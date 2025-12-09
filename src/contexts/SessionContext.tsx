@@ -30,49 +30,50 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Start with loading true
-    setLoading(true);
+    // 1. Perform a one-time check for the initial session on component mount.
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      // 2. IMPORTANT: Set loading to false immediately after the initial check is complete.
+      // This ensures the loading screen always disappears.
+      setLoading(false);
 
-    // onAuthStateChange handles both initial session and subsequent changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        try {
+      // 3. Set up the listener for future auth events (login, logout, etc.).
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        (_event, session) => {
           setSession(session);
           setUser(session?.user ?? null);
-
-          if (session?.user) {
-            // If there is a user, fetch their profile
-            const { data: profileData, error } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('id', session.user.id)
-              .single();
-            
-            if (error && error.code !== 'PGRST116') { // PGRST116 means "exact one row not found"
-              console.error('Error fetching profile:', error);
-              setProfile(null);
-            } else {
-              setProfile(profileData);
-            }
-          } else {
-            // If no user, clear the profile
-            setProfile(null);
-          }
-        } catch (e) {
-          console.error("An error occurred in onAuthStateChange", e);
-        } finally {
-          // This block is guaranteed to run, whether there was an error or not.
-          // This prevents the loading screen from getting stuck.
-          setLoading(false);
         }
-      }
-    );
+      );
 
-    // Cleanup subscription on component unmount
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+      // Cleanup the subscription on component unmount.
+      return () => {
+        subscription.unsubscribe();
+      };
+    });
+  }, []); // The empty dependency array ensures this effect runs only once.
+
+  // 4. A separate effect to fetch the user profile whenever the user object changes.
+  useEffect(() => {
+    // Only fetch the profile if there is a user.
+    if (user) {
+      supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+        .then(({ data, error }) => {
+          if (error && error.code !== 'PGRST116') {
+            console.error('Error fetching profile:', error);
+          } else {
+            setProfile(data);
+          }
+        });
+    } else {
+      // If there is no user, ensure the profile is cleared.
+      setProfile(null);
+    }
+  }, [user]); // This effect depends on the user object.
 
   const value = {
     session,
