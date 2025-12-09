@@ -1,4 +1,6 @@
 import React, { useState, forwardRef } from 'react';
+import { SessionProvider, useSession } from './contexts/SessionContext';
+import LoginPage from './pages/LoginPage';
 import { Sidebar } from './components/Sidebar';
 import { WelcomeBanner } from './components/WelcomeBanner';
 import { DashboardCard } from './components/DashboardCard';
@@ -27,7 +29,7 @@ import { UnlimitedContentPage } from './components/UnlimitedContentPage';
 import { WebsitePage } from './components/WebsitePage';
 import { YoutubeGoogleAdsPage } from './components/YoutubeGoogleAdsPage';
 import { AssetPage } from './components/AssetPage';
-import { CeoDashboardPage } from './components/CeoDashboardPage'; // Imported
+import { CeoDashboardPage } from './components/CeoDashboardPage';
 import { SOPModal } from './components/SOPModal';
 import { 
   Users, 
@@ -40,27 +42,24 @@ import {
   PlayCircle
 } from 'lucide-react';
 
-// Custom icons to match the design more closely where Lucide defaults differ slightly
-const FacebookIcon = forwardRef<SVGSVGElement, LucideProps>(({ size = 24, className, ...props }, ref) => (
-  <svg 
-    ref={ref}
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill="currentColor" 
-    className={className} 
-    {...props}
-  >
-    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-  </svg>
-));
-
-const App: React.FC = () => {
-  // Simple state for navigation. Defaulting to 'offer' (previously products)
+const AppContent: React.FC = () => {
+  const { session, loading } = useSession();
   const [currentView, setCurrentView] = useState<string>('offer');
-  
-  // State for SOP Modal
   const [isSOPOpen, setIsSOPOpen] = useState(false);
+
+  const FacebookIcon = forwardRef<SVGSVGElement, LucideProps>(({ size = 24, className, ...props }, ref) => (
+    <svg 
+      ref={ref}
+      width={size} 
+      height={size} 
+      viewBox="0 0 24 24" 
+      fill="currentColor" 
+      className={className} 
+      {...props}
+    >
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+    </svg>
+  ));
 
   const renderContent = () => {
     switch(currentView) {
@@ -122,11 +121,7 @@ const App: React.FC = () => {
         return (
           <div className="p-10 max-w-[1600px] mx-auto">
             <WelcomeBanner />
-
-            {/* Grid Layout */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              
-              {/* 1. Offer (Highlighted) - Renamed from Products */}
               <DashboardCard 
                 title="Offers"
                 description="A central place for your services, products, and digital assets details."
@@ -141,8 +136,6 @@ const App: React.FC = () => {
                   onClick: () => setCurrentView('create-product')
                 }}
               />
-
-              {/* 2. Dream Buyer Avatar */}
               <DashboardCard 
                 title="Dream Buyer Avatar"
                 description="Create a detailed and idealized representation of your target customer"
@@ -153,8 +146,6 @@ const App: React.FC = () => {
                   onClick: () => setCurrentView('dream-buyer')
                 }}
               />
-
-              {/* 3. Facebook Ad Generator */}
               <DashboardCard 
                 title="Facebook Ad Generator"
                 description="Generate tailored Facebook ad copy and captivating headlines"
@@ -165,8 +156,6 @@ const App: React.FC = () => {
                   onClick: () => setCurrentView('facebook-ads')
                 }}
               />
-
-              {/* 4. Direct Response Headline */}
               <DashboardCard 
                 title="Direct Response Headline"
                 description="Create powerful eyebrows, headlines and subheadlines designed to capture attention and drive action on your landing pages"
@@ -177,8 +166,6 @@ const App: React.FC = () => {
                   onClick: () => setCurrentView('direct-response')
                 }}
               />
-
-              {/* 5. HVCO Titles */}
               <DashboardCard 
                 title="HVCO Titles"
                 description="Craft compelling titles for your high-value content offers to attract and engage your ideal audience"
@@ -189,12 +176,23 @@ const App: React.FC = () => {
                   onClick: () => setCurrentView('hvco')
                 }}
               />
-
             </div>
           </div>
         );
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen w-screen bg-[#FDFDFD]">
+        <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-[#0EB869]"></div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return <LoginPage />;
+  }
 
   return (
     <div className="flex h-screen bg-[#FDFDFD] font-sans overflow-hidden">
@@ -202,8 +200,6 @@ const App: React.FC = () => {
       
       <main className="flex-1 flex flex-col h-full bg-[#F8F9FB] overflow-hidden relative">
         
-        {/* SOP / Tutorial Button - Fixed on Top Right of Content Area */}
-        {/* Hide SOP button on Unlimited Content & CEO Dashboard pages to keep immersive feel */}
         {currentView !== 'unlimited-content' && currentView !== 'ceo-dashboard' && (
           <div className="absolute top-6 right-8 z-40">
               <button 
@@ -223,11 +219,9 @@ const App: React.FC = () => {
         ) : (
            <div className="flex-1 h-full overflow-y-auto flex flex-col">
               <div className="flex-1 pt-4"> 
-                 {/* Added slight padding top so SOP button doesn't overlap immediate content too badly on mobile */}
                  {renderContent()}
               </div>
               
-              {/* Footer */}
               <div className="py-6 text-center text-slate-400 text-[11px] font-medium border-t border-slate-200/40 bg-[#F8F9FB]">
                   <span>Copyright © KP3 2025. All Rights Reserved.</span>
                   <span className="mx-2 text-slate-300">|</span> 
@@ -239,13 +233,20 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {/* Global SOP Modal */}
       <SOPModal 
         isOpen={isSOPOpen} 
         onClose={() => setIsSOPOpen(false)} 
         currentView={currentView} 
       />
     </div>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <SessionProvider>
+      <AppContent />
+    </SessionProvider>
   );
 };
 

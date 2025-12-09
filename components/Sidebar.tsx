@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useSession } from '@/contexts/SessionContext';
 import { 
   Users, 
   Facebook, 
@@ -79,6 +81,11 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ label, icon: Icon, isActive, 
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { profile } = useSession();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
 
   return (
     <div 
@@ -88,10 +95,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
         transition-all duration-300 ease-in-out z-50
       `}
     >
-      {/* Header / Logo */}
       <div className={`flex items-center ${isCollapsed ? 'justify-center flex-col-reverse gap-6' : 'justify-between'} mb-8 pt-5 transition-all duration-300`}>
         <div className="flex items-center gap-1 cursor-pointer overflow-hidden" onClick={() => onNavigate('dashboard')}>
-          {/* Custom Logo text */}
           <span 
             className="text-2xl font-[800] tracking-tighter text-[#0EB869] whitespace-nowrap" 
             style={{ fontFamily: 'Inter, sans-serif' }}
@@ -107,16 +112,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
         </button>
       </div>
 
-      {/* Generators Section */}
       <div className={`mb-2 transition-all duration-300 ${isCollapsed ? 'opacity-0 h-0 overflow-hidden mb-0' : 'opacity-100 h-auto'}`}>
         <h3 className="text-slate-900 font-bold text-[15px] mb-1 whitespace-nowrap">Power by KP3</h3>
         <p className="text-slate-500 text-[13px] mb-6 font-normal whitespace-nowrap">Clock Work</p>
       </div>
 
-      {/* Navigation List */}
       <div className="flex flex-col gap-2 flex-1">
-        
-        {/* CEO Dashboard (Renamed) */}
         <SidebarItem 
           icon={LayoutDashboard} 
           label="CEO Command" 
@@ -125,8 +126,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
           isCollapsed={isCollapsed}
           badge="Live"
         />
-
-        {/* New Menu: The All In Plan */}
         <SidebarItem 
           icon={Map} 
           label="The All In Plan" 
@@ -135,7 +134,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
           isCollapsed={isCollapsed}
           badge="Beta"
         />
-
         <SidebarItem 
           icon={Users} 
           label="Dream Buyer Avatars" 
@@ -171,7 +169,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
           onClick={() => onNavigate('hero-mechanisms')}
           isCollapsed={isCollapsed}
         />
-        
         <SidebarItem 
           icon={Image} 
           label="Ad Creatives" 
@@ -179,7 +176,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
           onClick={() => onNavigate('ad-creatives')}
           isCollapsed={isCollapsed}
         />
-
         <SidebarItem 
           icon={Scan} 
           label="Landing Pages" 
@@ -187,8 +183,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
           onClick={() => onNavigate('landing-pages')}
           isCollapsed={isCollapsed}
         />
-
-        {/* New Menu: Website */}
         <SidebarItem 
           icon={Globe} 
           label="Website" 
@@ -196,8 +190,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
           onClick={() => onNavigate('website')}
           isCollapsed={isCollapsed}
         />
-
-        {/* New Menu: Asset */}
         <SidebarItem 
           icon={Layers} 
           label="Asset" 
@@ -205,8 +197,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
           onClick={() => onNavigate('asset')}
           isCollapsed={isCollapsed}
         />
-
-        {/* New Menu: Youtube/Google Ads */}
         <SidebarItem 
           icon={MonitorPlay} 
           label="Youtube/Google Ads" 
@@ -214,7 +204,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
           onClick={() => onNavigate('youtube-ads')}
           isCollapsed={isCollapsed}
         />
-
         <SidebarItem 
           icon={Video} 
           label="VSL Creative" 
@@ -222,7 +211,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
           onClick={() => onNavigate('vsl-creative')}
           isCollapsed={isCollapsed}
         />
-
         <SidebarItem 
           icon={Share2} 
           label="Social System" 
@@ -230,8 +218,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
           onClick={() => onNavigate('social-system')}
           isCollapsed={isCollapsed}
         />
-
-        {/* New Menu: Closer */}
         <SidebarItem 
           icon={Phone} 
           label="Closer" 
@@ -239,7 +225,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
           onClick={() => onNavigate('closer')}
           isCollapsed={isCollapsed}
         />
-
         <SidebarItem 
           icon={Mail} 
           label="Email List" 
@@ -247,7 +232,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
           onClick={() => onNavigate('email-list')}
           isCollapsed={isCollapsed}
         />
-
         <SidebarItem 
           icon={Filter} 
           label="Funnel Builder" 
@@ -255,7 +239,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
           onClick={() => onNavigate('funnel-builder')}
           isCollapsed={isCollapsed}
         />
-
         <SidebarItem 
           icon={Wrench} 
           label="Mini Tools" 
@@ -264,10 +247,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
           isCollapsed={isCollapsed}
           badge="New"
         />
-
-        {/* Separator */}
         <div className={`my-4 border-t border-slate-200 ${isCollapsed ? 'mx-2' : 'mx-1'}`}></div>
-
         <SidebarItem 
           icon={ShoppingBag} 
           label="Offer" 
@@ -276,7 +256,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
           onClick={() => onNavigate('offer')}
           isCollapsed={isCollapsed}
         />
-        
         <SidebarItem 
           icon={Target} 
           label="Goal" 
@@ -286,7 +265,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
         />
       </div>
 
-      {/* Footer Links */}
       <div className="flex flex-col gap-1 mt-auto pt-8 pb-2">
         <SidebarItem 
           icon={LifeBuoy} 
@@ -320,23 +298,29 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
         />
       </div>
 
-      {/* User Profile */}
       <div className={`border-t border-slate-200/60 mt-2 mb-4 pt-3 ${isCollapsed ? 'px-1' : 'px-0'}`}>
-         <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} p-2 rounded-lg hover:bg-white hover:shadow-sm transition-all cursor-pointer group`}>
-            {/* Avatar */}
+         <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} p-2 rounded-lg hover:bg-white hover:shadow-sm transition-all group`}>
              <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 shrink-0 shadow-sm">
-                 <User size={20} />
+                 {profile?.avatar_url ? (
+                    <img src={profile.avatar_url} alt="avatar" className="w-full h-full rounded-full object-cover" />
+                 ) : (
+                    <User size={20} />
+                 )}
              </div>
              
              {!isCollapsed && (
                  <div className="flex-1 min-w-0">
-                     <div className="text-[14px] font-bold text-slate-900 truncate">Hai Phút Phúc</div>
+                     <div className="text-[14px] font-bold text-slate-900 truncate">
+                        {profile?.first_name || profile?.last_name ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : 'Welcome'}
+                     </div>
                      <div className="text-[12px] text-slate-500 truncate">Free Member</div>
                  </div>
              )}
 
              {!isCollapsed && (
-                 <LogOut size={16} className="text-slate-400 group-hover:text-slate-600 ml-1" />
+                 <button onClick={handleLogout} title="Logout" className="p-2 -mr-2 rounded-full hover:bg-red-50">
+                    <LogOut size={16} className="text-slate-400 group-hover:text-red-500" />
+                 </button>
              )}
          </div>
       </div>
