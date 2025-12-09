@@ -116,10 +116,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
       {/* Navigation List */}
       <div className="flex flex-col gap-2 flex-1">
         
-        {/* CEO Dashboard (New First Item) */}
+        {/* CEO Dashboard (Renamed) */}
         <SidebarItem 
           icon={LayoutDashboard} 
-          label="CEO Command Center" 
+          label="CEO Command" 
           isActive={currentView === 'ceo-dashboard'}
           onClick={() => onNavigate('ceo-dashboard')}
           isCollapsed={isCollapsed}
