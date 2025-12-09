@@ -1,2 +1,6 @@
 import React from 'react';
-export const HeroMechanismsPage: React.FC = () => <div className="p-10"><h1 className="text-2xl font-bold">Hero Mechanisms</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const HeroMechanismsPage: React.FC = () => {
+  return <PlaceholderContent title="Hero Mechanisms" description="Develop the core unique mechanism for your offer." />;
+};

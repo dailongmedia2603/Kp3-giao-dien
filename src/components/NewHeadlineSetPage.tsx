@@ -1,2 +1,6 @@
 import React from 'react';
-export const NewHeadlineSetPage: React.FC = () => <div className="p-10"><h1 className="text-2xl font-bold">New Headline Set</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const NewHeadlineSetPage: React.FC = () => {
+  return <PlaceholderContent title="New Headline Set" description="Create a new set of direct response headlines." />;
+};

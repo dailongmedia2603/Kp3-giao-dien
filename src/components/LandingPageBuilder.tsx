@@ -1,2 +1,6 @@
 import React from 'react';
-export const LandingPageBuilder: React.FC = () => <div className="p-10"><h1 className="text-2xl font-bold">Landing Pages</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const LandingPageBuilder: React.FC = () => {
+  return <PlaceholderContent title="Landing Pages" description="Build and optimize high-converting landing pages." />;
+};

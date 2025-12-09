@@ -1,2 +1,6 @@
 import React from 'react';
-export const GoalPage: React.FC = () => <div className="p-10"><h1 className="text-2xl font-bold">Goal</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const GoalPage: React.FC = () => {
+  return <PlaceholderContent title="Goal" description="Set and track your business and marketing goals." />;
+};

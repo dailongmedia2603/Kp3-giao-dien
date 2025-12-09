@@ -1,2 +1,6 @@
 import React from 'react';
-export const CeoDashboardPage: React.FC = () => <div className="p-10"><h1 className="text-2xl font-bold">CEO Command</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const CeoDashboardPage: React.FC = () => {
+  return <PlaceholderContent title="CEO Command" description="Your central command for business metrics and performance." />;
+};

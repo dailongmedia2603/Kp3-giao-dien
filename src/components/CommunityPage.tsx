@@ -1,2 +1,6 @@
 import React from 'react';
-export const CommunityPage: React.FC = () => <div className="p-10"><h1 className="text-2xl font-bold">KP3 Community</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const CommunityPage: React.FC = () => {
+  return <PlaceholderContent title="KP3 Community" description="Connect with other members of the KP3 community." />;
+};

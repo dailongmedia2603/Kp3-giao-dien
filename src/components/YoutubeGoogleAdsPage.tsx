@@ -1,2 +1,6 @@
 import React from 'react';
-export const YoutubeGoogleAdsPage: React.FC = () => <div className="p-10"><h1 className="text-2xl font-bold">Youtube/Google Ads</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const YoutubeGoogleAdsPage: React.FC = () => {
+  return <PlaceholderContent title="Youtube/Google Ads" description="Create and manage your video and search ad campaigns." />;
+};

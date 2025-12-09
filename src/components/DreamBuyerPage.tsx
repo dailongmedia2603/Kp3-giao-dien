@@ -1,2 +1,6 @@
 import React from 'react';
-export const DreamBuyerPage: React.FC = () => <div className="p-10"><h1 className="text-2xl font-bold">Dream Buyer Avatars</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const DreamBuyerPage: React.FC = () => {
+  return <PlaceholderContent title="Dream Buyer Avatars" description="Create a detailed and idealized representation of your target customer." />;
+};

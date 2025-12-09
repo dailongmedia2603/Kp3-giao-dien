@@ -1,2 +1,6 @@
 import React from 'react';
-export const CloserPage: React.FC = () => <div className="p-10"><h1 className="text-2xl font-bold">Closer</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const CloserPage: React.FC = () => {
+  return <PlaceholderContent title="Closer" description="Tools and scripts for your sales closing team." />;
+};

@@ -1,2 +1,6 @@
 import React from 'react';
-export const FunnelBuilderPage: React.FC = () => <div className="p-10"><h1 className="text-2xl font-bold">Funnel Builder</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const FunnelBuilderPage: React.FC = () => {
+  return <PlaceholderContent title="Funnel Builder" description="Visually construct and analyze your marketing funnels." />;
+};

@@ -1,2 +1,6 @@
 import React from 'react';
-export const SupportPage: React.FC = () => <div className="p-10"><h1 className="text-2xl font-bold">Support</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const SupportPage: React.FC = () => {
+  return <PlaceholderContent title="Support" description="Get help and find answers to your questions." />;
+};

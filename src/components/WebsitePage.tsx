@@ -1,2 +1,6 @@
 import React from 'react';
-export const WebsitePage: React.FC = () => <div className="p-10"><h1 className="text-2xl font-bold">Website</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const WebsitePage: React.FC = () => {
+  return <PlaceholderContent title="Website" description="Manage and analyze your main website's performance." />;
+};

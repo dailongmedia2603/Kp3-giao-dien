@@ -1,2 +1,6 @@
 import React from 'react';
-export const MiniToolsPage: React.FC = () => <div className="p-10"><h1 className="text-2xl font-bold">Mini Tools</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const MiniToolsPage: React.FC = () => {
+  return <PlaceholderContent title="Mini Tools" description="A collection of small, useful tools to help your workflow." />;
+};

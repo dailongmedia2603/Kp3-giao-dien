@@ -1,2 +1,6 @@
 import React from 'react';
-export const FacebookAdGeneratorPage: React.FC = () => <div className="p-10"><h1 className="text-2xl font-bold">Facebook Ad Generator</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const FacebookAdGeneratorPage: React.FC = () => {
+  return <PlaceholderContent title="Facebook Ad Generator" description="Generate tailored Facebook ad copy and captivating headlines." />;
+};

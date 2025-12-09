@@ -1,2 +1,6 @@
 import React from 'react';
-export const AllInPlanPage: React.FC = () => <div className="p-10"><h1 className="text-2xl font-bold">The All In Plan</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const AllInPlanPage: React.FC = () => {
+  return <PlaceholderContent title="The All In Plan" description="Strategize and map out your entire business plan." />;
+};

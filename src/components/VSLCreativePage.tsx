@@ -1,2 +1,6 @@
 import React from 'react';
-export const VSLCreativePage: React.FC = () => <div className="p-10"><h1 className="text-2xl font-bold">VSL Creative</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const VSLCreativePage: React.FC = () => {
+  return <PlaceholderContent title="VSL Creative" description="Develop compelling Video Sales Letter scripts and creatives." />;
+};

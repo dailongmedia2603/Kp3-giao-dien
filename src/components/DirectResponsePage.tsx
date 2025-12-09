@@ -1,2 +1,6 @@
 import React from 'react';
-export const DirectResponsePage: React.FC<{ onNavigate: (view: string) => void }> = () => <div className="p-10"><h1 className="text-2xl font-bold">Direct Response Headline</h1></div>;
+import { PlaceholderContent } from './PlaceholderContent';
+
+export const DirectResponsePage: React.FC<{ onNavigate: (view: string) => void }> = () => {
+  return <PlaceholderContent title="Direct Response Headline" description="Create powerful headlines to drive action." />;
+};
