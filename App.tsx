@@ -1,6 +1,6 @@
 import React, { useState, forwardRef } from 'react';
-import { SessionProvider, useSession } from './contexts/SessionContext';
-import LoginPage from './pages/LoginPage';
+import { SessionProvider, useSession } from './src/contexts/SessionContext';
+import LoginPage from './src/pages/LoginPage';
 import { Sidebar } from './components/Sidebar';
 import { WelcomeBanner } from './components/WelcomeBanner';
 import { DashboardCard } from './components/DashboardCard';

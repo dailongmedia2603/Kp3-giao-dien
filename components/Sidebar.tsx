@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useSession } from '@/contexts/SessionContext';
+import { supabase } from '@/src/integrations/supabase/client';
+import { useSession } from '@/src/contexts/SessionContext';
 import { 
   Users, 
   Facebook, 
