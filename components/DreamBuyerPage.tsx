@@ -64,14 +64,14 @@ const MOCK_OFFERS = [
   { id: 'offer_d1', category: 'Digital', title: 'Weight Loss Course', description: 'A comprehensive 12-week video course teaching sustainable weight loss.' },
   { id: 'offer_d2', category: 'Digital', title: 'Property Investment Course', description: 'A comprehensive course teaching how to retire early using property investment strategies.' },
   
-  // Delivery
-  { id: 'offer_del1', category: 'Delivery', title: 'Welcome Email Sequence', description: 'A 5-part email series delivered post-purchase.' },
+  // E-learning
+  { id: 'offer_del1', category: 'E-learning', title: 'Welcome Email Sequence', description: 'A 5-part email series delivered post-purchase.' },
 
   // Affiliate
   { id: 'offer_aff1', category: 'Affiliate', title: 'Partner Program Q3', description: '30% recurring commission structure for registered agency partners.' },
 ];
 
-const OFFER_CATEGORIES = ['Service', 'Physical', 'Software', 'Digital', 'Delivery', 'Affiliate'];
+const OFFER_CATEGORIES = ['Service', 'Physical', 'Software', 'Digital', 'E-learning', 'Affiliate'];
 
 // --- Mock Data Avatars ---
 const MOCK_AVATARS: AvatarProfile[] = [

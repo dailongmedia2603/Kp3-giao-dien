@@ -8,8 +8,8 @@ import {
   Package,
   Monitor,
   Download,
-  Send,
-  Link2
+  Link2,
+  BookOpen
 } from 'lucide-react';
 
 interface OfferPageProps {
@@ -17,7 +17,7 @@ interface OfferPageProps {
 }
 
 export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
-  const [activeTab, setActiveTab] = useState<'service' | 'physical' | 'software' | 'digital' | 'delivery' | 'affiliate'>('service');
+  const [activeTab, setActiveTab] = useState<'service' | 'physical' | 'software' | 'digital' | 'e-learning' | 'affiliate'>('service');
 
   return (
     <div className="p-8 max-w-[1400px] mx-auto font-sans">
@@ -88,17 +88,17 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
           Digital
         </button>
         
-        {/* New Tabs */}
+        {/* E-learning Tab */}
         <button 
-          onClick={() => setActiveTab('delivery')}
+          onClick={() => setActiveTab('e-learning')}
           className={`flex-1 min-w-[100px] py-3 px-4 rounded-lg flex items-center justify-center gap-2 text-[13px] font-bold transition-all duration-200 whitespace-nowrap
-            ${activeTab === 'delivery' 
+            ${activeTab === 'e-learning' 
               ? 'bg-white text-[#0EB869] shadow-sm ring-1 ring-slate-200' 
               : 'text-slate-500 hover:bg-white/60 hover:text-slate-700'
             }`}
         >
-          <Send size={18} />
-          Delivery
+          <BookOpen size={18} />
+          E-learning
         </button>
          <button 
           onClick={() => setActiveTab('affiliate')}
@@ -194,26 +194,26 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
           </div>
         )}
 
-        {/* New Delivery Tab Content */}
-        {activeTab === 'delivery' && (
+        {/* E-learning Tab Content */}
+        {activeTab === 'e-learning' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-300">
              <ProductCard 
                 title="Welcome Email Sequence"
-                category="Delivery"
+                category="E-learning"
                 description="A 5-part email series delivered post-purchase to onboard new customers effectively."
-                icon={Send}
+                icon={BookOpen}
               />
               <ProductCard 
                 title="Course Access Portal"
-                category="Delivery"
+                category="E-learning"
                 description="Login credentials and access management for the main educational content."
-                icon={Send}
+                icon={BookOpen}
               />
               <ProductCard 
                 title="Shipping Notification"
-                category="Delivery"
+                category="E-learning"
                 description="Automated SMS and Email templates for physical product dispatch updates."
-                icon={Send}
+                icon={BookOpen}
               />
           </div>
         )}
