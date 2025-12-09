@@ -27,7 +27,6 @@ import { UnlimitedContentPage } from './components/UnlimitedContentPage';
 import { WebsitePage } from './components/WebsitePage';
 import { YoutubeGoogleAdsPage } from './components/YoutubeGoogleAdsPage';
 import { AssetPage } from './components/AssetPage'; // Imported
-import { CEODashboardPage } from './components/CEODashboardPage';
 import { SOPModal } from './components/SOPModal';
 import { 
   Users, 
@@ -114,8 +113,6 @@ const App: React.FC = () => {
         return <YoutubeGoogleAdsPage />;
       case 'asset':
         return <AssetPage />; // Routed
-      case 'ceo-dashboard':
-        return <CEODashboardPage />;
       
       case 'dashboard':
       default:
@@ -204,7 +201,7 @@ const App: React.FC = () => {
         
         {/* SOP / Tutorial Button - Fixed on Top Right of Content Area */}
         {/* Hide SOP button on Unlimited Content page to keep the immersive dark mode */}
-        {currentView !== 'unlimited-content' && currentView !== 'ceo-dashboard' && (
+        {currentView !== 'unlimited-content' && (
           <div className="absolute top-6 right-8 z-40">
               <button 
                   onClick={() => setIsSOPOpen(true)}
@@ -216,7 +213,7 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {currentView === 'funnel-builder' || currentView === 'unlimited-content' || currentView === 'ceo-dashboard' ? (
+        {currentView === 'funnel-builder' || currentView === 'unlimited-content' ? (
            <div className="flex-1 h-full overflow-hidden">
               {renderContent()}
            </div>
