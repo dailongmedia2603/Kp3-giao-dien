@@ -30,8 +30,10 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Start with loading true
     setLoading(true);
 
+    // onAuthStateChange handles both initial session and subsequent changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         try {
@@ -39,30 +41,34 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
           setUser(session?.user ?? null);
 
           if (session?.user) {
+            // If there is a user, fetch their profile
             const { data: profileData, error } = await supabase
               .from('profiles')
               .select('*')
               .eq('id', session.user.id)
               .single();
             
-            if (error && error.code !== 'PGRST116') { // PGRST116 = "exact one row not found"
+            if (error && error.code !== 'PGRST116') { // PGRST116 means "exact one row not found"
               console.error('Error fetching profile:', error);
               setProfile(null);
             } else {
               setProfile(profileData);
             }
           } else {
+            // If no user, clear the profile
             setProfile(null);
           }
         } catch (e) {
           console.error("An error occurred in onAuthStateChange", e);
         } finally {
-          // This is guaranteed to run, preventing the loading screen from getting stuck.
+          // This block is guaranteed to run, whether there was an error or not.
+          // This prevents the loading screen from getting stuck.
           setLoading(false);
         }
       }
     );
 
+    // Cleanup subscription on component unmount
     return () => {
       subscription.unsubscribe();
     };
