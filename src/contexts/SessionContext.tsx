@@ -30,38 +30,35 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-        setProfile(profileData);
-      }
-      setLoading(false);
-    };
-
-    getInitialSession();
+    setLoading(true);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          setLoading(true);
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-          setProfile(profileData);
+        try {
+          setSession(session);
+          setUser(session?.user ?? null);
+
+          if (session?.user) {
+            const { data: profileData, error } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', session.user.id)
+              .single();
+            
+            if (error && error.code !== 'PGRST116') { // PGRST116 = "exact one row not found"
+              console.error('Error fetching profile:', error);
+              setProfile(null);
+            } else {
+              setProfile(profileData);
+            }
+          } else {
+            setProfile(null);
+          }
+        } catch (e) {
+          console.error("An error occurred in onAuthStateChange", e);
+        } finally {
+          // This is guaranteed to run, preventing the loading screen from getting stuck.
           setLoading(false);
-        } else {
-          setProfile(null);
         }
       }
     );
