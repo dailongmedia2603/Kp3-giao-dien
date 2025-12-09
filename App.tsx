@@ -26,7 +26,8 @@ import { CommunityPage } from './components/CommunityPage';
 import { UnlimitedContentPage } from './components/UnlimitedContentPage';
 import { WebsitePage } from './components/WebsitePage';
 import { YoutubeGoogleAdsPage } from './components/YoutubeGoogleAdsPage';
-import { AssetPage } from './components/AssetPage'; // Imported
+import { AssetPage } from './components/AssetPage';
+import { CeoDashboardPage } from './components/CeoDashboardPage'; // Imported
 import { SOPModal } from './components/SOPModal';
 import { 
   Users, 
@@ -63,6 +64,8 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     switch(currentView) {
+      case 'ceo-dashboard':
+        return <CeoDashboardPage />;
       case 'direct-response':
         return <DirectResponsePage onNavigate={setCurrentView} />;
       case 'new-headline-set':
@@ -112,7 +115,7 @@ const App: React.FC = () => {
       case 'youtube-ads':
         return <YoutubeGoogleAdsPage />;
       case 'asset':
-        return <AssetPage />; // Routed
+        return <AssetPage />;
       
       case 'dashboard':
       default:
@@ -200,8 +203,8 @@ const App: React.FC = () => {
       <main className="flex-1 flex flex-col h-full bg-[#F8F9FB] overflow-hidden relative">
         
         {/* SOP / Tutorial Button - Fixed on Top Right of Content Area */}
-        {/* Hide SOP button on Unlimited Content page to keep the immersive dark mode */}
-        {currentView !== 'unlimited-content' && (
+        {/* Hide SOP button on Unlimited Content & CEO Dashboard pages to keep immersive feel */}
+        {currentView !== 'unlimited-content' && currentView !== 'ceo-dashboard' && (
           <div className="absolute top-6 right-8 z-40">
               <button 
                   onClick={() => setIsSOPOpen(true)}
@@ -213,7 +216,7 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {currentView === 'funnel-builder' || currentView === 'unlimited-content' ? (
+        {currentView === 'funnel-builder' || currentView === 'unlimited-content' || currentView === 'ceo-dashboard' ? (
            <div className="flex-1 h-full overflow-hidden">
               {renderContent()}
            </div>

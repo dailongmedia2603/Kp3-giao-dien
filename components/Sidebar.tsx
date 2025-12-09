@@ -26,7 +26,8 @@ import {
   MonitorPlay,
   Phone,
   Map,
-  Infinity
+  Infinity,
+  LayoutDashboard
 } from 'lucide-react';
 import { SidebarItemProps } from '../types';
 
@@ -115,6 +116,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
       {/* Navigation List */}
       <div className="flex flex-col gap-2 flex-1">
         
+        {/* CEO Dashboard (New First Item) */}
+        <SidebarItem 
+          icon={LayoutDashboard} 
+          label="CEO Command Center" 
+          isActive={currentView === 'ceo-dashboard'}
+          onClick={() => onNavigate('ceo-dashboard')}
+          isCollapsed={isCollapsed}
+          badge="Live"
+        />
+
         {/* New Menu: The All In Plan */}
         <SidebarItem 
           icon={Map} 
