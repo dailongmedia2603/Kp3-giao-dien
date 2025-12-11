@@ -165,7 +165,7 @@ const categoriesData = [
       { view: 'unified-ads', icon: GalleryVerticalEnd, label: 'Unified Ads Manager' },
       { view: 'facebook-ads', icon: Facebook, label: 'Facebook Ad Generator' },
       { view: 'youtube-ads', icon: MonitorPlay, label: 'Youtube/Google Ads' },
-      { view: 'social-system', icon: Share2, label: 'Social System' },
+      { view: 'social-system', icon: Share2, label: 'Media Company' },
       { view: 'affiliate-center', icon: Handshake, label: 'Affiliate Center' },
     ],
   },
@@ -258,12 +258,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
     >
       <div className={`flex items-center ${isCollapsed ? 'justify-center flex-col-reverse gap-6' : 'justify-between'} mb-8 pt-5 transition-all duration-300`}>
         <div className="flex items-center gap-1 cursor-pointer overflow-hidden" onClick={() => onNavigate('dashboard')}>
-          <span 
-            className="text-2xl font-[800] tracking-tighter text-[#0EB869] whitespace-nowrap" 
-            style={{ fontFamily: 'Inter, sans-serif' }}
-          >
-            {isCollapsed ? 'G' : 'GETTIME.MONEY'}
-          </span>
+          {isCollapsed ? (
+            <img src="/logo-icon.png" alt="Logo" className="h-8 w-auto" onError={(e) => e.currentTarget.style.display = 'none'} />
+          ) : (
+            <img src="/logo-full.png" alt="Logo" className="h-8 w-auto" onError={(e) => e.currentTarget.style.display = 'none'} />
+          )}
         </div>
         <button 
           onClick={() => setIsCollapsed(!isCollapsed)}
