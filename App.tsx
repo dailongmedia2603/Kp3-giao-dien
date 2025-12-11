@@ -31,6 +31,7 @@ import { YoutubeGoogleAdsPage } from './components/YoutubeGoogleAdsPage';
 import { AssetPage } from './components/AssetPage';
 import { CeoDashboardPage } from './components/CeoDashboardPage';
 import { SOPModal } from './components/SOPModal';
+import { AffiliateCenterPage } from './components/AffiliateCenterPage';
 import { 
   Users, 
   Facebook, 
@@ -115,6 +116,8 @@ const AppContent: React.FC = () => {
         return <YoutubeGoogleAdsPage />;
       case 'asset':
         return <AssetPage />;
+      case 'affiliate-center':
+        return <AffiliateCenterPage />;
       
       case 'dashboard':
       default:
