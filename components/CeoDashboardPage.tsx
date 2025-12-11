@@ -1,278 +1,208 @@
 import React from 'react';
 import { 
-  Activity, 
-  DollarSign, 
-  TrendingUp, 
-  Users, 
-  Globe, 
-  Zap, 
-  Target, 
-  ShieldAlert,
-  Ticket,
-  LayoutDashboard,
-  Home,
-  ChevronRight
+  Sparkles,
+  ArrowRight,
+  Target,
+  Users,
+  Lock,
+  Activity,
+  AlertTriangle,
+  Clock,
+  Facebook,
+  QrCode,
+  BrainCircuit
 } from 'lucide-react';
 
-// --- Mock Data ---
-const FINANCIALS = {
-  revenue: 14250,
-  spend: 3840,
-  netProfit: 10410,
-  roas: 3.71,
-  history: [8500, 9200, 11000, 9800, 12500, 13100, 14250] // Last 7 days profit
+// --- Helper Components ---
+
+// Card cho các chỉ số chính
+const MetricCard = ({ icon: Icon, title, amount, subtext, percentage, color, alert }: { icon: any, title: string, amount: string, subtext: string, percentage: string, color: string, alert?: boolean }) => {
+  const colorClasses = {
+    green: { border: 'border-green-400', text: 'text-green-600', bg: 'bg-green-50' },
+    blue: { border: 'border-blue-400', text: 'text-blue-600', bg: 'bg-blue-50' },
+    yellow: { border: 'border-yellow-400', text: 'text-yellow-600', bg: 'bg-yellow-50' },
+    red: { border: 'border-red-400', text: 'text-red-600', bg: 'bg-red-50' },
+  };
+  const styles = colorClasses[color as keyof typeof colorClasses] || colorClasses.green;
+
+  return (
+    <div className={`bg-white rounded-xl border ${styles.border} shadow-sm p-5 relative flex flex-col`}>
+      <div className={`absolute top-4 right-4 px-2 py-0.5 rounded text-xs font-bold ${styles.bg} ${styles.text}`}>
+        {percentage}
+      </div>
+      <div className="flex items-center gap-3 mb-2">
+        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${styles.bg}`}>
+          <Icon className={styles.text} size={18} />
+        </div>
+        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">{title}</h3>
+      </div>
+      <div className="mt-auto">
+        <p className={`text-3xl font-bold ${alert ? 'text-red-500' : 'text-slate-800'}`}>{amount}</p>
+        <p className="text-xs text-slate-400 mt-1">{subtext}</p>
+      </div>
+    </div>
+  );
 };
 
-const HEALTH_METRICS = {
-  traffic: { cpl: '$12.50', hookRate: '32%', status: 'healthy' },
-  funnel: { optIn: '24%', salesConv: '1.8%', status: 'warning' },
-  community: { dau: 1240, newMembers: 45, status: 'healthy' },
-  ops: { 
-    alerts: [
-      { type: 'domain', text: 'gettime.money expires in 6d' },
-      { type: 'support', text: '3 Urgent Tickets Pending' }
-    ],
-    status: 'alert'
-  }
-};
+// Card cho Clockwork Score
+const ClockworkCard = () => (
+  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+    <div className="flex justify-between items-center mb-4">
+      <h3 className="font-bold text-slate-800 flex items-center gap-2"><Clock size={18} className="text-slate-400" /> Clockwork Score</h3>
+      <span className="text-xs font-bold bg-green-100 text-green-700 px-2 py-1 rounded">+5% tuần này</span>
+    </div>
+    <div className="space-y-4 mb-4">
+      <div>
+        <div className="flex justify-between text-xs font-medium text-slate-500 mb-1"><span>Designing</span><span>20%</span></div>
+        <div className="w-full bg-slate-100 h-2 rounded-full"><div className="w-[20%] h-2 rounded-full bg-purple-500"></div></div>
+      </div>
+      <div>
+        <div className="flex justify-between text-xs font-medium text-slate-500 mb-1"><span>Deciding</span><span>15%</span></div>
+        <div className="w-full bg-slate-100 h-2 rounded-full"><div className="w-[15%] h-2 rounded-full bg-slate-300"></div></div>
+      </div>
+      <div>
+        <div className="flex justify-between text-xs font-medium text-slate-500 mb-1"><span>Doing (Cần giảm)</span><span>65%</span></div>
+        <div className="w-full bg-slate-100 h-2 rounded-full"><div className="w-[65%] h-2 rounded-full bg-red-500"></div></div>
+      </div>
+    </div>
+    <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 mt-4">
+      <p className="text-xs text-blue-800 leading-relaxed"><span className="font-bold flex items-center gap-1"><BrainCircuit size={14}/> AI Insight:</span> Team Media đang tốn 40% thời gian vào việc "Lên Camp thủ công". Hãy dùng Otis Ads để giải phóng họ.</p>
+    </div>
+  </div>
+);
 
-const LIVE_FEED = [
-  { id: 1, time: '10:42 AM', type: 'sale', text: 'New Sale: "Agency Scale Course" ($997)', user: 'Mike R.' },
-  { id: 2, time: '10:38 AM', type: 'lead', text: 'New Lead: "John Doe" from FB Ads', user: 'System' },
-  { id: 3, time: '10:15 AM', type: 'alert', text: 'Ad Set "Testing_V4" CPA > $50', user: 'Ad Manager' },
-  { id: 4, time: '09:55 AM', type: 'support', text: 'Ticket Escalated: "Login Issue"', user: 'Sarah J.' },
-  { id: 5, time: '09:42 AM', type: 'sale', text: 'New Sale: "VIP Coaching" ($2,500)', user: 'Jessica T.' },
-];
+// Card cho Pumpkin Plan
+const PumpkinCard = () => (
+  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex flex-col items-center">
+    <h3 className="font-bold text-slate-800 flex items-center gap-2 mb-4 self-start"><Users size={18} className="text-slate-400" /> Pumpkin Plan</h3>
+    <div className="relative w-32 h-32 flex items-center justify-center my-4">
+      <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="54" fill="none" stroke="#FDBA74" strokeWidth="12" strokeOpacity="0.3" />
+        <circle cx="60" cy="60" r="54" fill="none" stroke="#F97316" strokeWidth="12" strokeDasharray="250 339.29" strokeLinecap="round" />
+      </svg>
+      <div className="absolute text-center">
+        <p className="text-3xl font-bold text-slate-800">12</p>
+        <p className="text-xs font-bold text-slate-400">HẠNG A</p>
+      </div>
+    </div>
+    <div className="grid grid-cols-2 gap-3 w-full mt-auto">
+      <div className="bg-green-50 text-green-700 p-3 rounded-lg text-center">
+        <p className="text-xs font-bold">DT HẠNG A</p>
+        <p className="text-lg font-bold">1.2 Tỷ</p>
+      </div>
+      <div className="bg-red-50 text-red-700 p-3 rounded-lg text-center">
+        <p className="text-xs font-bold">SA THẢI (HẠNG D)</p>
+        <p className="text-lg font-bold">5 Khách</p>
+      </div>
+    </div>
+  </div>
+);
+
+// Card cho Live Traffic
+const LiveTrafficCard = () => (
+  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+    <div className="flex justify-between items-center mb-4">
+      <h3 className="font-bold text-slate-800 flex items-center gap-2"><Activity size={18} className="text-slate-400" /> Live Traffic</h3>
+      <div className="flex items-center gap-2">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+        </span>
+        <span className="text-xs font-bold text-red-500">LIVE</span>
+      </div>
+    </div>
+    <div className="space-y-3">
+      <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+        <div className="w-8 h-8 rounded bg-blue-500 text-white flex items-center justify-center font-bold text-sm">FB</div>
+        <div className="flex-1">
+          <p className="text-sm font-medium text-slate-800">New Lead: Nguyen Van A</p>
+          <p className="text-xs text-slate-400">Campaign "Tet 2026"</p>
+        </div>
+        <p className="text-xs text-slate-400">Vừa xong</p>
+      </div>
+      <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+        <div className="w-8 h-8 rounded bg-green-500 text-white flex items-center justify-center"><QrCode size={16} /></div>
+        <div className="flex-1">
+          <p className="text-sm font-medium text-slate-800">Đơn #9928 Đã TT</p>
+          <p className="text-xs text-slate-400">via SePay</p>
+        </div>
+        <p className="text-xs text-slate-400">2p trước</p>
+      </div>
+    </div>
+    <button className="w-full mt-4 text-center py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">
+      Xem tất cả
+    </button>
+  </div>
+);
 
 export const CeoDashboardPage: React.FC = () => {
   return (
-    <div className="p-8 max-w-[1600px] mx-auto font-sans h-full flex flex-col">
+    <div className="p-6 lg:p-8 bg-slate-50 min-h-screen font-sans">
       
-      {/* Header */}
-      <div className="flex flex-col items-center mb-10 text-center shrink-0">
-        <div className="flex items-center gap-2 mb-6 text-[13px] text-slate-500">
-          <Home size={16} className="text-slate-400" />
-          <ChevronRight size={14} className="text-slate-300" />
-          <span className="bg-[#E8FCF3] text-[#0EB869] px-3 py-1 rounded text-xs font-bold">
-            CEO Command
-          </span>
+      {/* Header Banner */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl p-8 mb-8 flex justify-between items-start shadow-lg">
+        <div>
+          <div className="flex items-center gap-4 mb-4">
+            <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded">VITAL NEED</span>
+            <button className="flex items-center gap-2 text-white/80 hover:text-white text-sm font-medium">
+              <Sparkles size={16} /> AI Re-Analyze
+            </button>
+          </div>
+          <h1 className="text-3xl font-bold mb-2">Tập trung vào: SALES (BÁN HÀNG)</h1>
+          <p className="text-blue-200 max-w-lg">Doanh thu tháng này đang thấp hơn 20% so với điểm hòa vốn. Đừng lo về Quy trình (Clockwork) hay Di sản (Legacy) lúc này. Hãy bán hàng ngay!</p>
         </div>
-
-        <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight flex items-center gap-3">
-          Executive Overview <LayoutDashboard className="text-[#0EB869]" size={28} />
-        </h1>
-        
-        <p className="text-slate-500 text-[15px] leading-relaxed mb-8 max-w-2xl mx-auto">
-          Global Ops • Live Connection • {new Date().toLocaleDateString()}
-        </p>
+        <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 w-64 text-center border border-white/30">
+          <p className="text-xs font-bold text-blue-200 uppercase">TRẠNG THÁI</p>
+          <p className="text-2xl font-bold my-2">Alert</p>
+          <div className="w-full bg-white/20 h-1 rounded-full mb-3"><div className="w-3/4 bg-white h-1 rounded-full"></div></div>
+          <button className="bg-white text-blue-600 font-bold text-sm py-2 px-4 rounded-lg w-full flex items-center justify-center gap-2 hover:bg-blue-50">
+            Xử lý ngay <ArrowRight size={16} />
+          </button>
+        </div>
       </div>
 
-      {/* 1. The "North Star" Bar (Financials) */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-         
-         {/* Revenue */}
-         <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
-            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-2">
-                <DollarSign size={12} /> Revenue Today
-            </div>
-            <div className="text-3xl font-mono font-bold text-slate-900 mb-1 flex items-center gap-2">
-                ${FINANCIALS.revenue.toLocaleString()}
-                <span className="text-xs font-sans text-[#0EB869] bg-[#E8FCF3] px-1.5 py-0.5 rounded flex items-center">
-                    <TrendingUp size={10} className="mr-1" /> +12%
-                </span>
-            </div>
-            <div className="w-full bg-slate-100 h-1.5 mt-3 rounded-full overflow-hidden">
-                <div className="bg-[#0EB869] h-full w-[75%]"></div>
-            </div>
-         </div>
-
-         {/* Ad Spend */}
-         <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
-            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-2">
-                <Activity size={12} /> Ad Spend Today
-            </div>
-            <div className="text-3xl font-mono font-bold text-red-500 mb-1">
-                -${FINANCIALS.spend.toLocaleString()}
-            </div>
-            <p className="text-xs text-slate-400 font-mono mt-2">Budget Cap: $5,000</p>
-         </div>
-
-         {/* Net Profit & Sparkline */}
-         <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex justify-between items-center relative overflow-hidden hover:shadow-md transition-shadow">
-            <div className="z-10">
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
-                    Net Profit (Est)
-                </div>
-                <div className="text-3xl font-mono font-bold text-[#0EB869]">
-                    +${FINANCIALS.netProfit.toLocaleString()}
-                </div>
-                <p className="text-xs text-slate-400 font-mono mt-2">Margin: {Math.round((FINANCIALS.netProfit / FINANCIALS.revenue) * 100)}%</p>
-            </div>
-            {/* Simple Sparkline SVG */}
-            <svg className="w-24 h-16 text-[#E8FCF3] absolute right-0 bottom-0" viewBox="0 0 100 50" preserveAspectRatio="none">
-                <path 
-                    d="M0 50 L0 30 L15 35 L30 20 L45 25 L60 10 L75 15 L100 0 V50 Z" 
-                    fill="currentColor"
-                />
-                <path 
-                    d="M0 30 L15 35 L30 20 L45 25 L60 10 L75 15 L100 0" 
-                    fill="none" 
-                    stroke="#0EB869" 
-                    strokeWidth="2"
-                />
-            </svg>
-         </div>
-
-         {/* ROAS Meter */}
-         <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col items-center justify-center relative hover:shadow-md transition-shadow">
-            <div className="relative w-32 h-16 overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-full bg-slate-100 rounded-t-full"></div>
-                <div 
-                    className={`absolute top-0 left-0 w-full h-full rounded-t-full origin-bottom transition-all duration-1000 ${
-                        FINANCIALS.roas < 2 ? 'bg-red-500' : FINANCIALS.roas > 4 ? 'bg-[#0EB869]' : 'bg-amber-500'
-                    }`}
-                    style={{ transform: `rotate(${(FINANCIALS.roas / 6) * 180 - 180}deg)` }}
-                ></div>
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-12 bg-white rounded-t-full flex items-end justify-center pb-1">
-                    <span className={`text-xl font-bold ${
-                        FINANCIALS.roas < 2 ? 'text-red-500' : FINANCIALS.roas > 4 ? 'text-[#0EB869]' : 'text-amber-500'
-                    }`}>{FINANCIALS.roas}x</span>
-                </div>
-            </div>
-            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">ROAS Meter</div>
-         </div>
+      {/* Main Metrics Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <MetricCard 
+          icon={Target}
+          title="PROFIT VAULT"
+          amount="250.000.000₫"
+          subtext="Cấm đụng vào."
+          percentage="10%"
+          color="green"
+        />
+        <MetricCard 
+          icon={Users}
+          title="LƯƠNG CHỦ"
+          amount="120.000.000₫"
+          subtext="Đã sẵn sàng rút."
+          percentage="20%"
+          color="blue"
+        />
+        <MetricCard 
+          icon={Lock}
+          title="QUỸ THUẾ"
+          amount="90.000.000₫"
+          subtext="Đủ nộp Q1/2026."
+          percentage="15%"
+          color="yellow"
+        />
+        <MetricCard 
+          icon={Activity}
+          title="CHI PHÍ VẬN HÀNH"
+          amount="15.000.000₫"
+          subtext="CẢNH BÁO: Quỹ sắp cạn!"
+          percentage="55%"
+          color="red"
+          alert
+        />
       </div>
 
-      {/* 2. Department Health Grid & Live Feed */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 h-full min-h-0 flex-1">
-         
-         {/* Middle Section: Department Health (2/3 width) */}
-         <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 auto-rows-min">
-            
-            {/* Traffic Card */}
-            <div className="bg-white border border-slate-200 rounded-xl p-6 relative group hover:border-[#0EB869] transition-colors shadow-sm">
-                <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-bold text-slate-900 flex items-center gap-2">
-                        <Globe size={16} className="text-blue-500" /> Traffic (Ads)
-                    </h3>
-                    <div className={`w-2 h-2 rounded-full ${HEALTH_METRICS.traffic.status === 'healthy' ? 'bg-[#0EB869] shadow-[0_0_8px_#10b981]' : 'bg-amber-500'}`}></div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
-                        <div className="text-xs text-slate-500 uppercase">Avg. CPL</div>
-                        <div className="text-lg font-mono font-bold text-slate-900">{HEALTH_METRICS.traffic.cpl}</div>
-                    </div>
-                    <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
-                        <div className="text-xs text-slate-500 uppercase">Hook Rate</div>
-                        <div className="text-lg font-mono font-bold text-slate-900">{HEALTH_METRICS.traffic.hookRate}</div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Funnel Card */}
-            <div className="bg-white border border-slate-200 rounded-xl p-6 relative group hover:border-amber-500 transition-colors shadow-sm">
-                <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-bold text-slate-900 flex items-center gap-2">
-                        <Target size={16} className="text-purple-500" /> Funnel (VSL)
-                    </h3>
-                    <div className={`w-2 h-2 rounded-full ${HEALTH_METRICS.funnel.status === 'healthy' ? 'bg-[#0EB869]' : 'bg-amber-500 shadow-[0_0_8px_#f59e0b]'}`}></div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
-                        <div className="text-xs text-slate-500 uppercase">Opt-in Rate</div>
-                        <div className="text-lg font-mono font-bold text-slate-900">{HEALTH_METRICS.funnel.optIn}</div>
-                    </div>
-                    <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
-                        <div className="text-xs text-slate-500 uppercase">Sales Conv.</div>
-                        <div className="text-lg font-mono font-bold text-amber-500">{HEALTH_METRICS.funnel.salesConv}</div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Community Card */}
-            <div className="bg-white border border-slate-200 rounded-xl p-6 relative group hover:border-pink-500 transition-colors shadow-sm">
-                <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-bold text-slate-900 flex items-center gap-2">
-                        <Users size={16} className="text-pink-500" /> Community
-                    </h3>
-                    <div className="w-2 h-2 rounded-full bg-[#0EB869] shadow-[0_0_8px_#10b981]"></div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
-                        <div className="text-xs text-slate-500 uppercase">Daily Active</div>
-                        <div className="text-lg font-mono font-bold text-slate-900">{HEALTH_METRICS.community.dau}</div>
-                    </div>
-                    <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
-                        <div className="text-xs text-slate-500 uppercase">New Members</div>
-                        <div className="text-lg font-mono font-bold text-slate-900">+{HEALTH_METRICS.community.newMembers}</div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Operations Card */}
-            <div className="bg-white border border-slate-200 rounded-xl p-6 relative group hover:border-red-500 transition-colors border-l-4 border-l-red-500 shadow-sm">
-                <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-bold text-slate-900 flex items-center gap-2">
-                        <ShieldAlert size={16} className="text-red-500" /> Operations
-                    </h3>
-                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_#ef4444]"></div>
-                </div>
-                <div className="space-y-2">
-                    {HEALTH_METRICS.ops.alerts.map((alert, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-xs p-2 bg-red-50 border border-red-100 rounded text-red-600">
-                            {alert.type === 'domain' ? <Globe size={12} /> : <Ticket size={12} />}
-                            <span className="font-medium">{alert.text}</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-         </div>
-
-         {/* Right Section: Live Battle Feed */}
-         <div className="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-full overflow-hidden">
-            <div className="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                    <Zap size={14} className="text-[#0EB869]" /> Live Battle Feed
-                </h3>
-                <span className="text-[10px] font-mono text-slate-400 animate-pulse">REC ●</span>
-            </div>
-            
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {LIVE_FEED.map((event) => (
-                    <div key={event.id} className="flex gap-3 text-xs border-l-2 border-slate-200 pl-3 py-1 relative">
-                        {/* Dot on timeline */}
-                        <div className={`absolute -left-[5px] top-2 w-2 h-2 rounded-full border-2 border-white 
-                            ${event.type === 'sale' ? 'bg-[#0EB869]' : 
-                              event.type === 'alert' ? 'bg-red-500' : 
-                              event.type === 'support' ? 'bg-amber-500' : 'bg-blue-500'}
-                        `}></div>
-                        
-                        <div className="text-slate-400 font-mono w-14 shrink-0">{event.time}</div>
-                        <div className="flex-1">
-                            <div className={`font-bold mb-0.5 ${
-                                event.type === 'sale' ? 'text-[#0EB869]' : 
-                                event.type === 'alert' ? 'text-red-500' : 
-                                event.type === 'support' ? 'text-amber-500' : 'text-slate-700'
-                            }`}>
-                                {event.text}
-                            </div>
-                            <div className="text-slate-500 flex items-center gap-1">
-                                <span>Action by:</span> <span className="text-slate-400">{event.user}</span>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-            
-            {/* Feed Footer */}
-            <div className="p-3 border-t border-slate-100 bg-slate-50 text-center">
-                <button className="text-[10px] font-bold text-slate-500 hover:text-slate-700 uppercase tracking-widest transition-colors">
-                    View Full Audit Log
-                </button>
-            </div>
-         </div>
-
+      {/* Lower Section Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <ClockworkCard />
+        <PumpkinCard />
+        <LiveTrafficCard />
       </div>
     </div>
   );
