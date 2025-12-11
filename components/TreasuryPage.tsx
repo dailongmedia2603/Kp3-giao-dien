@@ -35,14 +35,7 @@ interface Vault {
 export const TreasuryPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'allocations' | 'pnl'>('dashboard');
   
-  //<think>**Refining the Solution**
-
-\n\n
-
-I've confirmed the initial assessment and am moving toward the fix. The corrupted import statement, specifically the `<think>` tags injected, is the primary issue. I will generate the corrected `components/TreasuryPage.tsx` using `dyad-write`, ensuring the import statement is clean. I am focused on delivering a correct version.
-
-
-</think> --- State for the entire page ---
+  // --- State for the entire page ---
   const [vaults, setVaults] = useState<Record<VaultType, Vault>>({
     income: { id: 'income', title: 'Income', icon: DollarSign, color: 'blue', amount: 100000, percentage: 100 },
     profit: { id: 'profit', title: 'Profit', icon: TrendingUp, color: 'green', amount: 5000, percentage: 5 },
