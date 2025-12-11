@@ -39,6 +39,7 @@ import { UnifiedAdsManagerPage } from './components/UnifiedAdsManagerPage';
 import { EducationHubPage } from './components/EducationHubPage';
 import { TeamHRPage } from './components/TeamHRPage';
 import { RetailOpsPage } from './components/RetailOpsPage';
+import { AgencyPortalPage } from './components/AgencyPortalPage';
 import { 
   Users, 
   Facebook, 
@@ -139,6 +140,8 @@ const AppContent: React.FC = () => {
         return <TeamHRPage />;
       case 'retail-ops':
         return <RetailOpsPage />;
+      case 'agency-portal':
+        return <AgencyPortalPage />;
       
       case 'dashboard':
       default:
@@ -236,7 +239,7 @@ const AppContent: React.FC = () => {
           </div>
         )}
 
-        {currentView === 'funnel-builder' || currentView === 'unlimited-content' || currentView === 'ceo-dashboard' ? (
+        {currentView === 'funnel-builder' || currentView === 'unlimited-content' || currentView === 'ceo-dashboard' || currentView === 'agency-portal' ? (
            <div className="flex-1 h-full overflow-hidden">
               {renderContent()}
            </div>
