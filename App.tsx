@@ -36,6 +36,7 @@ import { LegalShieldPage } from './components/LegalShieldPage';
 import { TreasuryPage } from './components/TreasuryPage';
 import { ProductStorePage } from './components/ProductStorePage';
 import { UnifiedAdsManagerPage } from './components/UnifiedAdsManagerPage';
+import { EducationHubPage } from './components/EducationHubPage';
 import { 
   Users, 
   Facebook, 
@@ -130,6 +131,8 @@ const AppContent: React.FC = () => {
         return <ProductStorePage />;
       case 'unified-ads':
         return <UnifiedAdsManagerPage />;
+      case 'education-hub':
+        return <EducationHubPage />;
       
       case 'dashboard':
       default:
