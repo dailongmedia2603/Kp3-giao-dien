@@ -57,7 +57,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ label, icon: Icon, isActive, 
     <div 
       onClick={onClick}
       className={`
-        group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'justify-between px-3'} py-2.5 rounded-lg cursor-pointer transition-all duration-200
+        group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'justify-between px-3'} py-2 rounded-lg cursor-pointer transition-all duration-200
         ${isActive 
           ? 'bg-white text-[#0EB869] shadow-sm ring-1 ring-slate-100' 
           : 'text-slate-600 hover:bg-gray-100 hover:text-slate-900'}
@@ -66,12 +66,12 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ label, icon: Icon, isActive, 
     >
       <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} w-full`}>
         <Icon 
-          size={20} 
+          size={18} 
           strokeWidth={2} 
           className={`shrink-0 ${isActive ? 'text-[#0EB869]' : 'text-slate-500 group-hover:text-slate-900'}`} 
         />
         {!isCollapsed && (
-          <span className="text-[14px] font-medium whitespace-nowrap overflow-hidden transition-all duration-200">
+          <span className="text-[13px] font-medium whitespace-nowrap overflow-hidden transition-all duration-200">
             {label}
           </span>
         )}
@@ -289,7 +289,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
               onToggle={() => toggleCategory(category.id)}
             />
             {openCategories.includes(category.id) && !isCollapsed && (
-              <div className="pt-2 space-y-1">
+              <div className="pt-1 pl-4 space-y-1">
                 {category.items.map(item => (
                   <SidebarItem
                     key={item.view}
