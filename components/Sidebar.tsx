@@ -259,9 +259,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
       <div className={`flex items-center ${isCollapsed ? 'justify-center flex-col-reverse gap-6' : 'justify-between'} mb-8 pt-5 transition-all duration-300`}>
         <div className="flex items-center gap-1 cursor-pointer overflow-hidden" onClick={() => onNavigate('dashboard')}>
           {isCollapsed ? (
-            <img src="/logo-icon.png" alt="Logo" className="h-8 w-auto" onError={(e) => e.currentTarget.style.display = 'none'} />
+            <img src="/logo-icon.png" alt="Logo" className="h-8 object-contain" onError={(e) => e.currentTarget.style.display = 'none'} />
           ) : (
-            <img src="/logo-full.png" alt="Logo" className="h-8 w-auto" onError={(e) => e.currentTarget.style.display = 'none'} />
+            <img src="/logo-full.png" alt="Logo" className="h-8 object-contain" onError={(e) => e.currentTarget.style.display = 'none'} />
           )}
         </div>
         <button 
