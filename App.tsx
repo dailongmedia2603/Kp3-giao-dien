@@ -44,6 +44,8 @@ import { EnglishCenterPage } from './components/EnglishCenterPage';
 import { ClinicOSPage } from './components/ClinicOSPage';
 import { ActionBasedPage } from './components/ActionBasedPage';
 import { ClockworkEnginePage } from './components/ClockworkEnginePage';
+import { ChatPanelPage } from './components/ChatPanelPage';
+import { CloserBookingPage } from './components/CloserBookingPage';
 import { 
   Users, 
   Facebook, 
@@ -156,6 +158,10 @@ const AppContent: React.FC = () => {
         return <ActionBasedPage />;
       case 'clockwork-engine':
         return <ClockworkEnginePage />;
+      case 'chat-panel':
+        return <ChatPanelPage />;
+      case 'closer-booking':
+        return <CloserBookingPage />;
       
       case 'dashboard':
       default:

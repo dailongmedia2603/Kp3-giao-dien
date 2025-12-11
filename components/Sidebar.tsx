@@ -48,7 +48,9 @@ import {
   Book,
   Zap,
   Cog,
-  Vault
+  Vault,
+  MessageSquare,
+  Calendar
 } from 'lucide-react';
 import { SidebarItemProps } from '../types';
 
@@ -205,6 +207,8 @@ const categoriesData = [
     color: '#16A349',
     items: [
       { view: 'closer', icon: Phone, label: 'Closer' },
+      { view: 'chat-panel', icon: MessageSquare, label: 'Chat Panel' },
+      { view: 'closer-booking', icon: Calendar, label: 'Closer Booking' },
       { view: 'email-list', icon: Mail, label: 'Email List' },
       { view: 'legal-shield', icon: Shield, label: 'Legal Shield' },
     ],
