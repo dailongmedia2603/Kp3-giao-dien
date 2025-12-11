@@ -15,26 +15,20 @@ import {
   Share2,
   Image as ImageIcon,
   PenTool,
-  Film
+  Film,
+  Linkedin,
+  Twitter
 } from 'lucide-react';
 
-// Custom Icons for TikTok and Threads since they might not be in the standard Lucide set used here
+// Custom Icons for TikTok
 const TikTokIcon = ({ size = 20, color = "currentColor" }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
   </svg>
 );
 
-const ThreadsIcon = ({ size = 20, color = "currentColor" }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M19 12a7 7 0 1 0-7 7A7 7 0 0 0 19 12z" />
-    <path d="M12 12a3 3 0 1 0 3-3" />
-    <path d="M19 12v1.5a2.5 2.5 0 0 1-5 0" />
-  </svg>
-);
-
 export const SocialSystemPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'youtube' | 'tiktok' | 'instagram' | 'facebook' | 'threads'>('youtube');
+  const [activeTab, setActiveTab] = useState<'youtube' | 'tiktok' | 'instagram' | 'facebook' | 'linkedin' | 'x'>('youtube');
 
   return (
     <div className="p-8 max-w-[1400px] mx-auto font-sans">
@@ -60,7 +54,7 @@ export const SocialSystemPage: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="bg-slate-100/50 rounded-xl border border-slate-200 p-1.5 flex mb-8 gap-1 overflow-x-auto max-w-4xl mx-auto">
+      <div className="bg-slate-100/50 rounded-xl border border-slate-200 p-1.5 flex mb-8 gap-1 overflow-x-auto max-w-5xl mx-auto">
         <TabButton 
           isActive={activeTab === 'youtube'} 
           onClick={() => setActiveTab('youtube')} 
@@ -86,10 +80,16 @@ export const SocialSystemPage: React.FC = () => {
           label="Facebook" 
         />
         <TabButton 
-          isActive={activeTab === 'threads'} 
-          onClick={() => setActiveTab('threads')} 
-          icon={ThreadsIcon} 
-          label="Threads" 
+          isActive={activeTab === 'linkedin'} 
+          onClick={() => setActiveTab('linkedin')} 
+          icon={Linkedin} 
+          label="LinkedIn" 
+        />
+        <TabButton 
+          isActive={activeTab === 'x'} 
+          onClick={() => setActiveTab('x')} 
+          icon={Twitter} 
+          label="X" 
         />
       </div>
 
@@ -176,19 +176,36 @@ export const SocialSystemPage: React.FC = () => {
          />
         )}
 
-        {activeTab === 'threads' && (
+        {activeTab === 'linkedin' && (
            <PlatformContent 
-           title="Threads Conversation Starter"
-           description="Join the public conversation and build text-based authority."
+           title="LinkedIn Authority Builder"
+           description="Establish professional presence and generate B2B leads."
            stats={[
-               { label: 'Followers', value: '1,200', change: '+40%' },
-               { label: 'Replies', value: '85', change: '+12%' },
-               { label: 'Reposts', value: '42', change: '+5%' }
+               { label: 'Connections', value: '5,000+', change: '+10%' },
+               { label: 'Post Views', value: '150K', change: '+30%' },
+               { label: 'Inbound Leads', value: '12', change: '+2' }
            ]}
            tools={[
-               { title: 'Thread Generator', desc: 'Turn blog posts into engaging threads.', icon: AtSign },
-               { title: 'Reply Guy AI', desc: 'Generate witty and valuable replies to big accounts.', icon: MessageCircle },
-               { title: 'Thought Leader Hooks', desc: 'One-liners to start discussions.', icon: Share2 },
+               { title: 'Carousel Post Generator', desc: 'Create engaging PDF-style carousels.', icon: ImageIcon },
+               { title: 'Poll Creator', desc: 'Generate polls to boost engagement.', icon: BarChart2 },
+               { title: 'Article Writer', desc: 'Draft long-form articles to showcase expertise.', icon: PenTool },
+           ]}
+         />
+        )}
+
+        {activeTab === 'x' && (
+           <PlatformContent 
+           title="X (Twitter) Viral Engine"
+           description="Craft viral threads and high-engagement short-form content."
+           stats={[
+               { label: 'Followers', value: '25.7K', change: '+15%' },
+               { label: 'Impressions', value: '2.1M', change: '+50%' },
+               { label: 'Link Clicks', value: '5.2K', change: '+25%' }
+           ]}
+           tools={[
+               { title: 'Viral Thread Hook', desc: 'Generate the first tweet of a thread that gets clicks.', icon: AtSign },
+               { title: 'Meme Creator', desc: 'Create relevant memes for your niche.', icon: ImageIcon },
+               { title: 'Short-form Video Script', desc: 'Write scripts for 1-minute videos.', icon: Film },
            ]}
          />
         )}
