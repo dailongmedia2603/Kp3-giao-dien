@@ -40,6 +40,7 @@ import { EducationHubPage } from './components/EducationHubPage';
 import { TeamHRPage } from './components/TeamHRPage';
 import { RetailOpsPage } from './components/RetailOpsPage';
 import { AgencyPortalPage } from './components/AgencyPortalPage';
+import { EnglishCenterPage } from './components/EnglishCenterPage';
 import { 
   Users, 
   Facebook, 
@@ -142,6 +143,8 @@ const AppContent: React.FC = () => {
         return <RetailOpsPage />;
       case 'agency-portal':
         return <AgencyPortalPage />;
+      case 'english-center':
+        return <EnglishCenterPage />;
       
       case 'dashboard':
       default:
