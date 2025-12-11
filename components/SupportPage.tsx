@@ -288,7 +288,7 @@ export const SupportPage: React.FC = () => {
             <div className="relative">
               <textarea 
                 value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setReplyText(e.target.value)}
                 placeholder="Type your reply... (Press Enter to send)"
                 className="w-full p-4 pr-12 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869] resize-none h-24 text-sm"
               />

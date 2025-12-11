@@ -316,7 +316,7 @@ export const DreamBuyerPage: React.FC = () => {
                         </label>
                         <select 
                             value={selectedOfferId}
-                            onChange={(e) => setSelectedOfferId(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedOfferId(e.target.value)}
                             className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-[15px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869]"
                         >
                             <option value="">-- Choose an existing offer --</option>
@@ -367,7 +367,7 @@ export const DreamBuyerPage: React.FC = () => {
                             className="w-full p-4 border border-slate-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869] min-h-[100px] resize-none"
                             placeholder="e.g. 'The course was too theoretical', 'Support took days to reply', 'The software is buggy'..."
                             value={marketNegativityInput}
-                            onChange={(e) => setMarketNegativityInput(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMarketNegativityInput(e.target.value)}
                         />
                     </div>
 
@@ -384,7 +384,7 @@ export const DreamBuyerPage: React.FC = () => {
                             className="w-full p-4 border border-slate-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869] min-h-[100px] resize-none"
                             placeholder="e.g. 'I loved the coaching but wished the videos were shorter', 'Best investment I made this year'..."
                             value={pastFeedbackInput}
-                            onChange={(e) => setPastFeedbackInput(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setPastFeedbackInput(e.target.value)}
                         />
                     </div>
 
@@ -400,7 +400,7 @@ export const DreamBuyerPage: React.FC = () => {
                                 type="text"
                                 placeholder="e.g. Sarah"
                                 value={personaNameInput}
-                                onChange={(e) => setPersonaNameInput(e.target.value)}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPersonaNameInput(e.target.value)}
                                 className="w-full p-3 border border-slate-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869]"
                             />
                         </div>
@@ -412,7 +412,7 @@ export const DreamBuyerPage: React.FC = () => {
                                 type="text"
                                 placeholder="e.g. 35-45"
                                 value={ageInput}
-                                onChange={(e) => setAgeInput(e.target.value)}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAgeInput(e.target.value)}
                                 className="w-full p-3 border border-slate-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869]"
                             />
                         </div>

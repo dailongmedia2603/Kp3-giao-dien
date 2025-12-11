@@ -200,7 +200,7 @@ export const CommunityPage: React.FC = () => {
                     <div className="flex-1">
                         <textarea 
                             value={postContent}
-                            onChange={(e) => setPostContent(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setPostContent(e.target.value)}
                             placeholder="Share your win or ask the neighborhood..." 
                             className="w-full text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none resize-none min-h-[60px] py-2"
                         />

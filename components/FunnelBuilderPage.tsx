@@ -398,7 +398,7 @@ export const FunnelBuilderPage: React.FC = () => {
                                         placeholder="0.00"
                                         className="w-full p-1.5 px-2 bg-slate-50 border border-slate-200 rounded text-sm font-medium text-slate-700 focus:outline-none focus:border-[#10B981] transition-colors"
                                         value={node.data?.cost || ''}
-                                        onChange={(e) => updateNodeData(node.id, 'cost', e.target.value)}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateNodeData(node.id, 'cost', e.target.value)}
                                         onMouseDown={(e) => e.stopPropagation()} // Allow clicking input without dragging node
                                     />
                                 </div>
@@ -411,7 +411,7 @@ export const FunnelBuilderPage: React.FC = () => {
                                         placeholder="0"
                                         className="w-full p-1.5 px-2 bg-slate-50 border border-slate-200 rounded text-sm font-medium text-slate-700 focus:outline-none focus:border-[#10B981] transition-colors"
                                         value={node.data?.impressions || ''}
-                                        onChange={(e) => updateNodeData(node.id, 'impressions', e.target.value)}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateNodeData(node.id, 'impressions', e.target.value)}
                                         onMouseDown={(e) => e.stopPropagation()} // Allow clicking input without dragging node
                                     />
                                 </div>

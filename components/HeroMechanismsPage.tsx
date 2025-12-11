@@ -93,7 +93,7 @@ export const HeroMechanismsPage: React.FC = () => {
                         <input 
                             type="text" 
                             value={config.name}
-                            onChange={(e) => setConfig({...config, name: e.target.value})}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfig({...config, name: e.target.value})}
                             className="w-full p-2.5 border border-slate-200 rounded-lg text-sm font-bold text-indigo-600 focus:outline-none focus:border-indigo-500 bg-indigo-50/30"
                         />
                     </div>
@@ -104,7 +104,7 @@ export const HeroMechanismsPage: React.FC = () => {
                             <input 
                                 type="text" 
                                 value={config.current_state}
-                                onChange={(e) => setConfig({...config, current_state: e.target.value})}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfig({...config, current_state: e.target.value})}
                                 className="w-full p-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-indigo-500"
                             />
                         </div>
@@ -113,7 +113,7 @@ export const HeroMechanismsPage: React.FC = () => {
                             <input 
                                 type="text" 
                                 value={config.desired_state}
-                                onChange={(e) => setConfig({...config, desired_state: e.target.value})}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfig({...config, desired_state: e.target.value})}
                                 className="w-full p-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-indigo-500"
                             />
                         </div>
@@ -123,7 +123,7 @@ export const HeroMechanismsPage: React.FC = () => {
                         <input 
                             type="text" 
                             value={config.problem}
-                            onChange={(e) => setConfig({...config, problem: e.target.value})}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfig({...config, problem: e.target.value})}
                             className="w-full p-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-indigo-500"
                         />
                     </div>
@@ -145,14 +145,14 @@ export const HeroMechanismsPage: React.FC = () => {
                                 <input 
                                     type="text" 
                                     value={step.title}
-                                    onChange={(e) => handleStepChange(idx, 'title', e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleStepChange(idx, 'title', e.target.value)}
                                     className="w-full p-2 border border-slate-200 rounded text-sm font-bold text-slate-900 focus:outline-none focus:border-indigo-500"
                                     placeholder="Phase Name"
                                 />
                                 <textarea 
                                     rows={3}
                                     value={step.desc}
-                                    onChange={(e) => handleStepChange(idx, 'desc', e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleStepChange(idx, 'desc', e.target.value)}
                                     className="w-full p-2 border border-slate-200 rounded text-xs text-slate-600 focus:outline-none focus:border-indigo-500 resize-none"
                                     placeholder="Phase Description"
                                 />

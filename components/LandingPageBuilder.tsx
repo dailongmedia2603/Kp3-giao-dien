@@ -74,7 +74,7 @@ export const LandingPageBuilder: React.FC = () => {
                     <input 
                         type="text" 
                         value={lpState.eyebrow}
-                        onChange={(e) => handleChange('eyebrow', e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('eyebrow', e.target.value)}
                         className="w-full p-3 border border-slate-200 rounded-lg text-sm text-red-600 font-bold focus:outline-none focus:border-[#0EB869] bg-red-50/30"
                     />
                 </div>
@@ -87,7 +87,7 @@ export const LandingPageBuilder: React.FC = () => {
                     <textarea 
                         rows={4}
                         value={lpState.headline}
-                        onChange={(e) => handleChange('headline', e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleChange('headline', e.target.value)}
                         className="w-full p-3 border border-slate-200 rounded-lg text-lg font-black text-slate-900 focus:outline-none focus:border-[#0EB869] resize-none leading-tight"
                     />
                     <p className="text-[11px] text-slate-400 mt-2">
@@ -103,7 +103,7 @@ export const LandingPageBuilder: React.FC = () => {
                     <textarea 
                         rows={3}
                         value={lpState.subheadline}
-                        onChange={(e) => handleChange('subheadline', e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleChange('subheadline', e.target.value)}
                         className="w-full p-3 border border-slate-200 rounded-lg text-sm font-medium text-slate-600 focus:outline-none focus:border-[#0EB869] resize-none"
                     />
                 </div>
@@ -139,7 +139,7 @@ export const LandingPageBuilder: React.FC = () => {
                     <input 
                         type="text" 
                         value={lpState.ctaText}
-                        onChange={(e) => handleChange('ctaText', e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('ctaText', e.target.value)}
                         className="w-full p-3 border border-slate-200 rounded-lg text-sm font-bold text-white bg-red-600 focus:outline-none focus:border-red-700 focus:ring-2 focus:ring-red-200"
                     />
                 </div>

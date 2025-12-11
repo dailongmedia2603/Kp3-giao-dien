@@ -328,7 +328,7 @@ const InputSlider: React.FC<{
                     <input 
                         type="number" 
                         value={value}
-                        onChange={(e) => onChange(Number(e.target.value))}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(Number(e.target.value))}
                         className="w-20 text-right font-bold text-slate-900 text-[15px] border-b border-transparent hover:border-slate-300 focus:border-[#0EB869] focus:outline-none bg-transparent p-0"
                     />
                     {suffix && <span className="text-[14px] font-bold text-slate-900 ml-0.5">{suffix}</span>}
@@ -340,7 +340,7 @@ const InputSlider: React.FC<{
                 max={max} 
                 step={step} 
                 value={value}
-                onChange={(e) => onChange(Number(e.target.value))}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(Number(e.target.value))}
                 className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0EB869] hover:bg-slate-300 transition-colors"
             />
         </div>
@@ -475,7 +475,7 @@ export const MiniToolsPage: React.FC = () => {
             type="text" 
             placeholder="Search for a tool..." 
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
             className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869] text-sm text-slate-700 placeholder:text-slate-400 shadow-sm"
           />
         </div>

@@ -148,7 +148,7 @@ const StoryboardView = () => {
                             </div>
                             <textarea 
                                 value={section.content}
-                                onChange={(e) => handleContentChange(section.id, e.target.value)}
+                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleContentChange(section.id, e.target.value)}
                                 className="w-full p-4 border border-slate-200 rounded-lg text-sm text-slate-700 leading-relaxed focus:outline-none focus:border-[#0EB869] focus:ring-2 focus:ring-[#0EB869]/10 resize-none min-h-[120px]"
                             />
                         </div>
@@ -357,7 +357,7 @@ const ScorecardView = () => {
                 max="10" 
                 step="1"
                 value={scores[key]}
-                onChange={(e) => setScores({ ...scores, [key]: Number(e.target.value) })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setScores({ ...scores, [key]: Number(e.target.value) })}
                 className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0EB869]"
             />
             <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-bold uppercase">
@@ -452,7 +452,7 @@ const StackBuilderView = () => {
                                 placeholder="e.g. The Copywriting Bible" 
                                 className="w-full p-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-[#0EB869]"
                                 value={newItem.name}
-                                onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewItem({ ...newItem, name: e.target.value })}
                             />
                         </div>
                         <div>
@@ -462,7 +462,7 @@ const StackBuilderView = () => {
                                 placeholder="e.g. 997" 
                                 className="w-full p-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-[#0EB869]"
                                 value={newItem.value || ''}
-                                onChange={(e) => setNewItem({ ...newItem, value: Number(e.target.value) })}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewItem({ ...newItem, value: Number(e.target.value) })}
                             />
                         </div>
                     </div>
@@ -473,7 +473,7 @@ const StackBuilderView = () => {
                             placeholder="e.g. My private swipe file of winning ads..." 
                             className="w-full p-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-[#0EB869]"
                             value={newItem.description}
-                            onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewItem({ ...newItem, description: e.target.value })}
                         />
                     </div>
                     <button 

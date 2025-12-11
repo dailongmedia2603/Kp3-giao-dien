@@ -269,7 +269,7 @@ const PartnerView = () => {
       <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
         <h3 className="font-bold text-slate-900 flex items-center gap-2 mb-4"><Link size={18} className="text-slate-400" /> Your Unique Tracking Link</h3>
         <div className="flex flex-col md:flex-row gap-2">
-          <input type="text" value={url} onChange={e => setUrl(e.target.value)} placeholder="Paste a landing page URL here..." className="flex-1 p-3 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500" />
+          <input type="text" value={url} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUrl(e.target.value)} placeholder="Paste a landing page URL here..." className="flex-1 p-3 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500" />
           <button onClick={handleGenerate} className="bg-blue-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">Generate</button>
         </div>
         {generatedLink && (

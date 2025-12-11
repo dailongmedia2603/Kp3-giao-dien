@@ -95,7 +95,7 @@ export const AdCreativesPage: React.FC = () => {
                         <textarea 
                             rows={8}
                             value={adState.primaryText}
-                            onChange={(e) => handleChange('primaryText', e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleChange('primaryText', e.target.value)}
                             className="w-full p-3 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-[#0EB869] focus:ring-2 focus:ring-[#0EB869]/10 resize-none leading-relaxed"
                             placeholder="Call out the avatar, state the pain, hint at the solution..."
                         />
@@ -117,7 +117,7 @@ export const AdCreativesPage: React.FC = () => {
                          <input 
                             type="text" 
                             value={adState.image}
-                            onChange={(e) => handleChange('image', e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('image', e.target.value)}
                             className="flex-1 p-2.5 border border-slate-200 rounded-lg text-sm text-slate-600 focus:outline-none focus:border-[#0EB869]"
                             placeholder="Image URL..."
                         />
@@ -143,7 +143,7 @@ export const AdCreativesPage: React.FC = () => {
                     <input 
                         type="text" 
                         value={adState.headline}
-                        onChange={(e) => handleChange('headline', e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('headline', e.target.value)}
                         className="w-full p-3 border border-slate-200 rounded-lg text-sm font-bold text-slate-900 focus:outline-none focus:border-[#0EB869]"
                     />
                 </div>
@@ -156,7 +156,7 @@ export const AdCreativesPage: React.FC = () => {
                         </label>
                         <select 
                             value={adState.cta}
-                            onChange={(e) => handleChange('cta', e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleChange('cta', e.target.value)}
                             className="w-full p-3 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 focus:outline-none focus:border-[#0EB869]"
                         >
                             <option>Learn More</option>
@@ -173,7 +173,7 @@ export const AdCreativesPage: React.FC = () => {
                         <input 
                             type="text" 
                             value={adState.description}
-                            onChange={(e) => handleChange('description', e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('description', e.target.value)}
                             className="w-full p-3 border border-slate-200 rounded-lg text-sm text-slate-600 focus:outline-none focus:border-[#0EB869]"
                         />
                     </div>

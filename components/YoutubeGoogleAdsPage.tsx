@@ -350,7 +350,7 @@ export const YoutubeGoogleAdsPage: React.FC = () => {
                                     <input 
                                         type="text" 
                                         value={adForm.videoUrl}
-                                        onChange={(e) => setAdForm({...adForm, videoUrl: e.target.value})}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAdForm({...adForm, videoUrl: e.target.value})}
                                         className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-red-500"
                                         placeholder="https://youtube.com/..."
                                     />
@@ -362,7 +362,7 @@ export const YoutubeGoogleAdsPage: React.FC = () => {
                                 <input 
                                     type="text" 
                                     value={adForm.headline}
-                                    onChange={(e) => setAdForm({...adForm, headline: e.target.value})}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAdForm({...adForm, headline: e.target.value})}
                                     className="w-full px-4 py-3 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-red-500 font-bold"
                                 />
                             </div>
@@ -371,7 +371,7 @@ export const YoutubeGoogleAdsPage: React.FC = () => {
                                 <label className="block text-xs font-bold text-slate-700 mb-2">Description</label>
                                 <textarea 
                                     value={adForm.desc}
-                                    onChange={(e) => setAdForm({...adForm, desc: e.target.value})}
+                                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAdForm({...adForm, desc: e.target.value})}
                                     className="w-full px-4 py-3 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-red-500 h-24 resize-none"
                                 />
                             </div>
@@ -380,7 +380,7 @@ export const YoutubeGoogleAdsPage: React.FC = () => {
                                 <label className="block text-xs font-bold text-slate-700 mb-2">Call To Action Button</label>
                                 <select 
                                     value={adForm.cta}
-                                    onChange={(e) => setAdForm({...adForm, cta: e.target.value})}
+                                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setAdForm({...adForm, cta: e.target.value})}
                                     className="w-full px-4 py-3 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-red-500 bg-white"
                                 >
                                     <option>Watch Now</option>

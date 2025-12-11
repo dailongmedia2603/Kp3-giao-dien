@@ -86,7 +86,7 @@ const YoutubeNodeContent: React.FC<{
       onUpdate(nodeId, [...videos, newVideo]);
       setInputValue('');
     } else {
-      alert("Invalid YouTube URL");
+      console.error("Invalid YouTube URL");
     }
   };
 
@@ -104,7 +104,7 @@ const YoutubeNodeContent: React.FC<{
             placeholder="Paste YouTube Link..." 
             className="flex-1 text-xs p-1.5 border border-slate-200 rounded focus:outline-none focus:border-red-400"
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleAddVideo()}
           />
           <button 
@@ -590,7 +590,7 @@ const DraggableItem = ({ type, label, icon: Icon }: { type: ContentNodeType, lab
     return (
         <div 
             draggable 
-            onDragStart={(e) => { e.dataTransfer.setData('nodeType', type); }}
+            onDragStart={(e: React.DragEvent) => { e.dataTransfer.setData('nodeType', type); }}
             className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-white hover:border-[#0EB869] hover:shadow-sm cursor-grab active:cursor-grabbing transition-all select-none"
         >
             <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: config.bg, color: config.color }}>

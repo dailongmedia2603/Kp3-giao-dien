@@ -481,7 +481,7 @@ export const EmailListPage: React.FC = () => {
                               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Campaign Topic / Angle</label>
                               <textarea 
                                   value={campaignData.topic}
-                                  onChange={(e) => setCampaignData({...campaignData, topic: e.target.value})}
+                                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCampaignData({...campaignData, topic: e.target.value})}
                                   placeholder="e.g. Announcing the new Black Friday deal with 50% off all courses..."
                                   className="w-full p-3 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-[#0EB869] resize-none h-24"
                               />
@@ -492,7 +492,7 @@ export const EmailListPage: React.FC = () => {
                               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Target Audience</label>
                               <select 
                                   value={campaignData.audience}
-                                  onChange={(e) => setCampaignData({...campaignData, audience: e.target.value})}
+                                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCampaignData({...campaignData, audience: e.target.value})}
                                   className="w-full p-3 bg-white border border-slate-200 rounded-lg text-sm font-medium focus:outline-none focus:border-[#0EB869]"
                               >
                                   {segments.map(seg => (
@@ -522,7 +522,7 @@ export const EmailListPage: React.FC = () => {
                               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Deploy To Platform</label>
                               <select 
                                   value={campaignData.platform}
-                                  onChange={(e) => setCampaignData({...campaignData, platform: e.target.value})}
+                                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCampaignData({...campaignData, platform: e.target.value})}
                                   className="w-full p-3 bg-white border border-slate-200 rounded-lg text-sm font-medium focus:outline-none focus:border-[#0EB869]"
                               >
                                   <option value="Mailchimp">Mailchimp</option>
@@ -576,7 +576,7 @@ export const EmailListPage: React.FC = () => {
                           <input 
                               type="text" 
                               value={campaignData.subject}
-                              onChange={(e) => setCampaignData({...campaignData, subject: e.target.value})}
+                              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCampaignData({...campaignData, subject: e.target.value})}
                               placeholder="Waiting for AI generation..."
                               className="w-full p-3 border border-slate-200 rounded-lg text-sm font-medium text-slate-900 focus:outline-none focus:border-[#0EB869]"
                           />
@@ -587,7 +587,7 @@ export const EmailListPage: React.FC = () => {
                           <label className="block text-xs font-bold text-slate-700 mb-2">Email Content</label>
                           <textarea 
                               value={campaignData.body}
-                              onChange={(e) => setCampaignData({...campaignData, body: e.target.value})}
+                              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCampaignData({...campaignData, body: e.target.value})}
                               placeholder="AI will generate the body copy here..."
                               className="w-full p-4 border border-slate-200 rounded-lg text-sm text-slate-800 leading-relaxed focus:outline-none focus:border-[#0EB869] h-[400px] resize-none font-mono"
                           />

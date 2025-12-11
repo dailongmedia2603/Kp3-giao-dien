@@ -116,7 +116,7 @@ export const VSLCreativePage: React.FC = () => {
                     <textarea 
                         rows={3}
                         value={config.headline}
-                        onChange={(e) => handleChange('headline', e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleChange('headline', e.target.value)}
                         className="w-full p-3 border border-slate-200 rounded-lg text-sm font-bold text-slate-900 focus:outline-none focus:border-[#0EB869] resize-none"
                     />
                 </div>
@@ -130,7 +130,7 @@ export const VSLCreativePage: React.FC = () => {
                         <input 
                             type="text" 
                             value={config.thumbnail}
-                            onChange={(e) => handleChange('thumbnail', e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('thumbnail', e.target.value)}
                             className="flex-1 p-3 border border-slate-200 rounded-lg text-sm text-slate-600 focus:outline-none focus:border-[#0EB869]"
                         />
                         <button className="p-3 bg-slate-100 rounded-lg hover:bg-slate-200">
@@ -153,7 +153,7 @@ export const VSLCreativePage: React.FC = () => {
                         <input 
                             type="number" 
                             value={config.ctaDelay}
-                            onChange={(e) => handleChange('ctaDelay', Number(e.target.value))}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('ctaDelay', Number(e.target.value))}
                             className="w-full p-2 border border-amber-200 rounded bg-white text-sm font-bold text-slate-900 focus:outline-none focus:border-amber-400"
                         />
                         <div className="flex justify-between mt-1">
@@ -169,7 +169,7 @@ export const VSLCreativePage: React.FC = () => {
                         <input 
                             type="text" 
                             value={config.ctaText}
-                            onChange={(e) => handleChange('ctaText', e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('ctaText', e.target.value)}
                             className="w-full p-2 border border-amber-200 rounded bg-white text-sm font-bold text-slate-900 focus:outline-none focus:border-amber-400"
                         />
                     </div>
