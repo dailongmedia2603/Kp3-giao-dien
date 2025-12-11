@@ -140,7 +140,7 @@ const categoriesData = [
     id: 'COMMAND CENTER',
     label: 'COMMAND CENTER',
     icon: Briefcase,
-    color: '#475569',
+    color: '#16A349',
     items: [
       { view: 'ceo-dashboard', icon: LayoutDashboard, label: 'CEO Command', badge: 'Live' },
       { view: 'all-in-plan', icon: Map, label: 'The All In Plan', badge: 'Beta' },
@@ -152,7 +152,7 @@ const categoriesData = [
     id: 'OFFER & STRATEGY',
     label: 'OFFER & STRATEGY',
     icon: Target,
-    color: '#9333ea',
+    color: '#16A349',
     items: [
       { view: 'dream-buyer', icon: Users, label: 'Dream Buyer Avatars' },
       { view: 'offer', icon: ShoppingBag, label: 'Offer', badge: '1' },
@@ -165,7 +165,7 @@ const categoriesData = [
     id: 'TRAFFIC ENGINE',
     label: 'TRAFFIC ENGINE',
     icon: TrendingUp,
-    color: '#2563eb',
+    color: '#16A349',
     items: [
       { view: 'unified-ads', icon: GalleryVerticalEnd, label: 'Unified Ads Manager' },
       { view: 'facebook-ads', icon: Facebook, label: 'Facebook Ad Generator' },
@@ -178,7 +178,7 @@ const categoriesData = [
     id: 'CONTENT & CREATIVE',
     label: 'CONTENT & CREATIVE',
     icon: PenTool,
-    color: '#ea580c',
+    color: '#16A349',
     items: [
       { view: 'direct-response', icon: LayoutTemplate, label: 'Direct Response Headlines' },
       { view: 'hvco', icon: BookOpen, label: 'HVCO Titles' },
@@ -191,7 +191,7 @@ const categoriesData = [
     id: 'CONVERSION LAB',
     label: 'CONVERSION LAB',
     icon: FlaskConical,
-    color: '#0d9488',
+    color: '#16A349',
     items: [
       { view: 'funnel-builder', icon: Filter, label: 'Funnel Builder' },
       { view: 'landing-pages', icon: Scan, label: 'Landing Pages' },
@@ -202,7 +202,7 @@ const categoriesData = [
     id: 'SALES & CLOSE',
     label: 'SALES & CLOSE',
     icon: Handshake,
-    color: '#16a34a',
+    color: '#16A349',
     items: [
       { view: 'closer', icon: Phone, label: 'Closer' },
       { view: 'email-list', icon: Mail, label: 'Email List' },
@@ -230,7 +230,7 @@ const categoriesData = [
     id: 'SYSTEM & UTILITIES',
     label: 'SYSTEM & UTILITIES',
     icon: Wrench,
-    color: '#475569',
+    color: '#16A349',
     items: [
       { view: 'community', icon: Users, label: 'KP3 Community' },
       { view: 'club', icon: Award, label: 'Club', badge: 'Club' },
