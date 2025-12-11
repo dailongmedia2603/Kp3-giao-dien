@@ -43,6 +43,7 @@ import { AgencyPortalPage } from './components/AgencyPortalPage';
 import { EnglishCenterPage } from './components/EnglishCenterPage';
 import { ClinicOSPage } from './components/ClinicOSPage';
 import { ActionBasedPage } from './components/ActionBasedPage';
+import { ClockworkEnginePage } from './components/ClockworkEnginePage';
 import { 
   Users, 
   Facebook, 
@@ -51,7 +52,9 @@ import {
   Folder,
   ShoppingBag,
   LucideProps,
-  PlayCircle
+  PlayCircle,
+  Video,
+  HelpCircle
 } from 'lucide-react';
 
 const AppContent: React.FC = () => {
@@ -151,6 +154,8 @@ const AppContent: React.FC = () => {
         return <ClinicOSPage />;
       case 'action-based':
         return <ActionBasedPage />;
+      case 'clockwork-engine':
+        return <ClockworkEnginePage />;
       
       case 'dashboard':
       default:
@@ -236,17 +241,28 @@ const AppContent: React.FC = () => {
       
       <main className="flex-1 flex flex-col h-full bg-[#F8F9FB] overflow-hidden relative">
         
-        {currentView !== 'unlimited-content' && currentView !== 'ceo-dashboard' && (
-          <div className="absolute top-6 right-8 z-40">
-              <button 
-                  onClick={() => setIsSOPOpen(true)}
-                  className="flex items-center gap-2 bg-white text-[#0EB869] border border-[#0EB869]/30 px-4 py-2 rounded-full font-bold text-sm shadow-sm hover:shadow-md hover:bg-[#E8FCF3] transition-all group"
-              >
-                  <PlayCircle size={18} className="group-hover:scale-110 transition-transform" />
-                  SOP Tutorials
-              </button>
-          </div>
-        )}
+        {/* Contextual Help Button */}
+        <div className="absolute top-6 right-8 z-40">
+            <button 
+                onClick={() => setIsSOPOpen(true)}
+                className="flex items-center justify-center w-10 h-10 bg-white text-slate-500 border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:bg-slate-50 transition-all group"
+                title="Contextual Help & SOPs"
+            >
+                <HelpCircle size={20} className="group-hover:scale-110 transition-transform" />
+            </button>
+        </div>
+
+        {/* Floating SOP Recorder */}
+        <div className="absolute bottom-8 right-8 z-40">
+            <button 
+                onClick={() => alert('Start recording SOP...')}
+                className="flex items-center gap-2 bg-red-600 text-white px-5 py-3 rounded-full font-bold text-sm shadow-lg hover:shadow-xl hover:bg-red-700 transition-all group animate-pulse"
+                title="Record New SOP"
+            >
+                <Video size={18} className="group-hover:scale-110 transition-transform" />
+                Record SOP
+            </button>
+        </div>
 
         {currentView === 'funnel-builder' || currentView === 'unlimited-content' || currentView === 'ceo-dashboard' || currentView === 'agency-portal' ? (
            <div className="flex-1 h-full overflow-hidden">
