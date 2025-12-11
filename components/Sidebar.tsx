@@ -158,7 +158,7 @@ const categoriesData = [
       { view: 'offer', icon: ShoppingBag, label: 'Offer', badge: '1' },
       { view: 'hero-mechanisms', icon: Rabbit, label: 'Hero Mechanisms' },
       { view: 'product-store', icon: Store, label: 'Product & Store' },
-      { view: 'asset', icon: Layers, label: 'Asset' },
+      { view: 'asset-vault', icon: Vault, label: 'Asset Vault' },
     ],
   },
   {

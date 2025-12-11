@@ -28,7 +28,7 @@ import { CommunityPage } from './components/CommunityPage';
 import { UnlimitedContentPage } from './components/UnlimitedContentPage';
 import { WebsitePage } from './components/WebsitePage';
 import { YoutubeGoogleAdsPage } from './components/YoutubeGoogleAdsPage';
-import { AssetPage } from './components/AssetPage';
+import { AssetVaultPage } from './components/AssetVaultPage';
 import { CeoDashboardPage } from './components/CeoDashboardPage';
 import { SOPModal } from './components/SOPModal';
 import { AffiliateCenterPage } from './components/AffiliateCenterPage';
@@ -128,8 +128,8 @@ const AppContent: React.FC = () => {
         return <WebsitePage />;
       case 'youtube-ads':
         return <YoutubeGoogleAdsPage />;
-      case 'asset':
-        return <AssetPage />;
+      case 'asset-vault':
+        return <AssetVaultPage />;
       case 'affiliate-center':
         return <AffiliateCenterPage />;
       case 'legal-shield':

@@ -19,7 +19,8 @@ import {
   TrendingUp,
   DollarSign,
   AlertOctagon,
-  Check
+  Check,
+  Copy
 } from 'lucide-react';
 
 // --- Types ---
@@ -35,18 +36,20 @@ interface Asset {
   billingCycle: 'monthly' | 'yearly';
   autoRenew: boolean;
   status: 'safe' | 'warning' | 'critical';
+  username?: string;
+  password?: string;
 }
 
 // --- Mock Data ---
 const INITIAL_ASSETS: Asset[] = [
-  { id: '1', name: 'gettime.money', provider: 'GoDaddy', type: 'domain', expiryDate: '2024-10-28', cost: 12, billingCycle: 'yearly', autoRenew: true, status: 'critical' }, // < 7 days (Mocking current date as late Oct)
-  { id: '2', name: 'AWS Production Cluster', provider: 'AWS', type: 'hosting', expiryDate: '2024-11-15', cost: 450, billingCycle: 'monthly', autoRenew: true, status: 'warning' }, // < 30 days
-  { id: '3', name: 'ClickFunnels Platinum', provider: 'ClickFunnels', type: 'saas', expiryDate: '2024-12-01', cost: 297, billingCycle: 'monthly', autoRenew: false, status: 'safe' },
-  { id: '4', name: 'agency-scale.io', provider: 'Namecheap', type: 'domain', expiryDate: '2025-03-10', cost: 10, billingCycle: 'yearly', autoRenew: true, status: 'safe' },
-  { id: '5', name: 'Adobe Creative Cloud', provider: 'Adobe', type: 'saas', expiryDate: '2024-11-20', cost: 54, billingCycle: 'monthly', autoRenew: true, status: 'warning' },
+  { id: '1', name: 'gettime.money', provider: 'GoDaddy', type: 'domain', expiryDate: '2024-10-28', cost: 12, billingCycle: 'yearly', autoRenew: true, status: 'critical', username: 'mike@gettime.money', password: 'supersecretpassword123' },
+  { id: '2', name: 'AWS Production Cluster', provider: 'AWS', type: 'hosting', expiryDate: '2024-11-15', cost: 450, billingCycle: 'monthly', autoRenew: true, status: 'warning', username: 'aws-admin', password: 'anothersecurepassword' },
+  { id: '3', name: 'ClickFunnels Platinum', provider: 'ClickFunnels', type: 'saas', expiryDate: '2024-12-01', cost: 297, billingCycle: 'monthly', autoRenew: false, status: 'safe', username: 'cf-user', password: 'passwordclickfunnels' },
+  { id: '4', name: 'agency-scale.io', provider: 'Namecheap', type: 'domain', expiryDate: '2025-03-10', cost: 10, billingCycle: 'yearly', autoRenew: true, status: 'safe', username: 'admin@agency.io', password: 'agencyscalepass' },
+  { id: '5', name: 'Adobe Creative Cloud', provider: 'Adobe', type: 'saas', expiryDate: '2024-11-20', cost: 54, billingCycle: 'monthly', autoRenew: true, status: 'warning', username: 'design@gettime.money', password: 'adobepassword' },
 ];
 
-export const AssetPage: React.FC = () => {
+export const AssetVaultPage: React.FC = () => {
   const [assets, setAssets] = useState<Asset[]>(INITIAL_ASSETS);
   const [panicMode, setPanicMode] = useState(false);
   const [justSecuredId, setJustSecuredId] = useState<string | null>(null);
@@ -94,7 +97,7 @@ export const AssetPage: React.FC = () => {
           <Home size={16} className="text-slate-400" />
           <ChevronRight size={14} className="text-slate-300" />
           <span className="bg-[#E8FCF3] text-[#0EB869] px-3 py-1 rounded text-xs font-bold">
-            The Vault
+            Asset Vault
           </span>
         </div>
 
@@ -223,8 +226,8 @@ export const AssetPage: React.FC = () => {
                 ))}
                 
                 {/* Add New Placeholder */}
-                <div className="border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center p-6 text-slate-400 hover:border-[#0EB869] hover:text-[#0EB869] hover:bg-[#E8FCF3]/30 transition-all cursor-pointer min-h-[200px] group">
-                    <div className="w-12 h-12 rounded-full bg-slate-50 group-hover:bg-white flex items-center justify-center mb-3 transition-colors">
+                <div className="border-2 border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center p-6 text-slate-500 hover:border-[#0EB869] hover:text-[#0EB869] hover:bg-slate-800/50 transition-all cursor-pointer min-h-[200px] group">
+                    <div className="w-12 h-12 rounded-full bg-slate-800 group-hover:bg-slate-700 flex items-center justify-center mb-3 transition-colors">
                         <Plus size={24} />
                     </div>
                     <span className="text-sm font-bold">Register New Asset</span>
@@ -233,11 +236,11 @@ export const AssetPage: React.FC = () => {
                             <input 
                                 type="text" 
                                 placeholder="example.com" 
-                                className="flex-1 text-xs p-2 bg-white border border-slate-200 rounded focus:outline-none"
+                                className="flex-1 text-xs p-2 bg-slate-700 border border-slate-600 rounded focus:outline-none text-white"
                                 onClick={(e) => e.stopPropagation()}
                             />
                             <button 
-                                className="px-3 py-1 bg-slate-200 text-slate-600 text-xs font-bold rounded hover:bg-slate-300"
+                                className="px-3 py-1 bg-slate-600 text-slate-300 text-xs font-bold rounded hover:bg-slate-500"
                                 onClick={(e) => { e.stopPropagation(); handleWhoisLookup(); }}
                             >
                                 {isWhoisLoading ? <RefreshCw size={12} className="animate-spin" /> : 'Fetch Whois'}
@@ -334,18 +337,25 @@ const AssetCard: React.FC<{
     isSecured: boolean
 }> = ({ asset, daysRemaining, onRenew, isSecured }) => {
     
+    const [copiedField, setCopiedField] = useState<string | null>(null);
+
+    const handleCopy = (text: string, field: string) => {
+        navigator.clipboard.writeText(text);
+        setCopiedField(field);
+        setTimeout(() => setCopiedField(null), 2000);
+    };
+
     const getStatusStyles = (days: number) => {
-        if (days < 7) return { border: 'border-red-500', bg: 'bg-red-50', text: 'text-red-700', badge: 'bg-red-100 text-red-700' };
-        if (days < 30) return { border: 'border-amber-400', bg: 'bg-amber-50', text: 'text-amber-700', badge: 'bg-amber-100 text-amber-700' };
-        return { border: 'border-slate-200', bg: 'bg-white', text: 'text-slate-700', badge: 'bg-emerald-100 text-emerald-700' };
+        if (days < 7) return { border: 'border-red-500', bg: 'bg-slate-800', text: 'text-red-400', badge: 'bg-red-500/20 text-red-300' };
+        if (days < 30) return { border: 'border-amber-500', bg: 'bg-slate-800', text: 'text-amber-400', badge: 'bg-amber-500/20 text-amber-300' };
+        return { border: 'border-slate-700', bg: 'bg-slate-800', text: 'text-slate-300', badge: 'bg-emerald-500/20 text-emerald-300' };
     };
 
     const styles = getStatusStyles(daysRemaining);
 
     return (
-        <div className={`relative rounded-xl border-2 p-5 shadow-sm transition-all overflow-hidden group ${styles.bg} ${styles.border}`}>
+        <div className={`relative rounded-xl border-2 p-5 shadow-lg transition-all overflow-hidden group text-white ${styles.bg} ${styles.border}`}>
             
-            {/* Secured Animation Overlay */}
             {isSecured && (
                 <div className="absolute inset-0 bg-[#0EB869]/90 z-20 flex flex-col items-center justify-center text-white animate-in fade-in zoom-in duration-300">
                     <ShieldCheck size={48} className="mb-2" />
@@ -355,16 +365,16 @@ const AssetCard: React.FC<{
 
             <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center shadow-sm">
-                        {asset.type === 'domain' && <Globe size={20} className="text-blue-500" />}
-                        {asset.type === 'hosting' && <Server size={20} className="text-orange-500" />}
-                        {asset.type === 'saas' && <CreditCard size={20} className="text-purple-500" />}
+                    <div className="w-10 h-10 rounded-lg bg-slate-700 border border-slate-600 flex items-center justify-center shadow-sm">
+                        {asset.type === 'domain' && <Globe size={20} className="text-blue-400" />}
+                        {asset.type === 'hosting' && <Server size={20} className="text-orange-400" />}
+                        {asset.type === 'saas' && <CreditCard size={20} className="text-purple-400" />}
                     </div>
                     <div>
-                        <h4 className="font-bold text-slate-900 text-sm">{asset.name}</h4>
-                        <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <h4 className="font-bold text-white text-sm">{asset.name}</h4>
+                        <div className="flex items-center gap-2 text-xs text-slate-400">
                             <span>{asset.provider}</span>
-                            <span className="text-slate-300">•</span>
+                            <span className="text-slate-600">•</span>
                             <span>{asset.type}</span>
                         </div>
                     </div>
@@ -374,16 +384,44 @@ const AssetCard: React.FC<{
                 </div>
             </div>
 
+            {/* Credentials Section */}
+            {(asset.username || asset.password) && (
+                <div className="space-y-2 my-4 p-4 bg-slate-900/50 rounded-lg border border-slate-700">
+                    {asset.username && (
+                        <div className="flex justify-between items-center">
+                            <div className="text-xs text-slate-400">Username:</div>
+                            <div className="flex items-center gap-2">
+                                <span className="font-mono text-xs text-slate-300">{asset.username}</span>
+                                <button onClick={() => handleCopy(asset.username!, 'username')} className="text-slate-500 hover:text-white">
+                                    {copiedField === 'username' ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                    {asset.password && (
+                        <div className="flex justify-between items-center">
+                            <div className="text-xs text-slate-400">Password:</div>
+                            <div className="flex items-center gap-2">
+                                <span className="font-mono text-xs text-slate-300">••••••••••••</span>
+                                <button onClick={() => handleCopy(asset.password!, 'password')} className="text-slate-500 hover:text-white">
+                                    {copiedField === 'password' ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
+
             <div className="flex items-center justify-between mt-2">
                 <div className="flex flex-col">
                     <span className="text-[10px] font-bold text-slate-400 uppercase">Cost</span>
-                    <span className="font-bold text-slate-900">${asset.cost}<span className="text-xs font-normal text-slate-400">/{asset.billingCycle === 'monthly' ? 'mo' : 'yr'}</span></span>
+                    <span className="font-bold text-white">${asset.cost}<span className="text-xs font-normal text-slate-400">/{asset.billingCycle === 'monthly' ? 'mo' : 'yr'}</span></span>
                 </div>
                 
                 <div className="flex items-center gap-3">
                     <div className="flex flex-col items-end">
                         <span className="text-[10px] font-bold text-slate-400 uppercase">Auto-Renew</span>
-                        <div className={`flex items-center gap-1 text-xs font-bold ${asset.autoRenew ? 'text-emerald-600' : 'text-slate-400'}`}>
+                        <div className={`flex items-center gap-1 text-xs font-bold ${asset.autoRenew ? 'text-emerald-400' : 'text-slate-400'}`}>
                             {asset.autoRenew ? <Lock size={12} /> : <Unlock size={12} />}
                             {asset.autoRenew ? 'On' : 'Off'}
                         </div>
@@ -391,7 +429,7 @@ const AssetCard: React.FC<{
                     
                     <button 
                         onClick={() => onRenew(asset.id)}
-                        className={`p-2 rounded-lg transition-colors shadow-sm ${daysRemaining < 30 ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50'}`}
+                        className={`p-2 rounded-lg transition-colors shadow-sm ${daysRemaining < 30 ? 'bg-white text-slate-800 hover:bg-slate-200' : 'bg-slate-700 border border-slate-600 text-slate-300 hover:bg-slate-600'}`}
                         title="Renew / Secure Asset"
                     >
                         <RefreshCw size={16} className={isSecured ? 'animate-spin' : ''} />
