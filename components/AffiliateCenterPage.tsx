@@ -21,7 +21,8 @@ import {
   Image as ImageIcon,
   FileText,
   Mail,
-  Users
+  Users,
+  MousePointerClick
 } from 'lucide-react';
 
 // --- Mock Data ---
@@ -52,12 +53,43 @@ const MOCK_ASSETS = [
   { id: 4, title: 'Case Study PDF', type: 'Documents', icon: FileText },
 ];
 
+// --- StatCard Component (Styled like CEO Dashboard) ---
+const StatCard = ({ icon: Icon, title, amount, subtext, percentage, color, alert }: { icon: any, title: string, amount: string, subtext: string, percentage: string, color: 'green' | 'blue' | 'yellow' | 'red', alert?: boolean }) => {
+  const colorClasses = {
+    green: { border: 'border-green-200', text: 'text-green-600', bg: 'bg-green-50' },
+    blue: { border: 'border-blue-200', text: 'text-blue-600', bg: 'bg-blue-50' },
+    yellow: { border: 'border-yellow-200', text: 'text-yellow-600', bg: 'bg-yellow-50' },
+    red: { border: 'border-red-200', text: 'text-red-600', bg: 'bg-red-50' },
+  };
+  const styles = colorClasses[color];
+
+  return (
+    <div className={`bg-white rounded-xl border ${styles.border} shadow-sm p-5 relative flex flex-col`}>
+      {percentage && (
+        <div className={`absolute top-4 right-4 px-2 py-0.5 rounded text-xs font-bold ${styles.bg} ${styles.text}`}>
+          {percentage}
+        </div>
+      )}
+      <div className="flex items-center gap-3 mb-2">
+        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${styles.bg}`}>
+          <Icon className={styles.text} size={18} />
+        </div>
+        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">{title}</h3>
+      </div>
+      <div className="mt-auto">
+        <p className={`text-3xl font-bold ${alert ? 'text-red-500' : 'text-slate-800'}`}>{amount}</p>
+        {subtext && <p className="text-xs text-slate-400 mt-1">{subtext}</p>}
+      </div>
+    </div>
+  );
+};
+
 // --- Main Component ---
 export const AffiliateCenterPage: React.FC = () => {
   const [view, setView] = useState<'admin' | 'partner'>('admin');
 
   return (
-    <div className="p-8 max-w-[1600px] mx-auto font-sans h-full flex flex-col">
+    <div className="p-8 max-w-[1600px] mx-auto font-sans h-full flex flex-col bg-slate-50">
       {/* Header */}
       <div className="flex flex-col items-center mb-8 text-center shrink-0">
         <div className="flex items-center gap-2 mb-6 text-[13px] text-slate-500">
@@ -98,9 +130,30 @@ const AdminView = () => (
   <div className="animate-in fade-in duration-300 space-y-8">
     {/* Stats */}
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <StatCard title="Total Revenue Generated" value="$29,800" change="+15%" />
-      <StatCard title="Active Partners" value="4" change="+2 this month" />
-      <StatCard title="Total Payouts Due" value="$2,980" isCurrency />
+      <StatCard 
+        title="Total Revenue Generated" 
+        amount="$29,800" 
+        subtext="All-time partner revenue"
+        percentage="+15%"
+        icon={DollarSign}
+        color="green"
+      />
+      <StatCard 
+        title="Active Partners" 
+        amount="4" 
+        subtext="+2 this month"
+        percentage="Live"
+        icon={Users}
+        color="blue"
+      />
+      <StatCard 
+        title="Total Payouts Due" 
+        amount="$2,980" 
+        subtext="For the current cycle"
+        percentage="Pending"
+        icon={DollarSign}
+        color="yellow"
+      />
     </div>
 
     {/* Partner Table & Payouts */}
@@ -186,9 +239,30 @@ const PartnerView = () => {
     <div className="animate-in fade-in duration-300 space-y-8">
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatCard title="Your Rank" value="#1" change="Top 1%" />
-        <StatCard title="Total Clicks" value="1,240" change="+150 this week" />
-        <StatCard title="Commission Due" value="$1,250" isCurrency />
+        <StatCard 
+          title="Your Rank" 
+          amount="#1" 
+          subtext="Top 1% of partners"
+          percentage="Elite"
+          icon={Trophy}
+          color="yellow"
+        />
+        <StatCard 
+          title="Total Clicks" 
+          amount="1,240" 
+          subtext="+150 this week"
+          percentage="Traffic"
+          icon={MousePointerClick}
+          color="blue"
+        />
+        <StatCard 
+          title="Commission Due" 
+          amount="$1,250" 
+          subtext="Next payout: Jan 1st"
+          percentage="Ready"
+          icon={DollarSign}
+          color="green"
+        />
       </div>
 
       {/* Link Generator */}
@@ -261,14 +335,3 @@ const PartnerView = () => {
     </div>
   );
 };
-
-// --- Helper Components ---
-const StatCard = ({ title, value, change, isCurrency = false }: { title: string, value: string, change?: string, isCurrency?: boolean }) => (
-  <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">{title}</h3>
-    <div className="flex justify-between items-end mt-2">
-      <span className={`text-3xl font-bold ${isCurrency ? 'text-blue-600' : 'text-slate-900'}`}>{value}</span>
-      {change && <span className={`text-xs font-bold ${change.includes('+') ? 'text-green-600' : 'text-red-500'}`}>{change}</span>}
-    </div>
-  </div>
-);
