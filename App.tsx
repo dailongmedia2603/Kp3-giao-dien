@@ -41,6 +41,7 @@ import { TeamHRPage } from './components/TeamHRPage';
 import { RetailOpsPage } from './components/RetailOpsPage';
 import { AgencyPortalPage } from './components/AgencyPortalPage';
 import { EnglishCenterPage } from './components/EnglishCenterPage';
+import { ClinicOSPage } from './components/ClinicOSPage';
 import { 
   Users, 
   Facebook, 
@@ -145,6 +146,8 @@ const AppContent: React.FC = () => {
         return <AgencyPortalPage />;
       case 'english-center':
         return <EnglishCenterPage />;
+      case 'clinic-os':
+        return <ClinicOSPage />;
       
       case 'dashboard':
       default:
