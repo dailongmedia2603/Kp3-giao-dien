@@ -18,7 +18,8 @@ import {
   User,
   ArrowLeft,
   Eye,
-  Copy
+  Copy,
+  X
 } from 'lucide-react';
 
 // --- TYPES & MOCK DATA ---
