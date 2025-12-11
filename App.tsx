@@ -38,6 +38,7 @@ import { ProductStorePage } from './components/ProductStorePage';
 import { UnifiedAdsManagerPage } from './components/UnifiedAdsManagerPage';
 import { EducationHubPage } from './components/EducationHubPage';
 import { TeamHRPage } from './components/TeamHRPage';
+import { RetailOpsPage } from './components/RetailOpsPage';
 import { 
   Users, 
   Facebook, 
@@ -136,6 +137,8 @@ const AppContent: React.FC = () => {
         return <EducationHubPage />;
       case 'team-hr':
         return <TeamHRPage />;
+      case 'retail-ops':
+        return <RetailOpsPage />;
       
       case 'dashboard':
       default:
