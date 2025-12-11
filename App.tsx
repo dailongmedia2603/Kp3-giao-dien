@@ -35,6 +35,7 @@ import { AffiliateCenterPage } from './components/AffiliateCenterPage';
 import { LegalShieldPage } from './components/LegalShieldPage';
 import { TreasuryPage } from './components/TreasuryPage';
 import { ProductStorePage } from './components/ProductStorePage';
+import { UnifiedAdsManagerPage } from './components/UnifiedAdsManagerPage';
 import { 
   Users, 
   Facebook, 
@@ -127,6 +128,8 @@ const AppContent: React.FC = () => {
         return <TreasuryPage />;
       case 'product-store':
         return <ProductStorePage />;
+      case 'unified-ads':
+        return <UnifiedAdsManagerPage />;
       
       case 'dashboard':
       default:
