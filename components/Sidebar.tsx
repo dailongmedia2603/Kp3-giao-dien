@@ -85,12 +85,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ label, icon: Icon, isActive, 
 
       {isCollapsed && badge && (
         <span className="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
-          <span<think>**Confirming Code Modifications**
-
-I'm verifying that the changes to the `Sidebar.tsx` file are correct. My goal is to ensure the menu item width aligns with the category headers, removing the existing indentation. I have added `pl-4` to the inner div of `SidebarItem` and removed the `pl-4` from the container.
-
-
-</think> className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0EB869] opacity-75"></span>
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0EB869] opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#0EB869]"></span>
         </span>
       )}
