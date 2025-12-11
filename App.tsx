@@ -46,6 +46,10 @@ import { ActionBasedPage } from './components/ActionBasedPage';
 import { ClockworkEnginePage } from './components/ClockworkEnginePage';
 import { ChatPanelPage } from './components/ChatPanelPage';
 import { CloserBookingPage } from './components/CloserBookingPage';
+import { HungryMarketPage } from './components/HungryMarketPage';
+import { MerchantAffiliatePage } from './components/MerchantAffiliatePage';
+import { CopywriterAIPage } from './components/CopywriterAIPage';
+import { CloserCRMPage } from './components/CloserCRMPage';
 import { 
   Users, 
   Facebook, 
@@ -162,6 +166,14 @@ const AppContent: React.FC = () => {
         return <ChatPanelPage />;
       case 'closer-booking':
         return <CloserBookingPage />;
+      case 'hungry-market':
+        return <HungryMarketPage />;
+      case 'merchant-affiliate':
+        return <MerchantAffiliatePage />;
+      case 'copywriter-ai':
+        return <CopywriterAIPage />;
+      case 'closer-crm':
+        return <CloserCRMPage />;
       
       case 'dashboard':
       default:

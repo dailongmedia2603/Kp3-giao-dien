@@ -50,7 +50,8 @@ import {
   Cog,
   Vault,
   MessageSquare,
-  Calendar
+  Calendar,
+  Bot
 } from 'lucide-react';
 import { SidebarItemProps } from '../types';
 
@@ -161,6 +162,7 @@ const categoriesData = [
       { view: 'hero-mechanisms', icon: Rabbit, label: 'Hero Mechanisms' },
       { view: 'product-store', icon: Store, label: 'Product & Store' },
       { view: 'asset-vault', icon: Vault, label: 'Asset Vault' },
+      { view: 'hungry-market', icon: Target, label: 'Hungry Market' },
     ],
   },
   {
@@ -174,6 +176,7 @@ const categoriesData = [
       { view: 'youtube-ads', icon: MonitorPlay, label: 'Youtube/Google Ads' },
       { view: 'social-system', icon: Share2, label: 'Media Company' },
       { view: 'affiliate-center', icon: Handshake, label: 'Affiliate Center' },
+      { view: 'merchant-affiliate', icon: Handshake, label: 'Merchant Affiliate' },
     ],
   },
   {
@@ -187,6 +190,7 @@ const categoriesData = [
       { view: 'unlimited-content', icon: Infinity, label: 'Unlimited Content', badge: 'AI' },
       { view: 'ad-creatives', icon: Image, label: 'Ad Creatives' },
       { view: 'vsl-creative', icon: Video, label: 'VSL Creative' },
+      { view: 'copywriter-ai', icon: Bot, label: 'Copywriter AI' },
     ],
   },
   {
@@ -198,6 +202,7 @@ const categoriesData = [
       { view: 'funnel-builder', icon: Filter, label: 'Funnel Builder' },
       { view: 'landing-pages', icon: Scan, label: 'Landing Pages' },
       { view: 'website', icon: Globe, label: 'Website' },
+      { view: 'closer-crm', icon: Users, label: 'Closer CRM' },
     ],
   },
   {
