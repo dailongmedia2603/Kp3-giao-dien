@@ -37,7 +37,13 @@ import {
   GraduationCap,
   Warehouse,
   Building2,
-  Award
+  Award,
+  Briefcase,
+  TrendingUp,
+  PenTool,
+  FlaskConical,
+  Package,
+  ChevronDown
 } from 'lucide-react';
 import { SidebarItemProps } from '../types';
 
@@ -87,20 +93,156 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ label, icon: Icon, isActive, 
   );
 };
 
-const SidebarCategory: React.FC<{ label: string; isCollapsed: boolean }> = ({ label, isCollapsed }) => {
+const SidebarCategory: React.FC<{
+  label: string;
+  icon: React.ElementType;
+  color: string;
+  isCollapsed: boolean;
+  isOpen: boolean;
+  onToggle: () => void;
+}> = ({ label, icon: Icon, color, isCollapsed, isOpen, onToggle }) => {
   if (isCollapsed) {
-    return <div className="h-px bg-slate-200 my-3 mx-2"></div>;
+    return (
+      <div className="pt-5 first:pt-0">
+        <div className="h-px bg-slate-200 mx-2"></div>
+      </div>
+    );
   }
+
   return (
-    <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-3 pt-6 pb-2 whitespace-nowrap">
-      {label}
-    </h3>
+    <div className="pt-4 first:pt-0">
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          <Icon size={18} style={{ color }} />
+          <span className="text-[12px] font-bold uppercase tracking-wider" style={{ color }}>
+            {label}
+          </span>
+        </div>
+        <ChevronDown
+          size={16}
+          className={`text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+        />
+      </button>
+    </div>
   );
 };
 
+const categoriesData = [
+  {
+    id: 'COMMAND CENTER',
+    label: 'COMMAND CENTER',
+    icon: Briefcase,
+    color: '#475569',
+    items: [
+      { view: 'ceo-dashboard', icon: LayoutDashboard, label: 'CEO Command', badge: 'Live' },
+      { view: 'all-in-plan', icon: Map, label: 'The All In Plan', badge: 'Beta' },
+      { view: 'treasury', icon: Landmark, label: 'Treasury (Finance)' },
+      { view: 'goal', icon: Target, label: 'Goal' },
+    ],
+  },
+  {
+    id: 'OFFER & STRATEGY',
+    label: 'OFFER & STRATEGY',
+    icon: Target,
+    color: '#9333ea',
+    items: [
+      { view: 'dream-buyer', icon: Users, label: 'Dream Buyer Avatars' },
+      { view: 'offer', icon: ShoppingBag, label: 'Offer', badge: '1' },
+      { view: 'hero-mechanisms', icon: Rabbit, label: 'Hero Mechanisms' },
+      { view: 'product-store', icon: Store, label: 'Product & Store' },
+      { view: 'asset', icon: Layers, label: 'Asset' },
+    ],
+  },
+  {
+    id: 'TRAFFIC ENGINE',
+    label: 'TRAFFIC ENGINE',
+    icon: TrendingUp,
+    color: '#2563eb',
+    items: [
+      { view: 'unified-ads', icon: GalleryVerticalEnd, label: 'Unified Ads Manager' },
+      { view: 'facebook-ads', icon: Facebook, label: 'Facebook Ad Generator' },
+      { view: 'youtube-ads', icon: MonitorPlay, label: 'Youtube/Google Ads' },
+      { view: 'social-system', icon: Share2, label: 'Social System' },
+      { view: 'affiliate-center', icon: Handshake, label: 'Affiliate Center' },
+    ],
+  },
+  {
+    id: 'CONTENT & CREATIVE',
+    label: 'CONTENT & CREATIVE',
+    icon: PenTool,
+    color: '#ea580c',
+    items: [
+      { view: 'direct-response', icon: LayoutTemplate, label: 'Direct Response Headlines' },
+      { view: 'hvco', icon: BookOpen, label: 'HVCO Titles' },
+      { view: 'unlimited-content', icon: Infinity, label: 'Unlimited Content', badge: 'AI' },
+      { view: 'ad-creatives', icon: Image, label: 'Ad Creatives' },
+      { view: 'vsl-creative', icon: Video, label: 'VSL Creative' },
+    ],
+  },
+  {
+    id: 'CONVERSION LAB',
+    label: 'CONVERSION LAB',
+    icon: FlaskConical,
+    color: '#0d9488',
+    items: [
+      { view: 'funnel-builder', icon: Filter, label: 'Funnel Builder' },
+      { view: 'landing-pages', icon: Scan, label: 'Landing Pages' },
+      { view: 'website', icon: Globe, label: 'Website' },
+    ],
+  },
+  {
+    id: 'SALES & CLOSE',
+    label: 'SALES & CLOSE',
+    icon: Handshake,
+    color: '#16a34a',
+    items: [
+      { view: 'closer', icon: Phone, label: 'Closer' },
+      { view: 'email-list', icon: Mail, label: 'Email List' },
+      { view: 'legal-shield', icon: Shield, label: 'Legal Shield' },
+    ],
+  },
+  {
+    id: 'DELIVERY & OPS',
+    label: 'DELIVERY & OPS',
+    icon: Package,
+    color: '#4b5563',
+    items: [
+      { view: 'education-hub', icon: GraduationCap, label: 'Education Hub' },
+      { view: 'retail-ops', icon: Warehouse, label: 'Retail Ops' },
+      { view: 'agency-portal', icon: Building2, label: 'Agency Portal' },
+      { view: 'team-hr', icon: Users, label: 'Team & HR' },
+    ],
+  },
+  {
+    id: 'SYSTEM & UTILITIES',
+    label: 'SYSTEM & UTILITIES',
+    icon: Wrench,
+    color: '#475569',
+    items: [
+      { view: 'community', icon: Users, label: 'KP3 Community' },
+      { view: 'club', icon: Award, label: 'Club', badge: 'Club' },
+      { view: 'support', icon: LifeBuoy, label: 'Support' },
+      { view: 'mini-tools', icon: Wrench, label: 'Mini Tools', badge: 'New' },
+      { view: 'settings', icon: Settings, label: 'Settings' },
+    ],
+  },
+];
+
 export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [openCategories, setOpenCategories] = useState<string[]>([]);
   const { profile } = useSession();
+
+  const toggleCategory = (categoryId: string) => {
+    setOpenCategories(prev =>
+      prev.includes(categoryId)
+        ? prev.filter(id => id !== categoryId)
+        : [...prev, categoryId]
+    );
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -136,56 +278,34 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
         <p className="text-slate-500 text-[13px] mb-6 font-normal whitespace-nowrap">Clock Work</p>
       </div>
 
-      <div className="flex flex-col gap-1 flex-1">
-        <SidebarCategory label="COMMAND CENTER" isCollapsed={isCollapsed} />
-        <SidebarItem icon={LayoutDashboard} label="CEO Command" isActive={currentView === 'ceo-dashboard'} onClick={() => onNavigate('ceo-dashboard')} isCollapsed={isCollapsed} badge="Live" />
-        <SidebarItem icon={Map} label="The All In Plan" isActive={currentView === 'all-in-plan'} onClick={() => onNavigate('all-in-plan')} isCollapsed={isCollapsed} badge="Beta" />
-        <SidebarItem icon={Landmark} label="Treasury (Finance)" isActive={currentView === 'treasury'} onClick={() => onNavigate('dashboard')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Target} label="Goal" isActive={currentView === 'goal'} onClick={() => onNavigate('goal')} isCollapsed={isCollapsed} />
-
-        <SidebarCategory label="OFFER & STRATEGY" isCollapsed={isCollapsed} />
-        <SidebarItem icon={Users} label="Dream Buyer Avatars" isActive={currentView === 'dream-buyer'} onClick={() => onNavigate('dream-buyer')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={ShoppingBag} label="Offer" badge="1" isActive={currentView === 'offer'} onClick={() => onNavigate('offer')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Rabbit} label="Hero Mechanisms" isActive={currentView === 'hero-mechanisms'} onClick={() => onNavigate('hero-mechanisms')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Store} label="Product & Store" isActive={currentView === 'product-store'} onClick={() => onNavigate('offer')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Layers} label="Asset" isActive={currentView === 'asset'} onClick={() => onNavigate('asset')} isCollapsed={isCollapsed} />
-
-        <SidebarCategory label="TRAFFIC ENGINE" isCollapsed={isCollapsed} />
-        <SidebarItem icon={GalleryVerticalEnd} label="Unified Ads Manager" isActive={currentView === 'unified-ads'} onClick={() => onNavigate('dashboard')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Facebook} label="Facebook Ad Generator" isActive={currentView === 'facebook-ads'} onClick={() => onNavigate('facebook-ads')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={MonitorPlay} label="Youtube/Google Ads" isActive={currentView === 'youtube-ads'} onClick={() => onNavigate('youtube-ads')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Share2} label="Social System" isActive={currentView === 'social-system'} onClick={() => onNavigate('social-system')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Handshake} label="Affiliate Center" isActive={currentView === 'affiliate-center'} onClick={() => onNavigate('dashboard')} isCollapsed={isCollapsed} />
-
-        <SidebarCategory label="CONTENT & CREATIVE" isCollapsed={isCollapsed} />
-        <SidebarItem icon={LayoutTemplate} label="Direct Response Headlines" isActive={currentView === 'direct-response'} onClick={() => onNavigate('direct-response')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={BookOpen} label="HVCO Titles" isActive={currentView === 'hvco'} onClick={() => onNavigate('hvco')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Infinity} label="Unlimited Content" isActive={currentView === 'unlimited-content'} onClick={() => onNavigate('unlimited-content')} isCollapsed={isCollapsed} badge="AI" />
-        <SidebarItem icon={Image} label="Ad Creatives" isActive={currentView === 'ad-creatives'} onClick={() => onNavigate('ad-creatives')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Video} label="VSL Creative" isActive={currentView === 'vsl-creative'} onClick={() => onNavigate('vsl-creative')} isCollapsed={isCollapsed} />
-
-        <SidebarCategory label="CONVERSION LAB" isCollapsed={isCollapsed} />
-        <SidebarItem icon={Filter} label="Funnel Builder" isActive={currentView === 'funnel-builder'} onClick={() => onNavigate('funnel-builder')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Scan} label="Landing Pages" isActive={currentView === 'landing-pages'} onClick={() => onNavigate('landing-pages')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Globe} label="Website" isActive={currentView === 'website'} onClick={() => onNavigate('website')} isCollapsed={isCollapsed} />
-
-        <SidebarCategory label="SALES & CLOSE" isCollapsed={isCollapsed} />
-        <SidebarItem icon={Phone} label="Closer" isActive={currentView === 'closer'} onClick={() => onNavigate('closer')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Mail} label="Email List" isActive={currentView === 'email-list'} onClick={() => onNavigate('email-list')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Shield} label="Legal Shield" isActive={currentView === 'legal-shield'} onClick={() => onNavigate('dashboard')} isCollapsed={isCollapsed} />
-
-        <SidebarCategory label="DELIVERY & OPS" isCollapsed={isCollapsed} />
-        <SidebarItem icon={GraduationCap} label="Education Hub" isActive={currentView === 'education-hub'} onClick={() => onNavigate('dashboard')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Warehouse} label="Retail Ops" isActive={currentView === 'retail-ops'} onClick={() => onNavigate('dashboard')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Building2} label="Agency Portal" isActive={currentView === 'agency-portal'} onClick={() => onNavigate('dashboard')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Users} label="Team & HR" isActive={currentView === 'team-hr'} onClick={() => onNavigate('dashboard')} isCollapsed={isCollapsed} />
-
-        <SidebarCategory label="SYSTEM & UTILITIES" isCollapsed={isCollapsed} />
-        <SidebarItem icon={Users} label="KP3 Community" isActive={currentView === 'community'} onClick={() => onNavigate('community')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Award} label="Club" isActive={currentView === 'club'} onClick={() => onNavigate('community')} isCollapsed={isCollapsed} badge="Club" />
-        <SidebarItem icon={LifeBuoy} label="Support" isActive={currentView === 'support'} onClick={() => onNavigate('support')} isCollapsed={isCollapsed} />
-        <SidebarItem icon={Wrench} label="Mini Tools" isActive={currentView === 'mini-tools'} onClick={() => onNavigate('mini-tools')} isCollapsed={isCollapsed} badge="New" />
-        <SidebarItem icon={Settings} label="Settings" isActive={currentView === 'settings'} onClick={() => onNavigate('settings')} isCollapsed={isCollapsed} />
+      <div className="flex flex-col flex-1">
+        {categoriesData.map(category => (
+          <div key={category.id}>
+            <SidebarCategory
+              label={category.label}
+              icon={category.icon}
+              color={category.color}
+              isCollapsed={isCollapsed}
+              isOpen={openCategories.includes(category.id)}
+              onToggle={() => toggleCategory(category.id)}
+            />
+            {openCategories.includes(category.id) && !isCollapsed && (
+              <div className="pl-4 pt-2 space-y-1">
+                {category.items.map(item => (
+                  <SidebarItem
+                    key={item.view}
+                    icon={item.icon}
+                    label={item.label}
+                    isActive={currentView === item.view}
+                    onClick={() => onNavigate(item.view)}
+                    isCollapsed={isCollapsed}
+                    badge={item.badge}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
 
       <div className={`border-t border-slate-200/60 mt-2 mb-4 pt-3 ${isCollapsed ? 'px-1' : 'px-0'}`}>
