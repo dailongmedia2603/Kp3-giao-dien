@@ -34,6 +34,7 @@ import { SOPModal } from './components/SOPModal';
 import { AffiliateCenterPage } from './components/AffiliateCenterPage';
 import { LegalShieldPage } from './components/LegalShieldPage';
 import { TreasuryPage } from './components/TreasuryPage';
+import { ProductStorePage } from './components/ProductStorePage';
 import { 
   Users, 
   Facebook, 
@@ -124,6 +125,8 @@ const AppContent: React.FC = () => {
         return <LegalShieldPage />;
       case 'treasury':
         return <TreasuryPage />;
+      case 'product-store':
+        return <ProductStorePage />;
       
       case 'dashboard':
       default:
