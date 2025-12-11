@@ -64,7 +64,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ label, icon: Icon, isActive, 
       `}
       title={isCollapsed ? label : undefined}
     >
-      <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3 pl-4'} w-full`}>
+      <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} w-full`}>
         <Icon 
           size={20} 
           strokeWidth={2} 
@@ -233,7 +233,7 @@ const categoriesData = [
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [openCategories, setOpenCategories] = useState<string[]>([]);
+  const [openCategories, setOpenCategories] = useState<string[]>(['OFFER & STRATEGY']);
   const { profile } = useSession();
 
   const toggleCategory = (categoryId: string) => {
