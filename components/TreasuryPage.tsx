@@ -1,11 +1,4 @@
-import<think>**Pinpointing the Culprit**
-
-\n\n
-
-I've carefully examined the `TreasuryPage.tsx` file and pinpointed the cause. The problem indeed lies with the `owner_comp` vault configuration. The incorrect `User` icon reference within the state initialization is the root of the error. My plan is now to correct the `icon` property to reference the correctly imported `Users` icon.
-
-
-</think> React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Home, 
   ChevronRight, 
@@ -42,7 +35,14 @@ interface Vault {
 export const TreasuryPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'allocations' | 'pnl'>('dashboard');
   
-  // --- State for the entire page ---
+  //<think>**Refining the Solution**
+
+\n\n
+
+I've confirmed the initial assessment and am moving toward the fix. The corrupted import statement, specifically the `<think>` tags injected, is the primary issue. I will generate the corrected `components/TreasuryPage.tsx` using `dyad-write`, ensuring the import statement is clean. I am focused on delivering a correct version.
+
+
+</think> --- State for the entire page ---
   const [vaults, setVaults] = useState<Record<VaultType, Vault>>({
     income: { id: 'income', title: 'Income', icon: DollarSign, color: 'blue', amount: 100000, percentage: 100 },
     profit: { id: 'profit', title: 'Profit', icon: TrendingUp, color: 'green', amount: 5000, percentage: 5 },
