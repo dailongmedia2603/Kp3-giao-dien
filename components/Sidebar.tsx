@@ -43,7 +43,12 @@ import {
   PenTool,
   FlaskConical,
   Package,
-  ChevronDown
+  ChevronDown,
+  HeartPulse,
+  Book,
+  Zap,
+  Cog,
+  Vault
 } from 'lucide-react';
 import { SidebarItemProps } from '../types';
 
@@ -208,12 +213,17 @@ const categoriesData = [
     id: 'DELIVERY & OPS',
     label: 'DELIVERY & OPS',
     icon: Package,
-    color: '#4b5563',
+    color: '#16A349',
     items: [
       { view: 'education-hub', icon: GraduationCap, label: 'Education Hub' },
       { view: 'retail-ops', icon: Warehouse, label: 'Retail Ops' },
       { view: 'agency-portal', icon: Building2, label: 'Agency Portal' },
       { view: 'team-hr', icon: Users, label: 'Team & HR' },
+      { view: 'clinic-os', icon: HeartPulse, label: 'Clinic OS' },
+      { view: 'english-center', icon: Book, label: 'English Center Management' },
+      { view: 'action-based', icon: Zap, label: 'The Action-Based' },
+      { view: 'clockwork-engine', icon: Cog, label: 'The Clockwork Engine' },
+      { view: 'asset-vault', icon: Vault, label: 'Asset Vault' },
     ],
   },
   {
