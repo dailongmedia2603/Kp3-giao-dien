@@ -32,6 +32,7 @@ import { AssetPage } from './components/AssetPage';
 import { CeoDashboardPage } from './components/CeoDashboardPage';
 import { SOPModal } from './components/SOPModal';
 import { AffiliateCenterPage } from './components/AffiliateCenterPage';
+import { LegalShieldPage } from './components/LegalShieldPage';
 import { 
   Users, 
   Facebook, 
@@ -118,6 +119,8 @@ const AppContent: React.FC = () => {
         return <AssetPage />;
       case 'affiliate-center':
         return <AffiliateCenterPage />;
+      case 'legal-shield':
+        return <LegalShieldPage />;
       
       case 'dashboard':
       default:
