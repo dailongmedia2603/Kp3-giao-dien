@@ -62,18 +62,21 @@ const ToolSidebar: React.FC<{
       
       {/* Tool Selection */}
       <div className="p-3 grid grid-cols-2 gap-2 border-b border-slate-100">
-        {Object.keys(toolConfig).map(key => (
-          <button 
-            key={key}
-            onClick={() => setActiveTool(key as Tool)}
-            className={`flex items-center gap-2 p-3 rounded-lg text-sm font-medium transition-colors ${
-              activeTool === key ? 'bg-slate-100 text-slate-900' : 'text-slate-500 hover:bg-slate-50'
-            }`}
-          >
-            <toolConfig[key as Tool].icon size={16} />
-            {toolConfig[key as Tool].name}
-          </button>
-        ))}
+        {Object.keys(toolConfig).map(key => {
+          const Icon = toolConfig[key as Tool].icon;
+          return (
+            <button 
+              key={key}
+              onClick={() => setActiveTool(key as Tool)}
+              className={`flex items-center gap-2 p-3 rounded-lg text-sm font-medium transition-colors ${
+                activeTool === key ? 'bg-slate-100 text-slate-900' : 'text-slate-500 hover:bg-slate-50'
+              }`}
+            >
+              <Icon size={16} />
+              {toolConfig[key as Tool].name}
+            </button>
+          );
+        })}
       </div>
 
       {/* Input Area */}
