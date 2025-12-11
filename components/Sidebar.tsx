@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
 import { 
@@ -233,16 +233,21 @@ const categoriesData = [
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [openCategories, setOpenCategories] = useState<string[]>(['COMMAND CENTER']);
+  const [openCategory, setOpenCategory] = useState<string | null>('COMMAND CENTER');
   const { profile } = useSession();
 
   const toggleCategory = (categoryId: string) => {
-    setOpenCategories(prev =>
-      prev.includes(categoryId)
-        ? prev.filter(id => id !== categoryId)
-        : [...prev, categoryId]
-    );
+    setOpenCategory(prev => (prev === categoryId ? null : categoryId));
   };
+
+  useEffect(() => {
+    const parentCategory = categoriesData.find(category => 
+      category.items.some(item => item.view === currentView)
+    );
+    if (parentCategory && openCategory !== parentCategory.id) {
+      setOpenCategory(parentCategory.id);
+    }
+  }, [currentView]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -285,10 +290,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
               icon={category.icon}
               color={category.color}
               isCollapsed={isCollapsed}
-              isOpen={openCategories.includes(category.id)}
+              isOpen={openCategory === category.id}
               onToggle={() => toggleCategory(category.id)}
             />
-            {openCategories.includes(category.id) && !isCollapsed && (
+            {openCategory === category.id && !isCollapsed && (
               <div className="pt-1 pl-4 space-y-1">
                 {category.items.map(item => (
                   <SidebarItem
