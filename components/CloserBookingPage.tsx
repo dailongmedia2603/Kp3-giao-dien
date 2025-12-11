@@ -16,10 +16,7 @@ import {
   Copy,
   Trash2,
   ArrowRight,
-  Globe,
-  ArrowLeft,
-  ArrowUpRight,
-  ArrowDownRight
+  Globe
 } from 'lucide-react';
 
 // --- MOCK DATA ---
