@@ -161,7 +161,7 @@ const categoriesData = [
       { view: 'offer', icon: ShoppingBag, label: 'Offer', badge: '1' },
       { view: 'hero-mechanisms', icon: Rabbit, label: 'Hero Mechanisms' },
       { view: 'product-store', icon: Store, label: 'Product & Store' },
-      { view: 'asset-vault', icon: Vault, label: 'Asset Vault' },
+      { view: 'offer-asset-vault', icon: Vault, label: 'Asset Vault' },
       { view: 'hungry-market', icon: Target, label: 'Hungry Market' },
     ],
   },

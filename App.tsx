@@ -50,6 +50,7 @@ import { HungryMarketPage } from './components/HungryMarketPage';
 import { MerchantAffiliatePage } from './components/MerchantAffiliatePage';
 import { CopywriterAIPage } from './components/CopywriterAIPage';
 import { CloserCRMPage } from './components/CloserCRMPage';
+import { OfferAssetVaultPage } from './components/OfferAssetVaultPage';
 import { 
   Users, 
   Facebook, 
@@ -136,6 +137,8 @@ const AppContent: React.FC = () => {
         return <YoutubeGoogleAdsPage />;
       case 'asset-vault':
         return <AssetVaultPage />;
+      case 'offer-asset-vault':
+        return <OfferAssetVaultPage />;
       case 'affiliate-center':
         return <AffiliateCenterPage />;
       case 'legal-shield':
