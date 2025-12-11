@@ -233,7 +233,7 @@ const categoriesData = [
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [openCategories, setOpenCategories] = useState<string[]>(['OFFER & STRATEGY']);
+  const [openCategories, setOpenCategories] = useState<string[]>(['COMMAND CENTER']);
   const { profile } = useSession();
 
   const toggleCategory = (categoryId: string) => {
