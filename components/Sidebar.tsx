@@ -105,18 +105,9 @@ const SidebarCategory: React.FC<{
   label: string;
   icon: React.ElementType;
   color: string;
-  isCollapsed: boolean;
   isOpen: boolean;
   onToggle: () => void;
-}> = ({ label, icon: Icon, color, isCollapsed, isOpen, onToggle }) => {
-  if (isCollapsed) {
-    return (
-      <div className="pt-5 first:pt-0">
-        <div className="h-px bg-slate-200 mx-2"></div>
-      </div>
-    );
-  }
-
+}> = ({ label, icon: Icon, color, isOpen, onToggle }) => {
   return (
     <div className="pt-4 first:pt-0">
       <button
@@ -276,8 +267,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
     <div 
       className={`
         ${isCollapsed ? 'w-[80px] min-w-[80px] px-3' : 'w-[280px] min-w-[280px] px-5'} 
-        h-screen bg-[#F8F9FB] flex flex-col border-r border-gray-200/50 overflow-y-auto sticky top-0
-        transition-all duration-300 ease-in-out z-50
+        h-screen bg-[#F8F9FB] flex flex-col border-r border-gray-200/50 
+        ${isCollapsed ? 'overflow-visible' : 'overflow-y-auto'} 
+        sticky top-0 transition-all duration-300 ease-in-out z-50
       `}
     >
       <div className={`flex items-center ${isCollapsed ? 'justify-center flex-col-reverse gap-6' : 'justify-between'} mb-8 pt-5 transition-all duration-300`}>
@@ -301,31 +293,65 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
         <p className="text-slate-500 text-[13px] mb-6 font-normal whitespace-nowrap">Clock Work</p>
       </div>
 
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 space-y-2">
         {categoriesData.map(category => (
-          <div key={category.id}>
-            <SidebarCategory
-              label={category.label}
-              icon={category.icon}
-              color={category.color}
-              isCollapsed={isCollapsed}
-              isOpen={openCategory === category.id}
-              onToggle={() => toggleCategory(category.id)}
-            />
-            {openCategory === category.id && !isCollapsed && (
-              <div className="pt-1 pl-4 space-y-1">
-                {category.items.map(item => (
-                  <SidebarItem
-                    key={item.view}
-                    icon={item.icon}
-                    label={item.label}
-                    isActive={currentView === item.view}
-                    onClick={() => onNavigate(item.view)}
-                    isCollapsed={isCollapsed}
-                    badge={item.badge}
-                  />
-                ))}
-              </div>
+          <div key={category.id} className="relative group">
+            {isCollapsed ? (
+              // Collapsed Mode: Icon Only + Flyout Menu
+              <>
+                <div 
+                  className="w-10 h-10 mx-auto flex items-center justify-center rounded-xl cursor-pointer hover:bg-white hover:shadow-md transition-all duration-200 group-hover:scale-110"
+                  title={category.label}
+                >
+                  <category.icon size={20} style={{ color: category.color }} />
+                </div>
+
+                {/* Hover Flyout Menu */}
+                <div className="absolute left-full top-0 ml-4 w-60 bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-2xl rounded-xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-x-[-10px] group-hover:translate-x-0 z-[100]">
+                   <div className="px-3 py-2 border-b border-slate-100 mb-2 bg-slate-50/50 rounded-t-lg -mx-2 -mt-2">
+                      <h4 className="text-[11px] font-black uppercase tracking-widest" style={{ color: category.color }}>{category.label}</h4>
+                   </div>
+                   <div className="space-y-0.5">
+                      {category.items.map(item => (
+                          <SidebarItem
+                            key={item.view}
+                            icon={item.icon}
+                            label={item.label}
+                            isActive={currentView === item.view}
+                            onClick={() => onNavigate(item.view)}
+                            isCollapsed={false} // Force expanded look in flyout
+                            badge={item.badge}
+                          />
+                      ))}
+                   </div>
+                </div>
+              </>
+            ) : (
+              // Expanded Mode: Accordion
+              <>
+                <SidebarCategory
+                  label={category.label}
+                  icon={category.icon}
+                  color={category.color}
+                  isOpen={openCategory === category.id}
+                  onToggle={() => toggleCategory(category.id)}
+                />
+                {openCategory === category.id && (
+                  <div className="pt-1 pl-4 space-y-1">
+                    {category.items.map(item => (
+                      <SidebarItem
+                        key={item.view}
+                        icon={item.icon}
+                        label={item.label}
+                        isActive={currentView === item.view}
+                        onClick={() => onNavigate(item.view)}
+                        isCollapsed={false}
+                        badge={item.badge}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </div>
         ))}
