@@ -1,4 +1,5 @@
 import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/src/integrations/supabase/client';
 
 const LoginPage = () => {
@@ -17,6 +18,7 @@ const LoginPage = () => {
             supabaseClient={supabase}
             providers={[]}
             appearance={{
+              theme: ThemeSupa,
               className: {
                 container: 'space-y-4',
                 label: 'block text-sm font-bold text-slate-700',
@@ -27,7 +29,6 @@ const LoginPage = () => {
                 message: 'text-sm text-center text-red-500 mt-2',
               },
             }}
-            theme="light"
             socialLayout="horizontal"
             showLinks={true}
           />
