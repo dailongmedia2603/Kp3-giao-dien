@@ -30,7 +30,7 @@ const LoginPage = () => {
             </h2>
             <p className="text-sm text-slate-500 mt-2">Enter your credentials to access your dashboard.</p>
           </div>
-          <div className="bg-[#E8F5E9] p-8 rounded-xl shadow-md border border-[#16A349]">
+          <div className="bg-white p-8 rounded-xl shadow-md border border-slate-200/80">
             <Auth
               supabaseClient={supabase}
               providers={[]}
@@ -39,7 +39,7 @@ const LoginPage = () => {
                 className: {
                   container: 'space-y-4',
                   label: 'block text-sm font-medium text-slate-700',
-                  input: 'bg-white w-full p-3 mt-1 border border-slate-200 rounded-lg text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349]',
+                  input: 'w-full p-3 mt-1 border border-slate-200 rounded-lg text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349]',
                   button: 'w-full py-3 mt-4 bg-[#16A349] text-white text-sm font-bold rounded-lg hover:bg-[#149641] transition-colors shadow-sm',
                   anchor: 'text-sm text-center block text-slate-600 hover:text-[#16A349] hover:underline pt-2',
                   divider: 'hidden',
