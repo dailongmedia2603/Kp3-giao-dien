@@ -15,21 +15,21 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
     <div className={`
       flex flex-col h-full rounded-xl p-6 transition-all duration-200
       ${isHighlighted 
-        ? 'bg-[#E8FCF3] border border-[#86EFAC] shadow-sm' 
+        ? 'bg-[#E8F5E9] border border-[#A5D6A7] shadow-sm' 
         : 'bg-white border border-slate-200/80 shadow-sm hover:shadow-md'}
     `}>
       {/* Card Header */}
       <div className="flex items-start gap-4 mb-4">
         <div className={`
           p-2.5 rounded-lg shrink-0
-          ${isHighlighted ? 'bg-white border border-[#86EFAC]' : 'bg-white border border-slate-100'}
+          ${isHighlighted ? 'bg-white border border-[#A5D6A7]' : 'bg-white border border-slate-100'}
         `}>
           <Icon 
             size={24} 
-            className={isHighlighted || title.includes("Facebook") ? 'text-[#0EB869]' : 'text-[#0EB869]'} 
+            className={isHighlighted || title.includes("Facebook") ? 'text-[#16A349]' : 'text-[#16A349]'} 
             strokeWidth={1.5}
-            fill={title.includes("Facebook") ? '#0EB869' : 'none'}
-            color={title.includes("Facebook") ? 'white' : '#0EB869'}
+            fill={title.includes("Facebook") ? '#16A349' : 'none'}
+            color={title.includes("Facebook") ? 'white' : '#16A349'}
           />
         </div>
         <h3 className="text-[16px] font-bold text-slate-900 mt-1">{title}</h3>
@@ -41,7 +41,7 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
       </p>
 
       {/* Divider */}
-      <div className={`h-px w-full mb-4 ${isHighlighted ? 'bg-[#86EFAC]/60' : 'bg-slate-100'}`}></div>
+      <div className={`h-px w-full mb-4 ${isHighlighted ? 'bg-[#A5D6A7]/60' : 'bg-slate-100'}`}></div>
 
       {/* Actions */}
       <div className="flex items-center justify-between mt-auto">
@@ -58,7 +58,7 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
         
         <button 
           onClick={actionRight.onClick}
-          className="text-[13px] font-bold text-[#0EB869] hover:text-[#0B9655] transition-colors"
+          className="text-[13px] font-bold text-[#16A349] hover:text-[#149641] transition-colors"
         >
           {actionRight.text}
         </button>

@@ -27,7 +27,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
         <div className="flex items-center gap-2 mb-6 text-[13px] text-slate-500">
           <Home size={16} className="text-slate-400" />
           <ChevronRight size={14} className="text-slate-300" />
-          <span className="bg-[#E8FCF3] text-[#0EB869] px-3 py-1 rounded text-xs font-bold">
+          <span className="bg-[#E8F5E9] text-[#16A349] px-3 py-1 rounded text-xs font-bold">
             Offers
           </span>
         </div>
@@ -47,7 +47,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
           onClick={() => setActiveTab('service')}
           className={`flex-1 min-w-[100px] py-3 px-4 rounded-lg flex items-center justify-center gap-2 text-[13px] font-bold transition-all duration-200 whitespace-nowrap
             ${activeTab === 'service' 
-              ? 'bg-white text-[#0EB869] shadow-sm ring-1 ring-slate-200' 
+              ? 'bg-white text-[#16A349] shadow-sm ring-1 ring-slate-200' 
               : 'text-slate-500 hover:bg-white/60 hover:text-slate-700'
             }`}
         >
@@ -58,7 +58,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
           onClick={() => setActiveTab('physical')}
           className={`flex-1 min-w-[100px] py-3 px-4 rounded-lg flex items-center justify-center gap-2 text-[13px] font-bold transition-all duration-200 whitespace-nowrap
             ${activeTab === 'physical' 
-              ? 'bg-white text-[#0EB869] shadow-sm ring-1 ring-slate-200' 
+              ? 'bg-white text-[#16A349] shadow-sm ring-1 ring-slate-200' 
               : 'text-slate-500 hover:bg-white/60 hover:text-slate-700'
             }`}
         >
@@ -69,7 +69,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
           onClick={() => setActiveTab('software')}
           className={`flex-1 min-w-[100px] py-3 px-4 rounded-lg flex items-center justify-center gap-2 text-[13px] font-bold transition-all duration-200 whitespace-nowrap
             ${activeTab === 'software' 
-              ? 'bg-white text-[#0EB869] shadow-sm ring-1 ring-slate-200' 
+              ? 'bg-white text-[#16A349] shadow-sm ring-1 ring-slate-200' 
               : 'text-slate-500 hover:bg-white/60 hover:text-slate-700'
             }`}
         >
@@ -80,7 +80,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
           onClick={() => setActiveTab('digital')}
           className={`flex-1 min-w-[100px] py-3 px-4 rounded-lg flex items-center justify-center gap-2 text-[13px] font-bold transition-all duration-200 whitespace-nowrap
             ${activeTab === 'digital' 
-              ? 'bg-white text-[#0EB869] shadow-sm ring-1 ring-slate-200' 
+              ? 'bg-white text-[#16A349] shadow-sm ring-1 ring-slate-200' 
               : 'text-slate-500 hover:bg-white/60 hover:text-slate-700'
             }`}
         >
@@ -93,7 +93,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
           onClick={() => setActiveTab('e-learning')}
           className={`flex-1 min-w-[100px] py-3 px-4 rounded-lg flex items-center justify-center gap-2 text-[13px] font-bold transition-all duration-200 whitespace-nowrap
             ${activeTab === 'e-learning' 
-              ? 'bg-white text-[#0EB869] shadow-sm ring-1 ring-slate-200' 
+              ? 'bg-white text-[#16A349] shadow-sm ring-1 ring-slate-200' 
               : 'text-slate-500 hover:bg-white/60 hover:text-slate-700'
             }`}
         >
@@ -104,7 +104,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
           onClick={() => setActiveTab('affiliate')}
           className={`flex-1 min-w-[100px] py-3 px-4 rounded-lg flex items-center justify-center gap-2 text-[13px] font-bold transition-all duration-200 whitespace-nowrap
             ${activeTab === 'affiliate' 
-              ? 'bg-white text-[#0EB869] shadow-sm ring-1 ring-slate-200' 
+              ? 'bg-white text-[#16A349] shadow-sm ring-1 ring-slate-200' 
               : 'text-slate-500 hover:bg-white/60 hover:text-slate-700'
             }`}
         >
@@ -117,7 +117,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
       <div className="flex justify-end mb-6">
         <button 
           onClick={() => onNavigate && onNavigate('create-product')}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#0EB869] text-white text-[14px] font-bold hover:bg-[#0B9655] transition-colors shadow-sm"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#16A349] text-white text-[14px] font-bold hover:bg-[#149641] transition-colors shadow-sm"
         >
             <Plus size={18} strokeWidth={3} />
             Add New Offer
@@ -253,7 +253,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ title, category, description,
     return (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col p-6 h-full group">
             <div className="flex items-start gap-4 mb-4">
-                 <div className="w-12 h-12 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 bg-white shrink-0 group-hover:border-[#86EFAC] group-hover:text-[#0EB869] transition-colors">
+                 <div className="w-12 h-12 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 bg-white shrink-0 group-hover:border-[#A5D6A7] group-hover:text-[#16A349] transition-colors">
                    <Icon size={24} strokeWidth={1.5} />
                 </div>
                 <div>
@@ -270,7 +270,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ title, category, description,
                  <button className="text-[13px] font-bold text-slate-700 hover:text-slate-900 transition-colors">
                     Delete
                 </button>
-                <button className="text-[13px] font-bold text-[#0EB869] hover:text-[#0B9655] transition-colors">
+                <button className="text-[13px] font-bold text-[#16A349] hover:text-[#149641] transition-colors">
                     Edit Offer
                 </button>
             </div>

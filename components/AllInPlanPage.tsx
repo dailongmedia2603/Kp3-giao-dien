@@ -42,13 +42,13 @@ export const AllInPlanPage: React.FC = () => {
         <div className="flex items-center gap-2 mb-6 text-[13px] text-slate-500">
           <Home size={16} className="text-slate-400" />
           <ChevronRight size={14} className="text-slate-300" />
-          <span className="bg-[#E8FCF3] text-[#0EB869] px-3 py-1 rounded text-xs font-bold">
+          <span className="bg-[#E8F5E9] text-[#16A349] px-3 py-1 rounded text-xs font-bold">
             The All In Plan
           </span>
         </div>
 
         <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight flex items-center gap-3">
-          Business Master Plan <Map className="text-[#0EB869]" size={28} />
+          Business Master Plan <Map className="text-[#16A349]" size={28} />
         </h1>
         
         <p className="text-slate-500 text-[15px] leading-relaxed mb-8 max-w-2xl mx-auto">
@@ -88,7 +88,7 @@ export const AllInPlanPage: React.FC = () => {
       <div className="relative mb-12">
         {/* Connecting Line */}
         <div className="absolute top-1/2 left-0 w-full h-1 bg-slate-100 -translate-y-1/2 z-0 hidden lg:block rounded-full"></div>
-        <div className="absolute top-1/2 left-0 h-1 bg-[#0EB869]/30 -translate-y-1/2 z-0 hidden lg:block rounded-full transition-all duration-1000" style={{ width: `${totalScore}%` }}></div>
+        <div className="absolute top-1/2 left-0 h-1 bg-[#16A349]/30 -translate-y-1/2 z-0 hidden lg:block rounded-full transition-all duration-1000" style={{ width: `${totalScore}%` }}></div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 relative z-10">
             
@@ -98,9 +98,9 @@ export const AllInPlanPage: React.FC = () => {
                 icon={ShoppingBag} 
                 description="Product Market Fit"
                 stats={planState.offer}
-                color="text-[#0EB869]"
-                bgColor="bg-[#E8FCF3]"
-                borderColor="border-[#0EB869]"
+                color="text-[#16A349]"
+                bgColor="bg-[#E8F5E9]"
+                borderColor="border-[#16A349]"
             >
                 <CheckListItem label="Create Dream Buyer Avatar" done />
                 <CheckListItem label="Define HVCO Title" done />
@@ -178,14 +178,14 @@ export const AllInPlanPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in duration-500 slide-in-from-bottom-4">
         <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
             <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <TrendingUp size={20} className="text-[#0EB869]" />
+                <TrendingUp size={20} className="text-[#16A349]" />
                 Next Best Move
             </h3>
             <p className="text-sm text-slate-600 mb-4">
                 Your <strong>Conversion</strong> pillar is currently the bottleneck (40%). 
                 Focus on completing the <span className="font-bold text-slate-900">Email Automation</span> and <span className="font-bold text-slate-900">VSL Creative</span> to unblock flow.
             </p>
-            <button className="w-full py-2.5 bg-[#0EB869] text-white text-sm font-bold rounded-lg hover:bg-[#0B9655] transition-colors">
+            <button className="w-full py-2.5 bg-[#16A349] text-white text-sm font-bold rounded-lg hover:bg-[#149641] transition-colors">
                 Go to Funnel Builder
             </button>
         </div>
@@ -229,7 +229,7 @@ const PillarCard: React.FC<{
     isLocked?: boolean;
 }> = ({ title, icon: Icon, description, stats, color, bgColor, borderColor, children, isLocked }) => {
     return (
-        <div className={`bg-white rounded-xl border ${stats.progress === 100 ? 'border-[#0EB869]' : 'border-slate-200'} shadow-sm flex flex-col h-full relative overflow-hidden group hover:shadow-md transition-shadow`}>
+        <div className={`bg-white rounded-xl border ${stats.progress === 100 ? 'border-[#16A349]' : 'border-slate-200'} shadow-sm flex flex-col h-full relative overflow-hidden group hover:shadow-md transition-shadow`}>
             {isLocked && (
                 <div className="absolute inset-0 bg-slate-50/80 backdrop-blur-[1px] z-20 flex flex-col items-center justify-center text-slate-400">
                     <Lock size={32} className="mb-2" />
@@ -261,7 +261,7 @@ const PillarCard: React.FC<{
                 {/* Progress Bar */}
                 <div className="w-full h-1.5 bg-slate-100 rounded-full mb-4">
                     <div 
-                        className={`h-1.5 rounded-full transition-all duration-1000 ${stats.progress === 100 ? 'bg-[#0EB869]' : color.replace('text-', 'bg-')}`} 
+                        className={`h-1.5 rounded-full transition-all duration-1000 ${stats.progress === 100 ? 'bg-[#16A349]' : color.replace('text-', 'bg-')}`} 
                         style={{ width: `${stats.progress}%` }}
                     ></div>
                 </div>
@@ -274,7 +274,7 @@ const PillarCard: React.FC<{
              {/* Footer Status */}
              <div className="p-3 border-t border-slate-50 bg-slate-50/50 text-center">
                 <span className={`text-[11px] font-bold uppercase tracking-wider ${
-                    stats.status === 'optimized' ? 'text-[#0EB869]' : 
+                    stats.status === 'optimized' ? 'text-[#16A349]' : 
                     stats.status === 'in-progress' ? 'text-blue-500' : 
                     stats.status === 'warning' ? 'text-amber-500' : 'text-slate-400'
                 }`}>
@@ -288,7 +288,7 @@ const PillarCard: React.FC<{
 const CheckListItem = ({ label, done }: { label: string, done?: boolean }) => (
     <div className={`flex items-start gap-2 text-[13px] ${done ? 'text-slate-400' : 'text-slate-600'}`}>
         {done ? (
-            <CheckCircle2 size={16} className="text-[#0EB869] shrink-0 mt-0.5" />
+            <CheckCircle2 size={16} className="text-[#16A349] shrink-0 mt-0.5" />
         ) : (
             <div className="w-4 h-4 rounded-full border border-slate-300 shrink-0 mt-0.5"></div>
         )}
@@ -302,7 +302,7 @@ const AlertItem = ({ title, desc, action }: { title: string, desc: string, actio
             <div className="text-[14px] font-bold text-slate-900 mb-1">{title}</div>
             <p className="text-[12px] text-slate-500 leading-relaxed">{desc}</p>
         </div>
-        <button className="text-[12px] font-bold text-[#0EB869] hover:underline whitespace-nowrap ml-4 mt-1">
+        <button className="text-[12px] font-bold text-[#16A349] hover:underline whitespace-nowrap ml-4 mt-1">
             {action} <ArrowRight size={10} className="inline ml-0.5" />
         </button>
     </div>

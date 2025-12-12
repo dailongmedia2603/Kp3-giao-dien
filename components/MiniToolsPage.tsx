@@ -138,7 +138,7 @@ const ROICalculatorTool: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         {/* Left Column: Inputs */}
         <div className="flex-1 bg-white rounded-xl border border-slate-200 shadow-sm p-6 lg:p-8">
             <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
-                <Activity size={20} className="text-[#0EB869]" />
+                <Activity size={20} className="text-[#16A349]" />
                 Campaign Inputs
             </h3>
 
@@ -242,7 +242,7 @@ const ROICalculatorTool: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                 {/* Header */}
                 <div className="p-6 bg-slate-800 border-b border-slate-700">
                     <h3 className="text-xl font-bold text-white mb-1 flex items-center gap-2">
-                         NGHIAKK <span className="text-[#0EB869]">KP3</span>
+                         NGHIAKK <span className="text-[#16A349]">KP3</span>
                     </h3>
                     <p className="text-slate-400 text-xs leading-relaxed">
                         Based on these numbers, here is what you could expect for return on investment.
@@ -272,7 +272,7 @@ const ROICalculatorTool: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                     <div className="h-px bg-slate-800 my-2"></div>
 
                     {/* Bottom Funnel / Financials */}
-                    <ResultRow label="Sales Closed" value={formatNumber(results.sales)} highlight color="text-[#0EB869]" />
+                    <ResultRow label="Sales Closed" value={formatNumber(results.sales)} highlight color="text-[#16A349]" />
                     <ResultRow label="Acquisition Cost (CPA)" value={formatCurrency(results.cpa)} />
                     
                     <div className="mt-6 pt-6 border-t border-slate-700">
@@ -286,13 +286,13 @@ const ROICalculatorTool: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                         </div>
                          <div className="flex justify-between items-end mb-4">
                              <span className="text-sm font-medium text-slate-400">Net Profit</span>
-                             <span className={`text-xl font-bold ${results.profit > 0 ? 'text-[#0EB869]' : 'text-red-500'}`}>
+                             <span className={`text-xl font-bold ${results.profit > 0 ? 'text-[#16A349]' : 'text-red-500'}`}>
                                 {formatCurrency(results.profit)}
                              </span>
                         </div>
                         
                         {/* ROAS Badge */}
-                        <div className="bg-[#0EB869] rounded-lg p-4 text-center">
+                        <div className="bg-[#16A349] rounded-lg p-4 text-center">
                             <div className="text-xs font-bold text-white/80 uppercase mb-1">Lifetime ROAS</div>
                             <div className="text-3xl font-bold text-white">{results.roas.toFixed(2)}x</div>
                         </div>
@@ -329,7 +329,7 @@ const InputSlider: React.FC<{
                         type="number" 
                         value={value}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(Number(e.target.value))}
-                        className="w-20 text-right font-bold text-slate-900 text-[15px] border-b border-transparent hover:border-slate-300 focus:border-[#0EB869] focus:outline-none bg-transparent p-0"
+                        className="w-20 text-right font-bold text-slate-900 text-[15px] border-b border-transparent hover:border-slate-300 focus:border-[#16A349] focus:outline-none bg-transparent p-0"
                     />
                     {suffix && <span className="text-[14px] font-bold text-slate-900 ml-0.5">{suffix}</span>}
                 </div>
@@ -341,7 +341,7 @@ const InputSlider: React.FC<{
                 step={step} 
                 value={value}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0EB869] hover:bg-slate-300 transition-colors"
+                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#16A349] hover:bg-slate-300 transition-colors"
             />
         </div>
     );
@@ -416,7 +416,7 @@ export const MiniToolsPage: React.FC = () => {
       description: "Advanced projection for Service Based Business funnels. Calculate CPA, ROAS and Profit.",
       category: "Finance",
       icon: Calculator,
-      color: "#0EB869" // Emerald
+      color: "#16A349" // Emerald
     }
   ];
 
@@ -455,7 +455,7 @@ export const MiniToolsPage: React.FC = () => {
         <div className="flex items-center gap-2 mb-6 text-[13px] text-slate-500">
           <Home size={16} className="text-slate-400" />
           <ChevronRight size={14} className="text-slate-300" />
-          <span className="bg-[#E8FCF3] text-[#0EB869] px-3 py-1 rounded text-xs font-bold">
+          <span className="bg-[#E8F5E9] text-[#16A349] px-3 py-1 rounded text-xs font-bold">
             Mini Tools
           </span>
         </div>
@@ -476,7 +476,7 @@ export const MiniToolsPage: React.FC = () => {
             placeholder="Search for a tool..." 
             value={searchTerm}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869] text-sm text-slate-700 placeholder:text-slate-400 shadow-sm"
+            className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349] text-sm text-slate-700 placeholder:text-slate-400 shadow-sm"
           />
         </div>
       </div>
@@ -487,7 +487,7 @@ export const MiniToolsPage: React.FC = () => {
           <div 
             key={tool.id}
             onClick={() => setActiveToolId(tool.id)}
-            className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-[#86EFAC] transition-all duration-200 group flex flex-col cursor-pointer h-full"
+            className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-[#A5D6A7] transition-all duration-200 group flex flex-col cursor-pointer h-full"
           >
             <div className="p-6 flex flex-col h-full">
               {/* Header */}
@@ -504,7 +504,7 @@ export const MiniToolsPage: React.FC = () => {
               </div>
 
               {/* Content */}
-              <h3 className="text-[16px] font-bold text-slate-900 mb-2 group-hover:text-[#0EB869] transition-colors">
+              <h3 className="text-[16px] font-bold text-slate-900 mb-2 group-hover:text-[#16A349] transition-colors">
                 {tool.title}
               </h3>
               <p className="text-[13px] text-slate-500 leading-relaxed mb-6 flex-1">
@@ -516,7 +516,7 @@ export const MiniToolsPage: React.FC = () => {
                 <span className="text-[12px] font-semibold text-slate-400 group-hover:text-slate-600 transition-colors">
                   v1.0
                 </span>
-                <button className="flex items-center gap-1 text-[13px] font-bold text-[#0EB869] hover:underline">
+                <button className="flex items-center gap-1 text-[13px] font-bold text-[#16A349] hover:underline">
                   Open Tool
                   <ExternalLink size={12} />
                 </button>
@@ -526,7 +526,7 @@ export const MiniToolsPage: React.FC = () => {
         ))}
 
         {/* Add New Tool Placeholder */}
-        <div className="border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center p-6 text-center text-slate-400 hover:border-[#0EB869] hover:text-[#0EB869] hover:bg-slate-50/50 transition-all cursor-pointer min-h-[200px]">
+        <div className="border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center p-6 text-center text-slate-400 hover:border-[#16A349] hover:text-[#16A349] hover:bg-slate-50/50 transition-all cursor-pointer min-h-[200px]">
            <Wrench size={32} strokeWidth={1.5} className="mb-3 opacity-50" />
            <span className="text-sm font-bold">Request a Tool</span>
            <span className="text-xs opacity-70 mt-1">Need something custom?</span>

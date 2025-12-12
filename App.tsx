@@ -247,7 +247,7 @@ const AppContent: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen w-screen bg-[#FDFDFD]">
-        <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-[#0EB869]"></div>
+        <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-[#16A349]"></div>
       </div>
     );
   }

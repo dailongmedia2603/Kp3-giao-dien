@@ -67,7 +67,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ label, icon: Icon, isActive, 
       className={`
         group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'justify-between px-3'} py-2 rounded-lg cursor-pointer transition-all duration-200
         ${isActive 
-          ? 'bg-white text-[#0EB869] shadow-sm ring-1 ring-slate-100' 
+          ? 'bg-white text-[#16A349] shadow-sm ring-1 ring-slate-100' 
           : 'text-slate-600 hover:bg-gray-100 hover:text-slate-900'}
       `}
       title={isCollapsed ? label : undefined}
@@ -76,7 +76,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ label, icon: Icon, isActive, 
         <Icon 
           size={18} 
           strokeWidth={2} 
-          className={`shrink-0 ${isActive ? 'text-[#0EB869]' : 'text-slate-500 group-hover:text-slate-900'}`} 
+          className={`shrink-0 ${isActive ? 'text-[#16A349]' : 'text-slate-500 group-hover:text-slate-900'}`} 
         />
         {!isCollapsed && (
           <span className="text-[13px] font-medium whitespace-nowrap overflow-hidden transition-all duration-200">
@@ -93,8 +93,8 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ label, icon: Icon, isActive, 
 
       {isCollapsed && badge && (
         <span className="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0EB869] opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#0EB869]"></span>
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#16A349] opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#16A349]"></span>
         </span>
       )}
     </div>

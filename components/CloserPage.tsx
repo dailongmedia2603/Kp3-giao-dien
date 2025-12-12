@@ -30,7 +30,7 @@ export const CloserPage: React.FC = () => {
         <div className="flex items-center gap-2 mb-6 text-[13px] text-slate-500">
           <Home size={16} className="text-slate-400" />
           <ChevronRight size={14} className="text-slate-300" />
-          <span className="bg-[#E8FCF3] text-[#0EB869] px-3 py-1 rounded text-xs font-bold">
+          <span className="bg-[#E8F5E9] text-[#16A349] px-3 py-1 rounded text-xs font-bold">
             Closer Hub
           </span>
         </div>
@@ -83,7 +83,7 @@ const TabButton = ({ isActive, onClick, icon: Icon, label }: { isActive: boolean
     onClick={onClick}
     className={`flex-1 min-w-[120px] py-3 px-4 rounded-lg flex items-center justify-center gap-2 text-[13px] font-bold transition-all duration-200 whitespace-nowrap
       ${isActive 
-        ? 'bg-white text-[#0EB869] shadow-sm ring-1 ring-slate-200' 
+        ? 'bg-white text-[#16A349] shadow-sm ring-1 ring-slate-200' 
         : 'text-slate-500 hover:bg-white/60 hover:text-slate-700'
       }`}
   >
@@ -99,9 +99,9 @@ const PipelineView = () => {
             <div className="flex justify-between items-center mb-6">
                 <div className="relative w-64">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                    <input type="text" placeholder="Search deals..." className="w-full pl-9 pr-4 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:border-[#0EB869]" />
+                    <input type="text" placeholder="Search deals..." className="w-full pl-9 pr-4 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:border-[#16A349]" />
                 </div>
-                <button className="flex items-center gap-2 px-4 py-2 bg-[#0EB869] text-white rounded-lg text-sm font-bold hover:bg-[#0B9655] transition-colors">
+                <button className="flex items-center gap-2 px-4 py-2 bg-[#16A349] text-white rounded-lg text-sm font-bold hover:bg-[#149641] transition-colors">
                     <Plus size={16} /> Add Deal
                 </button>
             </div>
@@ -129,7 +129,7 @@ const PipelineView = () => {
                  <PipelineColumn 
                     title="Closed Won" 
                     count={3} 
-                    color="bg-[#0EB869]"
+                    color="bg-[#16A349]"
                     items={[
                         { id: 6, name: "Tony Stark", value: "$50,000", task: "Onboarding", time: "3d ago", won: true },
                         { id: 7, name: "Bruce Wayne", value: "$25,000", task: "Paid Invoice", time: "1w ago", won: true },
@@ -164,13 +164,13 @@ const PipelineColumn = ({ title, count, color, items }: { title: string, count: 
                         <div className="font-bold text-slate-800 text-sm">{item.name}</div>
                         <button className="text-slate-300 hover:text-slate-500"><MoreHorizontal size={14} /></button>
                     </div>
-                    <div className="flex items-center gap-1 text-[#0EB869] font-bold text-xs mb-3">
+                    <div className="flex items-center gap-1 text-[#16A349] font-bold text-xs mb-3">
                         <DollarSign size={12} />
                         {item.value}
                     </div>
                     <div className="flex items-center justify-between pt-2 border-t border-slate-50">
                          <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                             {item.won ? <CheckCircle2 size={12} className="text-[#0EB869]" /> : 
+                             {item.won ? <CheckCircle2 size={12} className="text-[#16A349]" /> : 
                               item.lost ? <XCircle size={12} className="text-red-500" /> :
                               <Clock size={12} />}
                              {item.task}
@@ -179,7 +179,7 @@ const PipelineColumn = ({ title, count, color, items }: { title: string, count: 
                     </div>
                 </div>
             ))}
-            <button className="w-full py-2 border border-dashed border-slate-300 rounded-lg text-slate-400 text-xs font-medium hover:border-[#0EB869] hover:text-[#0EB869] transition-colors">
+            <button className="w-full py-2 border border-dashed border-slate-300 rounded-lg text-slate-400 text-xs font-medium hover:border-[#16A349] hover:text-[#16A349] transition-colors">
                 + New Deal
             </button>
         </div>
@@ -196,7 +196,7 @@ const ScriptHubView = () => {
             <div className="w-full lg:w-64 bg-slate-50 border-r border-slate-200 flex flex-col">
                 <div className="p-4 border-b border-slate-200">
                     <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                        <BookOpen size={16} className="text-[#0EB869]" />
+                        <BookOpen size={16} className="text-[#16A349]" />
                         Script Modules
                     </h3>
                 </div>
@@ -248,7 +248,7 @@ const ScriptHubView = () => {
             {/* Main Script Content */}
             <div className="flex-1 overflow-y-auto p-8 bg-white relative">
                  <div className="max-w-3xl mx-auto">
-                    <div className="flex items-center gap-2 mb-2 text-[#0EB869] font-bold text-xs uppercase tracking-wide">
+                    <div className="flex items-center gap-2 mb-2 text-[#16A349] font-bold text-xs uppercase tracking-wide">
                         Module 14: Samurai Sword Sales Script
                     </div>
                     
@@ -316,12 +316,12 @@ const ScriptNavItem = ({ label, isActive, onClick, isAlert }: { label: string, i
         onClick={onClick}
         className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-between
             ${isActive 
-                ? 'bg-white text-[#0EB869] shadow-sm ring-1 ring-slate-100' 
+                ? 'bg-white text-[#16A349] shadow-sm ring-1 ring-slate-100' 
                 : 'text-slate-600 hover:bg-white hover:text-slate-900'
             }`}
     >
         <span>{label}</span>
-        {isAlert && <ShieldAlert size={14} className={isActive ? 'text-[#0EB869]' : 'text-slate-300'} />}
+        {isAlert && <ShieldAlert size={14} className={isActive ? 'text-[#16A349]' : 'text-slate-300'} />}
     </button>
 )
 
@@ -341,7 +341,7 @@ const CalendarView = () => {
                 <div className="flex gap-2">
                     <button className="px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded border border-transparent">Day</button>
                     <button className="px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded border border-transparent">Week</button>
-                    <button className="px-3 py-1.5 text-sm font-bold bg-[#E8FCF3] text-[#0EB869] rounded border border-[#86EFAC]">Month</button>
+                    <button className="px-3 py-1.5 text-sm font-bold bg-[#E8F5E9] text-[#16A349] rounded border border-[#A5D6A7]">Month</button>
                 </div>
              </div>
 
@@ -361,13 +361,13 @@ const CalendarView = () => {
                             <div key={i} className={`bg-white min-h-[100px] p-2 relative group hover:bg-slate-50 transition-colors ${day <= 0 || day > 31 ? 'bg-slate-50/50' : ''}`}>
                                 {day > 0 && day <= 31 && (
                                     <>
-                                        <span className={`text-sm font-medium ${isToday ? 'bg-[#0EB869] text-white w-6 h-6 flex items-center justify-center rounded-full' : 'text-slate-700'}`}>
+                                        <span className={`text-sm font-medium ${isToday ? 'bg-[#16A349] text-white w-6 h-6 flex items-center justify-center rounded-full' : 'text-slate-700'}`}>
                                             {day}
                                         </span>
                                         
                                         {/* Mock Appointments */}
                                         {day === 24 && (
-                                            <div className="mt-2 bg-[#E8FCF3] border border-[#86EFAC] p-1.5 rounded text-[11px] text-[#0EB869] font-bold truncate cursor-pointer hover:shadow-sm">
+                                            <div className="mt-2 bg-[#E8F5E9] border border-[#A5D6A7] p-1.5 rounded text-[11px] text-[#16A349] font-bold truncate cursor-pointer hover:shadow-sm">
                                                 10:00 AM - Sarah C.
                                             </div>
                                         )}

@@ -39,9 +39,9 @@ const LoginPage = () => {
                 className: {
                   container: 'space-y-4',
                   label: 'block text-sm font-bold text-slate-700',
-                  input: 'w-full p-3 mt-1 border border-slate-300 rounded-lg text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869]',
-                  button: 'w-full py-3 mt-4 bg-[#0EB869] text-white text-sm font-bold rounded-lg hover:bg-[#0B9655] transition-colors shadow-sm',
-                  anchor: 'text-sm text-center block text-slate-600 hover:text-[#0EB869] hover:underline',
+                  input: 'w-full p-3 mt-1 border border-slate-300 rounded-lg text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349]',
+                  button: 'w-full py-3 mt-4 bg-[#16A349] text-white text-sm font-bold rounded-lg hover:bg-[#149641] transition-colors shadow-sm',
+                  anchor: 'text-sm text-center block text-slate-600 hover:text-[#16A349] hover:underline',
                   divider: 'hidden',
                   message: 'text-sm text-center text-red-500 mt-2',
                 },

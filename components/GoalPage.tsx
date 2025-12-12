@@ -26,7 +26,7 @@ export const GoalPage: React.FC = () => {
         <ChevronRight size={14} className="text-slate-300" />
         <span>Goal</span>
         <ChevronRight size={14} className="text-slate-300" />
-        <span className="bg-[#E8FCF3] text-[#0EB869] px-3 py-1 rounded text-xs font-bold capitalize">
+        <span className="bg-[#E8F5E9] text-[#16A349] px-3 py-1 rounded text-xs font-bold capitalize">
           {activeTab} Phase
         </span>
       </div>
@@ -56,7 +56,7 @@ export const GoalPage: React.FC = () => {
                   onClick={() => setActiveTab('launching')}
                   className={`flex-1 min-w-[100px] py-3 px-4 rounded-lg flex items-center justify-center gap-2 text-[13px] font-bold transition-all duration-200 whitespace-nowrap
                     ${activeTab === 'launching' 
-                      ? 'bg-white text-[#0EB869] shadow-sm ring-1 ring-slate-200' 
+                      ? 'bg-white text-[#16A349] shadow-sm ring-1 ring-slate-200' 
                       : 'text-slate-500 hover:bg-white/60 hover:text-slate-700'
                     }`}
                 >
@@ -67,7 +67,7 @@ export const GoalPage: React.FC = () => {
                   onClick={() => setActiveTab('cook')}
                   className={`flex-1 min-w-[100px] py-3 px-4 rounded-lg flex items-center justify-center gap-2 text-[13px] font-bold transition-all duration-200 whitespace-nowrap
                     ${activeTab === 'cook' 
-                      ? 'bg-white text-[#0EB869] shadow-sm ring-1 ring-slate-200' 
+                      ? 'bg-white text-[#16A349] shadow-sm ring-1 ring-slate-200' 
                       : 'text-slate-500 hover:bg-white/60 hover:text-slate-700'
                     }`}
                 >
@@ -78,7 +78,7 @@ export const GoalPage: React.FC = () => {
                   onClick={() => setActiveTab('stabilize')}
                   className={`flex-1 min-w-[100px] py-3 px-4 rounded-lg flex items-center justify-center gap-2 text-[13px] font-bold transition-all duration-200 whitespace-nowrap
                     ${activeTab === 'stabilize' 
-                      ? 'bg-white text-[#0EB869] shadow-sm ring-1 ring-slate-200' 
+                      ? 'bg-white text-[#16A349] shadow-sm ring-1 ring-slate-200' 
                       : 'text-slate-500 hover:bg-white/60 hover:text-slate-700'
                     }`}
                 >
@@ -89,7 +89,7 @@ export const GoalPage: React.FC = () => {
                   onClick={() => setActiveTab('scale')}
                   className={`flex-1 min-w-[100px] py-3 px-4 rounded-lg flex items-center justify-center gap-2 text-[13px] font-bold transition-all duration-200 whitespace-nowrap
                     ${activeTab === 'scale' 
-                      ? 'bg-white text-[#0EB869] shadow-sm ring-1 ring-slate-200' 
+                      ? 'bg-white text-[#16A349] shadow-sm ring-1 ring-slate-200' 
                       : 'text-slate-500 hover:bg-white/60 hover:text-slate-700'
                     }`}
                 >
@@ -105,15 +105,15 @@ export const GoalPage: React.FC = () => {
                     <div className="flex items-center justify-between mb-6">
                       <h2 className="text-lg font-bold text-slate-900">Launch Phase Strategy</h2>
                       <div className="flex items-center gap-3">
-                        <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0EB869] text-white text-[13px] font-semibold hover:bg-[#0B9655] transition-colors shadow-sm">
+                        <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#16A349] text-white text-[13px] font-semibold hover:bg-[#149641] transition-colors shadow-sm">
                             <Download size={16} />
                             Export Plan
                         </button>
                       </div>
                     </div>
 
-                    <div className="bg-[#E8FCF3] border border-[#86EFAC] rounded-xl p-6 mb-6">
-                      <h3 className="text-[#0EB869] font-bold text-[15px] mb-4 flex items-center gap-2">
+                    <div className="bg-[#E8F5E9] border border-[#A5D6A7] rounded-xl p-6 mb-6">
+                      <h3 className="text-[#16A349] font-bold text-[15px] mb-4 flex items-center gap-2">
                         <Rocket size={18} />
                         Launch Checklist
                       </h3>
@@ -219,7 +219,7 @@ export const GoalPage: React.FC = () => {
                       <h2 className="text-lg font-bold text-slate-900">Scaling Roadmap</h2>
                     </div>
 
-                    <div className="bg-gradient-to-r from-[#0EB869] to-[#6EE7B7] rounded-xl p-6 text-white mb-6 shadow-md">
+                    <div className="bg-gradient-to-r from-[#16A349] to-[#6EE7B7] rounded-xl p-6 text-white mb-6 shadow-md">
                        <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
                           <TrendingUp size={20} />
                           10x Growth Plan
@@ -230,13 +230,13 @@ export const GoalPage: React.FC = () => {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                       <div className="border border-slate-200 rounded-xl p-5 hover:border-[#0EB869] transition-colors cursor-pointer group">
-                          <div className="text-slate-400 group-hover:text-[#0EB869] mb-2"><Target size={24}/></div>
+                       <div className="border border-slate-200 rounded-xl p-5 hover:border-[#16A349] transition-colors cursor-pointer group">
+                          <div className="text-slate-400 group-hover:text-[#16A349] mb-2"><Target size={24}/></div>
                           <h4 className="font-bold text-slate-900 text-sm">New Markets</h4>
                           <p className="text-slate-500 text-xs mt-1">Expand geo-targeting to UK & CA</p>
                        </div>
-                       <div className="border border-slate-200 rounded-xl p-5 hover:border-[#0EB869] transition-colors cursor-pointer group">
-                          <div className="text-slate-400 group-hover:text-[#0EB869] mb-2"><CheckCircle2 size={24}/></div>
+                       <div className="border border-slate-200 rounded-xl p-5 hover:border-[#16A349] transition-colors cursor-pointer group">
+                          <div className="text-slate-400 group-hover:text-[#16A349] mb-2"><CheckCircle2 size={24}/></div>
                           <h4 className="font-bold text-slate-900 text-sm">Affiliate Program</h4>
                           <p className="text-slate-500 text-xs mt-1">Recruit top 10 industry partners</p>
                        </div>
@@ -264,7 +264,7 @@ export const GoalPage: React.FC = () => {
                 <label className="block text-[13px] font-bold text-slate-700 mb-2">
                   Primary Objective
                 </label>
-                <select className="w-full p-3 bg-white border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869]">
+                <select className="w-full p-3 bg-white border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349]">
                    <option>Revenue Growth</option>
                    <option>User Acquisition</option>
                    <option>Brand Awareness</option>
@@ -281,7 +281,7 @@ export const GoalPage: React.FC = () => {
                   <input 
                     type="text" 
                     defaultValue="5,000"
-                    className="w-full pl-7 p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869]"
+                    className="w-full pl-7 p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349]"
                   />
                 </div>
               </div>
@@ -293,12 +293,12 @@ export const GoalPage: React.FC = () => {
                 </label>
                 <input 
                     type="date" 
-                    className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869]"
+                    className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349]"
                   />
               </div>
 
               {/* Action Button */}
-              <button className="w-full py-3 bg-[#0EB869] text-white text-[14px] font-bold rounded-lg hover:bg-[#0B9655] transition-colors shadow-sm mt-4">
+              <button className="w-full py-3 bg-[#16A349] text-white text-[14px] font-bold rounded-lg hover:bg-[#149641] transition-colors shadow-sm mt-4">
                  Update Settings
               </button>
 
@@ -317,7 +317,7 @@ export const GoalPage: React.FC = () => {
 const CheckItem = ({ text, checked = false }: { text: string; checked?: boolean }) => (
   <div className="flex items-start gap-3">
     <div className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center shrink-0 
-      ${checked ? 'bg-[#0EB869] border-[#0EB869]' : 'border-slate-300 bg-white'}`}>
+      ${checked ? 'bg-[#16A349] border-[#16A349]' : 'border-slate-300 bg-white'}`}>
       {checked && <CheckCircle2 size={14} className="text-white" />}
     </div>
     <span className={`text-[14px] ${checked ? 'text-slate-400 line-through' : 'text-slate-700 font-medium'}`}>
