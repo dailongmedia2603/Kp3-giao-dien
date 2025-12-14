@@ -28,11 +28,13 @@ import {
   Globe,
   BookOpen,
   Type,
-  Smile
+  Smile,
+  Trash2
 } from 'lucide-react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
-import { callApi } from '@/src/utils/api'; // Import hàm mới
+import { callApi } from '@/src/utils/api';
+import toast from 'react-hot-toast';
 
 // --- Types ---
 interface AvatarProfile {
@@ -241,6 +243,23 @@ export const DreamBuyerPage: React.FC = () => {
     setIsSaving(false);
   };
 
+  const handleDeleteAvatar = async (avatarId: string) => {
+    if (!user) return;
+
+    const { error } = await supabase
+      .from('dream_buyer_avatars')
+      .delete()
+      .match({ id: avatarId, user_id: user.id });
+
+    if (error) {
+      console.error('Error deleting avatar:', error);
+      toast.error('Xóa avatar thất bại.');
+    } else {
+      setAvatars(prevAvatars => prevAvatars.filter(avatar => avatar.id !== avatarId));
+      toast.success('Đã xóa avatar thành công.');
+    }
+  };
+
   const handleViewDetail = (avatar: AvatarProfile) => {
     setSelectedAvatar(avatar);
     setView('detail');
@@ -334,43 +353,72 @@ export const DreamBuyerPage: React.FC = () => {
                   {avatars.map(avatar => (
                       <div 
                           key={avatar.id}
-                          onClick={() => handleViewDetail(avatar)}
-                          className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-[#86EFAC] transition-all cursor-pointer group flex flex-col h-full"
+                          className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-[#86EFAC] transition-all group flex flex-col h-full"
                       >
-                          <div className="p-6">
-                              <div className="flex justify-between items-start mb-4">
-                                  <div className="w-14 h-14 rounded-full bg-[#E8FCF3] border-2 border-white shadow-sm flex items-center justify-center text-[#0EB869] text-xl font-bold">
+                          <div className="p-6 flex-1 cursor-pointer" onClick={() => handleViewDetail(avatar)}>
+                              <div className="flex items-start gap-4 mb-4">
+                                  <div className="w-14 h-14 rounded-full bg-[#E8FCF3] border-2 border-white shadow-sm flex items-center justify-center text-[#0EB869] text-xl font-bold shrink-0">
                                       {avatar.persona_name ? avatar.persona_name.charAt(0) : 'A'}
                                   </div>
-                                  <div className="text-right">
-                                      <div className="px-2 py-1 bg-slate-50 border border-slate-100 rounded text-[10px] font-bold text-slate-500 uppercase tracking-wide inline-block mb-1">
-                                          {avatar.industry || 'Chưa xác định'}
-                                      </div>
-                                      <div className="text-[12px] font-bold text-slate-400">
-                                          {avatar.age || 'N/A'}
-                                      </div>
+                                  <div>
+                                      <h3 className="text-lg font-bold text-slate-900 group-hover:text-[#0EB869] transition-colors">
+                                          {avatar.persona_name}
+                                      </h3>
+                                      <p className="text-sm text-slate-500">{avatar.name}</p>
                                   </div>
                               </div>
-                              <h3 className="text-lg font-bold text-slate-900 mb-1 group-hover:text-[#0EB869] transition-colors">
-                                  {avatar.persona_name}
-                              </h3>
-                              <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">{avatar.name}</p>
-                              <p className="text-sm text-slate-500 mb-4">{avatar.role} @ {avatar.company_size}</p>
                               
-                              <div className="bg-red-50 rounded-lg p-3 border border-red-100 mb-4">
-                                  <div className="text-[11px] font-bold text-red-500 uppercase mb-1 flex items-center gap-1">
-                                      <AlertTriangle size={12} /> Top Pain Point
+                              <div className="grid grid-cols-2 gap-4 mb-4 text-xs">
+                                  <div className="bg-slate-50 p-2 rounded-md">
+                                      <div className="font-bold text-slate-400 uppercase">Industry</div>
+                                      <div className="font-medium text-slate-700 truncate">{avatar.industry || 'N/A'}</div>
                                   </div>
-                                  <p className="text-[13px] text-slate-700 line-clamp-2">
-                                      "{avatar.pain_points && avatar.pain_points[0] || avatar.q3_frustrations || 'Chưa xác định'}"
-                                  </p>
+                                  <div className="bg-slate-50 p-2 rounded-md">
+                                      <div className="font-bold text-slate-400 uppercase">Age</div>
+                                      <div className="font-medium text-slate-700">{avatar.age || 'N/A'}</div>
+                                  </div>
+                              </div>
+
+                              <div className="space-y-4">
+                                  <div className="bg-red-50 rounded-lg p-3 border border-red-100">
+                                      <div className="text-[11px] font-bold text-red-500 uppercase mb-1 flex items-center gap-1">
+                                          <AlertTriangle size={12} /> Top Pain Point
+                                      </div>
+                                      <p className="text-[13px] text-slate-700 line-clamp-2">
+                                          "{avatar.pain_points && avatar.pain_points[0] || avatar.q3_frustrations || 'Chưa xác định'}"
+                                      </p>
+                                  </div>
+
+                                  {avatar.summary && (
+                                      <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
+                                          <div className="text-[11px] font-bold text-blue-500 uppercase mb-1 flex items-center gap-1">
+                                              <BrainCircuit size={12} /> AI Summary
+                                          </div>
+                                          <p className="text-[13px] text-slate-700 line-clamp-3 italic">
+                                              "{avatar.summary}"
+                                          </p>
+                                      </div>
+                                  )}
                               </div>
                           </div>
                           <div className="mt-auto border-t border-slate-50 p-4 bg-slate-50/50 rounded-b-xl flex justify-between items-center">
-                              <span className="text-xs font-medium text-slate-400">Updated today</span>
-                              <span className="text-xs font-bold text-[#0EB869] flex items-center gap-1">
-                                  View Dossier <ChevronRight size={12} />
-                              </span>
+                              <button 
+                                  onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (window.confirm('Bạn có chắc chắn muốn xóa avatar này không?')) {
+                                          handleDeleteAvatar(avatar.id);
+                                      }
+                                  }}
+                                  className="text-xs font-bold text-red-500 hover:text-red-700 flex items-center gap-1 p-1 rounded hover:bg-red-50"
+                              >
+                                  <Trash2 size={14} /> Xoá
+                              </button>
+                              <button 
+                                  onClick={() => handleViewDetail(avatar)}
+                                  className="text-xs font-bold text-[#0EB869] flex items-center gap-1"
+                              >
+                                  Xem chi tiết <ChevronRight size={12} />
+                              </button>
                           </div>
                       </div>
                   ))}
