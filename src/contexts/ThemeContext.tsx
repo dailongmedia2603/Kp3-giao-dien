@@ -52,7 +52,32 @@ const ThemeContext = createContext<ThemeContextType>({
 
 // Component Provider để bao bọc ứng dụng
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [theme, setTheme] = useState<Theme>(defaultTheme);
+  const THEME_STORAGE_KEY = 'kp3-dashboard-theme';
+
+  const [theme, setThemeState] = useState<Theme>(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+        if (savedTheme) {
+          return JSON.parse(savedTheme);
+        }
+      }
+    } catch (error) {
+      console.error("Could not load theme from localStorage", error);
+    }
+    return defaultTheme;
+  });
+
+  const setTheme = (newTheme: Theme) => {
+    try {
+      setThemeState(newTheme);
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(newTheme));
+      }
+    } catch (error) {
+      console.error("Could not save theme to localStorage", error);
+    }
+  };
 
   const themeStyle = useMemo(() => {
     return `
