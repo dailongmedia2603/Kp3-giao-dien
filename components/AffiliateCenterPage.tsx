@@ -99,11 +99,11 @@ export const AffiliateCenterPage: React.FC = () => {
             Affiliate Center
           </span>
         </div>
-        <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight flex items-center gap-3">
+        <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight flex items-center gap-3">
           <Handshake className="text-blue-600" size={28} />
           Partner Portal
         </h1>
-        <p className="text-slate-500 text-[15px] leading-relaxed mb-8 max-w-2xl mx-auto">
+        <p className="text-slate-500 text-[13px] leading-relaxed mb-8 max-w-2xl mx-auto">
           Manage your remote sales army. Track performance, manage payouts, and empower your partners.
         </p>
         {/* View Toggle */}

@@ -79,10 +79,10 @@ export const TeamHRPage: React.FC = () => {
             Team & HR
           </span>
         </div>
-        <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">
+        <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight">
           Team Performance & HR
         </h1>
-        <p className="text-slate-500 text-[15px] leading-relaxed mb-8 max-w-2xl mx-auto">
+        <p className="text-slate-500 text-[13px] leading-relaxed mb-8 max-w-2xl mx-auto">
           Gamify performance, optimize roles with Clockwork principles, and build your A-Team.
         </p>
       </div>

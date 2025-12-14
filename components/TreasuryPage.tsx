@@ -106,11 +106,11 @@ export const TreasuryPage: React.FC = () => {
             Treasury
           </span>
         </div>
-        <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight flex items-center gap-3">
+        <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight flex items-center gap-3">
           <Landmark className="text-blue-600" size={28} />
           Financial Command Center
         </h1>
-        <p className="text-slate-500 text-[15px] leading-relaxed mb-8 max-w-2xl mx-auto">
+        <p className="text-slate-500 text-[13px] leading-relaxed mb-8 max-w-2xl mx-auto">
           A real-time cashflow allocation system based on the "Profit First" methodology.
         </p>
       </div>

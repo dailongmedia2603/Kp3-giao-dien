@@ -30,11 +30,11 @@ export const DirectResponsePage: React.FC<DirectResponsePageProps> = ({ onNaviga
           </span>
         </div>
         
-        <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">
+        <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight">
           Direct Response Headlines
         </h1>
         
-        <p className="text-slate-500 text-center max-w-2xl text-[15px] leading-relaxed">
+        <p className="text-slate-500 text-center max-w-2xl text-[13px] leading-relaxed">
           Create powerful eyebrows, headlines and subheadlines designed to<br/>
           capture attention and drive action on your landing pages.
         </p>

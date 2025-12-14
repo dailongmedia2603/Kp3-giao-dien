@@ -77,10 +77,10 @@ export const EducationHubPage: React.FC = () => {
             Education Hub
           </span>
         </div>
-        <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">
+        <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight">
           Your Learning & Community Platform
         </h1>
-        <p className="text-slate-500 text-[15px] leading-relaxed mb-8 max-w-2xl mx-auto">
+        <p className="text-slate-500 text-[13px] leading-relaxed mb-8 max-w-2xl mx-auto">
           Access courses, connect with peers, and track your progress all in one place.
         </p>
       </div>
@@ -255,10 +255,10 @@ const CoursePlayerView: React.FC<{ course: any, onBack: () => void }> = ({ cours
                 <div className="flex-1 overflow-y-auto p-2 space-y-1">
                     {MOCK_LESSONS.map(lesson => (
                         <div key={lesson.id} className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors ${
-                            lesson.isCurrent ? 'bg-[#E8FCF3] text-[#0EB869]' : lesson.isLocked ? 'bg-slate-50 text-slate-400' : 'hover:bg-slate-50 text-slate-700'
+                            lesson.isCurrent ? 'bg-[#E8F5E9] text-[#16A349]' : lesson.isLocked ? 'bg-slate-50 text-slate-400' : 'hover:bg-slate-50 text-slate-700'
                         }`}>
                             <div className="flex items-center gap-3">
-                                {lesson.completed ? <CheckCircle2 size={18} className="text-[#0EB869]" /> : lesson.isLocked ? <Lock size={18} /> : <PlayCircle size={18} />}
+                                {lesson.completed ? <CheckCircle2 size={18} className="text-[#16A349]" /> : lesson.isLocked ? <Lock size={18} /> : <PlayCircle size={18} />}
                                 <span className={`font-medium text-sm ${lesson.isCurrent && 'font-bold'}`}>{lesson.title}</span>
                             </div>
                             <span className="text-xs font-mono">{lesson.duration}</span>
@@ -284,14 +284,14 @@ const CoursePlayerView: React.FC<{ course: any, onBack: () => void }> = ({ cours
                         <div className="space-y-3">
                             {actionItems.map(item => (
                                 <label key={item.id} className="flex items-start gap-3 cursor-pointer">
-                                    <input type="checkbox" checked={item.completed} onChange={() => toggleActionItem(item.id)} className="h-5 w-5 rounded border-slate-300 text-[#0EB869] focus:ring-[#0EB869]/50 mt-0.5" />
+                                    <input type="checkbox" checked={item.completed} onChange={() => toggleActionItem(item.id)} className="h-5 w-5 rounded border-slate-300 text-[#16A349] focus:ring-[#16A349]/50 mt-0.5" />
                                     <span className={`text-sm ${item.completed ? 'text-slate-400 line-through' : 'text-slate-700'}`}>{item.text}</span>
                                 </label>
                             ))}
                         </div>
                     </div>
 
-                    <button disabled={!allActionsCompleted} className="w-full py-3 mt-6 rounded-lg text-white font-bold text-sm shadow-md transition-all disabled:bg-slate-300 disabled:cursor-not-allowed bg-[#0EB869] hover:bg-[#0B9655]">
+                    <button disabled={!allActionsCompleted} className="w-full py-3 mt-6 rounded-lg text-white font-bold text-sm shadow-md transition-all disabled:bg-slate-300 disabled:cursor-not-allowed bg-[#16A349] hover:bg-[#149641]">
                         {allActionsCompleted ? 'Mark as Complete & Continue' : 'Complete All Actions to Continue'}
                     </button>
                 </div>

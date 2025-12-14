@@ -44,11 +44,11 @@ export const LandingPageBuilder: React.FC = () => {
           </span>
         </div>
 
-        <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">
+        <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight">
           High-Converting Funnel Builder
         </h1>
         
-        <p className="text-slate-500 text-[15px] leading-relaxed mb-8 max-w-2xl mx-auto">
+        <p className="text-slate-500 text-[13px] leading-relaxed mb-8 max-w-2xl mx-auto">
           Build aggressive "Direct Response" style landing pages optimized for cold traffic conversions.
         </p>
       </div>

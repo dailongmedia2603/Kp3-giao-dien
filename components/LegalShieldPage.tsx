@@ -94,11 +94,11 @@ export const LegalShieldPage: React.FC = () => {
             Legal Shield
           </span>
         </div>
-        <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight flex items-center gap-3">
+        <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight flex items-center gap-3">
           <Shield size={28} className="text-blue-600" />
           Legal Automation Suite
         </h1>
-        <p className="text-slate-500 text-[15px] leading-relaxed mb-8 max-w-2xl mx-auto">
+        <p className="text-slate-500 text-[13px] leading-relaxed mb-8 max-w-2xl mx-auto">
           Automate contracts, secure e-signatures, and protect your business from disputes & chargebacks.
         </p>
       </div>

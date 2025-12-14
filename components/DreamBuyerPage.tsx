@@ -212,10 +212,10 @@ export const DreamBuyerPage: React.FC = () => {
 
         {view === 'list' && (
             <>
-                <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">
+                <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight">
                 Ideal Customer Profiles
                 </h1>
-                <p className="text-slate-500 text-[15px] leading-relaxed mb-8 max-w-2xl mx-auto">
+                <p className="text-slate-500 text-[13px] leading-relaxed mb-8 max-w-2xl mx-auto">
                 Research, define, and store your Dream Buyer Avatars. Use these deep profiles to write high-converting copy and train your closers.
                 </p>
             </>

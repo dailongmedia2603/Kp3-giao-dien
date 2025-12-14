@@ -101,11 +101,11 @@ export const AssetVaultPage: React.FC = () => {
           </span>
         </div>
 
-        <h1 className="text-3xl font-bold text-slate-900 mb-2 tracking-tight flex items-center gap-3">
+        <h1 className="text-[26px] font-bold text-slate-900 mb-2 tracking-tight flex items-center gap-3">
           Asset Protection System <ShieldCheck className="text-[#0EB869]" size={32} />
         </h1>
         
-        <p className="text-slate-500 text-[15px] leading-relaxed mb-6 max-w-2xl mx-auto">
+        <p className="text-slate-500 text-[13px] leading-relaxed mb-6 max-w-2xl mx-auto">
           Prevent catastrophic loss. Monitor domains, hosting, and critical SaaS subscriptions in real-time.
         </p>
 

@@ -30,8 +30,8 @@ export const SettingsPage: React.FC = () => {
       </div>
 
       <div className="flex flex-col items-start mb-8">
-         <h1 className="text-3xl font-bold text-slate-900 mb-2 tracking-tight">Settings</h1>
-         <p className="text-slate-500 text-[15px]">Manage your workspace preferences and AI configurations.</p>
+         <h1 className="text-[26px] font-bold text-slate-900 mb-2 tracking-tight">Settings</h1>
+         <p className="text-slate-500 text-[13px]">Manage your workspace preferences and AI configurations.</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8 items-start">

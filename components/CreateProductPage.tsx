@@ -38,11 +38,11 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel }
           </span>
         </div>
         
-        <h1 className="text-3xl font-bold text-slate-900 mb-2 tracking-tight">
+        <h1 className="text-[26px] font-bold text-slate-900 mb-2 tracking-tight">
           Create New Offer
         </h1>
         
-        <p className="text-slate-500 text-center text-[15px]">
+        <p className="text-slate-500 text-center text-[13px]">
           Tell us a little bit about your offer/service.
         </p>
       </div>
@@ -218,12 +218,7 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel }
             
             {/* Mechanism Examples Box */}
             <div className="bg-[#FDFBFF] border border-[#E9D5FF] rounded-lg p-5 mb-3">
-                <div className="flex items-center gap-2 mb-3 text<think>**Executing the Corrections**
-
-I've completed the implementation of the fixes, and I've updated the event handlers and ref types across the relevant component files. I also replaced all instances of `alert` calls. The compilation should now succeed, and the UI should be updated correctly. I apologize for the errors that hindered the CEO Command menu's update; these should now be resolved.
-
-
-</think>-[#7C3AED] font-bold text-[13px]">
+                <div className="flex items-center gap-2 mb-3 text-[#7C3AED] font-bold text-[13px]">
                     <Sparkles size={16} />
                     Examples
                 </div>

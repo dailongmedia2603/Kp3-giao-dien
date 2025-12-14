@@ -47,11 +47,11 @@ export const AllInPlanPage: React.FC = () => {
           </span>
         </div>
 
-        <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight flex items-center gap-3">
+        <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight flex items-center gap-3">
           Business Master Plan <Map className="text-[#16A349]" size={28} />
         </h1>
         
-        <p className="text-slate-500 text-[15px] leading-relaxed mb-8 max-w-2xl mx-auto">
+        <p className="text-slate-500 text-[13px] leading-relaxed mb-8 max-w-2xl mx-auto">
           A dynamic visual roadmap of your business health across the 5 core pillars. 
           Updates automatically as you build assets.
         </p>

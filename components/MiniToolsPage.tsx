@@ -460,11 +460,11 @@ export const MiniToolsPage: React.FC = () => {
           </span>
         </div>
 
-        <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">
+        <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight">
           Mini Tools Hub
         </h1>
         
-        <p className="text-slate-500 text-[15px] leading-relaxed mb-8 max-w-2xl mx-auto">
+        <p className="text-slate-500 text-[13px] leading-relaxed mb-8 max-w-2xl mx-auto">
           A collection of small but mighty utilities to help streamline your daily workflow.
         </p>
 

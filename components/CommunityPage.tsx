@@ -185,7 +185,7 @@ export const CommunityPage: React.FC = () => {
             Community
           </span>
         </div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">KP3 Neighborhood</h1>
+        <h1 className="text-[26px] font-bold text-slate-900 tracking-tight">KP3 Neighborhood</h1>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8 items-start h-full min-h-0">

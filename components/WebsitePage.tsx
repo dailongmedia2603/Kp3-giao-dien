@@ -415,11 +415,11 @@ export const WebsitePage: React.FC = () => {
           </span>
         </div>
 
-        <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight flex items-center gap-3">
+        <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight flex items-center gap-3">
           Content Mission Control <Globe className="text-indigo-600" size={28} />
         </h1>
         
-        <p className="text-slate-500 text-[15px] leading-relaxed mb-8 max-w-2xl mx-auto">
+        <p className="text-slate-500 text-[13px] leading-relaxed mb-8 max-w-2xl mx-auto">
           Manage your web presence as a single source of truth. Deploy content globally.
         </p>
       </div>

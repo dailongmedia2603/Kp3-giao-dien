@@ -21,11 +21,11 @@ export const NewHeadlineSetPage: React.FC = () => {
           </span>
         </div>
         
-        <h1 className="text-3xl font-bold text-slate-900 mb-2 tracking-tight">
+        <h1 className="text-[26px] font-bold text-slate-900 mb-2 tracking-tight">
           New Headline Set
         </h1>
         
-        <p className="text-slate-500 text-center text-[15px]">
+        <p className="text-slate-500 text-center text-[13px]">
           Generates 25 Different Headlines
         </p>
       </div>

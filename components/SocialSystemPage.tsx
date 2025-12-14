@@ -39,16 +39,16 @@ export const SocialSystemPage: React.FC = () => {
         <div className="flex items-center gap-2 mb-6 text-[13px] text-slate-500">
           <Home size={16} className="text-slate-400" />
           <ChevronRight size={14} className="text-slate-300" />
-          <span className="bg-[#E8FCF3] text-[#0EB869] px-3 py-1 rounded text-xs font-bold">
+          <span className="bg-[#E8F5E9] text-[#16A349] px-3 py-1 rounded text-xs font-bold">
             Social System
           </span>
         </div>
 
-        <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">
+        <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight">
           Social Media Ecosystem
         </h1>
         
-        <p className="text-slate-500 text-[15px] leading-relaxed mb-8 max-w-2xl mx-auto">
+        <p className="text-slate-500 text-[13px] leading-relaxed mb-8 max-w-2xl mx-auto">
           Manage your content strategy, generate scripts, and track performance across all your organic channels.
         </p>
       </div>
@@ -237,7 +237,7 @@ const PlatformContent = ({ title, description, stats, tools }: { title: string, 
     <div className="space-y-6">
         {/* Banner / Stats Row */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-1 bg-[#E8FCF3] border border-[#86EFAC] rounded-xl p-6 flex flex-col justify-center">
+            <div className="lg:col-span-1 bg-[#E8F5E9] border border-[#86EFAC] rounded-xl p-6 flex flex-col justify-center">
                 <h2 className="text-xl font-bold text-[#0EB869] mb-2">{title}</h2>
                 <p className="text-sm text-slate-600 leading-relaxed">{description}</p>
             </div>
@@ -262,7 +262,7 @@ const PlatformContent = ({ title, description, stats, tools }: { title: string, 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {tools.map((tool, idx) => (
                 <div key={idx} className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-[#86EFAC] transition-all cursor-pointer p-6 group">
-                     <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 mb-4 group-hover:bg-[#E8FCF3] group-hover:text-[#0EB869] group-hover:border-[#86EFAC] transition-colors">
+                     <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 mb-4 group-hover:bg-[#E8F5E9] group-hover:text-[#0EB869] group-hover:border-[#86EFAC] transition-colors">
                         <tool.icon size={20} />
                      </div>
                      <h4 className="text-[15px] font-bold text-slate-900 mb-2">{tool.title}</h4>

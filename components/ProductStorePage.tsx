@@ -94,10 +94,10 @@ export const ProductStorePage: React.FC = () => {
             Product & Store
           </span>
         </div>
-        <h1 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">
+        <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight">
           {step === 1 ? 'Tạo một sản phẩm mới' : 'Chỉnh sửa & Xem trước'}
         </h1>
-        <p className="text-slate-500 text-[15px] leading-relaxed mb-8 max-w-2xl mx-auto">
+        <p className="text-slate-500 text-[13px] leading-relaxed mb-8 max-w-2xl mx-auto">
           {step === 1 
             ? 'Chọn loại sản phẩm bạn muốn bán. Bạn có thể tạo một liên kết bán hàng trong vòng chưa đầy 60 giây.'
             : 'Điền thông tin chi tiết sản phẩm của bạn và xem trước trang thanh toán trong thời gian thực.'}
