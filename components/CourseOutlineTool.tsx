@@ -1,34 +1,54 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, MoreHorizontal, Trash2, Edit, BookOpen, Users, Loader2 } from 'lucide-react';
+import { ArrowLeft, Plus, MoreHorizontal, Trash2, Edit, BookOpen, Users, Loader2, Target } from 'lucide-react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
+import { AddCourseModal } from './AddCourseModal';
 
 interface Course {
-  id: string; // UUID from Supabase
+  id: string;
   title: string;
   modules: number;
   students: number;
   user_id: string;
   created_at: string;
+  dream_buyer_avatar: string | null;
+  outcome: string | null;
 }
+
+// Mock data for Dream Buyer Avatars, in a real app this would be fetched
+const MOCK_AVATARS = [
+  { id: '1', name: 'Growth-Focused HR Director' },
+  { id: '2', name: 'E-commerce Founder' },
+  { id: '3', name: 'Agency Owner' },
+];
 
 const CourseCard: React.FC<{ course: Course; onDelete: (id: string) => void; }> = ({ course, onDelete }) => {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 group hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 group hover:shadow-md transition-shadow flex flex-col">
       <div className="flex justify-between items-start mb-4">
         <div className="p-3 bg-blue-50 text-blue-600 rounded-lg">
           <BookOpen size={24} />
         </div>
-        <button className="p-2 text-slate-400 hover:text-slate-600">
+        <button className="p-2 text-slate-400 hover:text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">
           <MoreHorizontal size={18} />
         </button>
       </div>
-      <h3 className="font-bold text-slate-900 text-lg mb-2">{course.title}</h3>
-      <div className="flex items-center gap-4 text-sm text-slate-500 mb-6">
-        <span className="flex items-center gap-1.5"><BookOpen size={14} /> {course.modules} Modules</span>
-        <span className="flex items-center gap-1.5"><Users size={14} /> {course.students.toLocaleString()} Students</span>
-      </div>
-      <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-100">
+      <h3 className="font-bold text-slate-900 text-lg mb-2 flex-1">{course.title}</h3>
+      
+      {course.dream_buyer_avatar && (
+        <div className="flex items-center gap-2 text-xs text-slate-500 mb-2">
+          <Users size={14} className="text-blue-400" />
+          <span className="font-medium">{course.dream_buyer_avatar}</span>
+        </div>
+      )}
+      {course.outcome && (
+        <div className="flex items-start gap-2 text-xs text-slate-500 mb-4">
+          <Target size={14} className="text-green-500 mt-0.5" />
+          <span className="italic">"{course.outcome}"</span>
+        </div>
+      )}
+
+      <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-100 mt-auto">
         <button onClick={() => onDelete(course.id)} className="text-xs font-bold text-red-500 hover:text-red-700 flex items-center gap-1 p-2 rounded hover:bg-red-50">
           <Trash2 size={14} /> Delete
         </button>
@@ -44,7 +64,7 @@ export const CourseOutlineTool: React.FC<{ onBack: () => void }> = ({ onBack }) 
   const { user } = useSession();
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isAdding, setIsAdding] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -71,16 +91,12 @@ export const CourseOutlineTool: React.FC<{ onBack: () => void }> = ({ onBack }) 
     fetchCourses();
   }, [user]);
 
-  const handleAddCourse = async () => {
-    if (!user || isAdding) return;
+  const handleSaveCourse = async (newCourseData: { title: string; dream_buyer_avatar: string; outcome: string }) => {
+    if (!user) return;
     
-    setIsAdding(true);
     const { data, error } = await supabase
       .from('courses')
-      .insert({ 
-        title: `New Course #${courses.length + 1}`, 
-        user_id: user.id 
-      })
+      .insert({ ...newCourseData, user_id: user.id })
       .select()
       .single();
 
@@ -89,7 +105,6 @@ export const CourseOutlineTool: React.FC<{ onBack: () => void }> = ({ onBack }) 
     } else if (data) {
       setCourses(prevCourses => [data, ...prevCourses]);
     }
-    setIsAdding(false);
   };
 
   const handleDeleteCourse = async (id: string) => {
@@ -123,12 +138,10 @@ export const CourseOutlineTool: React.FC<{ onBack: () => void }> = ({ onBack }) 
           </div>
         </div>
         <button 
-          onClick={handleAddCourse}
-          disabled={isAdding}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 shadow-sm disabled:bg-blue-400"
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 shadow-sm"
         >
-          {isAdding ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />} 
-          New Course
+          <Plus size={14} /> New Course
         </button>
       </div>
 
@@ -151,6 +164,13 @@ export const CourseOutlineTool: React.FC<{ onBack: () => void }> = ({ onBack }) 
           ))}
         </div>
       )}
+
+      <AddCourseModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveCourse}
+        avatars={MOCK_AVATARS}
+      />
     </div>
   );
 };
