@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Save, RotateCcw, Loader2, Bot, Copy } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Save, RotateCcw, Loader2, Bot } from 'lucide-react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
 import toast from 'react-hot-toast';
@@ -37,6 +37,7 @@ const PromptConfigTab: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [dreamBuyerPrompt, setDreamBuyerPrompt] = useState(DEFAULT_DREAM_BUYER_PROMPT);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -60,6 +61,27 @@ const PromptConfigTab: React.FC = () => {
 
     fetchSettings();
   }, [user]);
+
+  const handleInsertVariable = (variableValue: string) => {
+    if (!textareaRef.current) return;
+
+    const start = textareaRef.current.selectionStart;
+    const end = textareaRef.current.selectionEnd;
+    const text = textareaRef.current.value;
+
+    const newText = text.substring(0, start) + variableValue + text.substring(end);
+    setDreamBuyerPrompt(newText);
+
+    // Use a timeout to allow React to re-render before we set the selection
+    setTimeout(() => {
+      if (textareaRef.current) {
+        const newCursorPosition = start + variableValue.length;
+        textareaRef.current.focus();
+        textareaRef.current.selectionStart = newCursorPosition;
+        textareaRef.current.selectionEnd = newCursorPosition;
+      }
+    }, 0);
+  };
 
   const handleSave = async () => {
     if (!user) {
@@ -114,6 +136,7 @@ const PromptConfigTab: React.FC = () => {
               <label className="text-[14px] font-bold text-slate-900">Dream Buyer Avatar System Prompt</label>
             </div>
             <textarea 
+              ref={textareaRef}
               className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-[13px] font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349] leading-relaxed resize-y min-h-[240px]"
               value={dreamBuyerPrompt}
               onChange={(e) => setDreamBuyerPrompt(e.target.value)}
@@ -124,20 +147,16 @@ const PromptConfigTab: React.FC = () => {
 
             <div className="mt-4 pt-4 border-t border-slate-100">
               <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Biến dữ liệu động</h4>
-              <p className="text-xs text-slate-500 mb-3">Nhấp vào để sao chép và dán vào prompt của bạn. Các biến này sẽ được tự động thay thế bằng dữ liệu từ form "Dream Buyer".</p>
+              <p className="text-xs text-slate-500 mb-3">Nhấp vào để chèn vào prompt của bạn. Các biến này sẽ được tự động thay thế bằng dữ liệu từ form "Dream Buyer".</p>
               <div className="flex flex-wrap gap-2">
                 {promptVariables.map(variable => (
                   <button
                     key={variable.value}
-                    onClick={() => {
-                      navigator.clipboard.writeText(variable.value);
-                      toast.success(`Đã sao chép: ${variable.value}`);
-                    }}
+                    onClick={() => handleInsertVariable(variable.value)}
                     className="bg-slate-100 text-slate-700 text-xs font-mono px-3 py-1.5 rounded-lg hover:bg-slate-200 transition-colors flex items-center gap-1.5"
                     title={variable.name}
                   >
                     {variable.value}
-                    <Copy size={12} />
                   </button>
                 ))}
               </div>
