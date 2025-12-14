@@ -11,8 +11,9 @@ const ApiSettingsTab: React.FC = () => {
   const [projectId, setProjectId] = useState('');
   const [serviceAccountJson, setServiceAccountJson] = useState('');
   const [location, setLocation] = useState('us-central1');
-  const [model, setModel] = useState('gemini-2.5-pro');
+  const [model, setModel] = useState('gemini-1.5-pro-preview-0409');
   const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
+  const [testPrompt, setTestPrompt] = useState('Say "Hello World" in Vietnamese.');
 
   useEffect(() => {
     if (!user) return;
@@ -29,7 +30,7 @@ const ApiSettingsTab: React.FC = () => {
         setProjectId(data.project_id || '');
         setServiceAccountJson(data.service_account_json || '');
         setLocation(data.location || 'us-central1');
-        setModel(data.model || 'gemini-2.5-pro');
+        setModel(data.model || 'gemini-1.5-pro-preview-0409');
       } else if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
         console.error('Error fetching API settings:', error);
         toast.error('Không thể tải cài đặt API.');
@@ -48,6 +49,8 @@ const ApiSettingsTab: React.FC = () => {
           projectId,
           location,
           serviceAccountJson,
+          model,
+          prompt: testPrompt,
         },
       });
 
@@ -56,16 +59,14 @@ const ApiSettingsTab: React.FC = () => {
       }
 
       setTestStatus('success');
-      toast.success('Kết nối thành công!');
+      toast.success(`AI Response: "${data.text}"`);
     } catch (error: any) {
       setTestStatus('error');
-      // Cố gắng lấy thông báo lỗi cụ thể từ phản hồi của hàm
-      const functionError = error.context?.json?.error;
-      const displayMessage = functionError || error.message || 'Vui lòng kiểm tra lại thông tin.';
-      toast.error(`Kết nối thất bại: ${displayMessage}`);
+      const functionError = error.context?.json?.error || error.message;
+      toast.error(`Test failed: ${functionError}`, { duration: 6000 });
       console.error('Connection test failed:', error);
     } finally {
-      setTimeout(() => setTestStatus('idle'), 4000);
+      setTimeout(() => setTestStatus('idle'), 5000);
     }
   };
 
@@ -160,9 +161,19 @@ const ApiSettingsTab: React.FC = () => {
                   onChange={(e) => setModel(e.target.value)}
                   className="w-full p-3 bg-white border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349]"
                 >
-                  <option value="gemini-2.5-pro">Gemini 2.5 Pro (Recommended)</option>
+                  <option value="gemini-1.5-pro-preview-0409">Gemini 1.5 Pro</option>
                   <option value="gemini-1.0-pro">Gemini 1.0 Pro</option>
                 </select>
+              </div>
+              
+              <div className="pt-4 border-t border-slate-100">
+                <label className="block text-[13px] font-bold text-slate-700 mb-2">Test Prompt</label>
+                <textarea 
+                  value={testPrompt}
+                  onChange={(e) => setTestPrompt(e.target.value)}
+                  placeholder='Enter a prompt to test the connection...'
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-[13px] font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349] h-20 resize-none"
+                />
               </div>
             </div>
           </div>

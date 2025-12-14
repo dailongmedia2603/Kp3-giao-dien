@@ -36,7 +36,7 @@ async function importKey(pem: string) {
 }
 
 serve(async (req) => {
-  console.log("Function `test-vertex-connection` invoked.");
+  console.log("Function `test-vertex-connection` invoked for content generation test.");
 
   if (req.method === 'OPTIONS') {
     console.log("Handling OPTIONS request.");
@@ -45,12 +45,12 @@ serve(async (req) => {
 
   try {
     console.log("Parsing request body...");
-    const { projectId, location, serviceAccountJson } = await req.json();
-    console.log(`Received projectId: ${projectId}, location: ${location}`);
+    const { projectId, location, serviceAccountJson, model, prompt } = await req.json();
+    console.log(`Received projectId: ${projectId}, location: ${location}, model: ${model}`);
 
-    if (!projectId || !location || !serviceAccountJson) {
+    if (!projectId || !location || !serviceAccountJson || !model || !prompt) {
       console.error("Missing required fields in request body.");
-      throw new Error('Missing required fields: projectId, location, or serviceAccountJson');
+      throw new Error('Missing required fields: projectId, location, serviceAccountJson, model, or prompt');
     }
 
     let serviceAccount;
@@ -88,13 +88,7 @@ serve(async (req) => {
     const encodedPayload = base64url(new TextEncoder().encode(JSON.stringify(payload)));
     
     const dataToSign = new TextEncoder().encode(`${encodedHeader}.${encodedPayload}`);
-    
-    const signature = await crypto.subtle.sign(
-      "RSASSA-PKCS1-v1_5",
-      privateKey,
-      dataToSign
-    );
-
+    const signature = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", privateKey, dataToSign);
     const encodedSignature = base64url(signature);
     const jwt = `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
     console.log("JWT created successfully.");
@@ -124,14 +118,18 @@ serve(async (req) => {
       throw new Error('Access token not found in Google Auth response.');
     }
 
-    const testApiUrl = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models`;
+    const testApiUrl = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${model}:generateContent`;
     console.log(`Testing connection to Vertex AI endpoint: ${testApiUrl}`);
 
     const testResponse = await fetch(testApiUrl, {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }]
+      }),
     });
 
     if (!testResponse.ok) {
@@ -140,8 +138,11 @@ serve(async (req) => {
       throw new Error(`Connection failed: ${testResponse.status} ${errorBody}`);
     }
 
-    console.log("Connection to Vertex AI successful!");
-    return new Response(JSON.stringify({ message: 'Connection successful!' }), {
+    const responseData = await testResponse.json();
+    const generatedText = responseData.candidates[0].content.parts[0].text;
+
+    console.log("Connection to Vertex AI successful! Response:", generatedText);
+    return new Response(JSON.stringify({ message: 'Connection successful!', text: generatedText }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     });
