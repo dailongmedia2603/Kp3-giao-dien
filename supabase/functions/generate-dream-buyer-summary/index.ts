@@ -54,6 +54,7 @@ serve(async (req) => {
   );
 
   try {
+    console.log("Function `generate-dream-buyer-summary` invoked.");
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -65,12 +66,14 @@ serve(async (req) => {
       throw new Error('Unauthorized: User not found.');
     }
     userId = user.id;
+    console.log(`Authenticated user: ${userId}`);
 
     requestBody = await req.json();
     const { answers } = requestBody;
     if (!answers) {
       throw new Error('Bad Request: Missing answers payload.');
     }
+    console.log("Request body parsed successfully.");
 
     const { data: apiConfig, error: configError } = await serviceClient
       .from('api_configurations')
@@ -79,17 +82,25 @@ serve(async (req) => {
       .single();
 
     if (configError || !apiConfig) {
-      throw new Error('API configuration not found. Please configure your API settings.');
+      console.error("API config error:", configError?.message);
+      throw new Error('API configuration not found. Please configure your API settings in the settings page.');
     }
+    console.log("API configuration loaded.");
 
     const { project_id, location, model, service_account_json, dream_buyer_prompt } = apiConfig;
 
     if (!project_id || !location || !model || !service_account_json) {
-      throw new Error('Incomplete API configuration. Please check your settings.');
+      throw new Error('Incomplete API configuration. Please check your settings for Project ID, Location, Model, and Service Account JSON.');
     }
 
     const serviceAccount = JSON.parse(service_account_json);
+    if (!serviceAccount.private_key || !serviceAccount.client_email) {
+        throw new Error("Service Account JSON must contain 'private_key' and 'client_email'.");
+    }
+    console.log("Service account parsed.");
+
     const privateKey = await importKey(serviceAccount.private_key);
+    console.log("Private key imported.");
 
     const now = Math.floor(Date.now() / 1000);
     const exp = now + 3600;
@@ -115,6 +126,7 @@ serve(async (req) => {
 
     const encodedSignature = base64url(signature);
     const jwt = `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
+    console.log("JWT created.");
 
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
@@ -127,6 +139,7 @@ serve(async (req) => {
 
     if (!tokenResponse.ok) {
       const errorBody = await tokenResponse.text();
+      console.error("Failed to get access token:", errorBody);
       throw new Error(`Failed to get access token: ${tokenResponse.status} ${errorBody}`);
     }
 
@@ -136,6 +149,7 @@ serve(async (req) => {
     if (!accessToken) {
       throw new Error('Access token not found in Google Auth response.');
     }
+    console.log("Access token fetched.");
 
     const systemPrompt = dream_buyer_prompt || `You are a world-class marketing strategist and psychologist. Based on the following answers about a "Dream Buyer", create a concise, insightful summary of the avatar. The summary should be a narrative that brings the person to life, focusing on their core motivations, fears, and what would make them say "yes" to an offer. Synthesize the provided information into a compelling persona description.`;
 
@@ -156,6 +170,7 @@ serve(async (req) => {
     `;
 
     const vertexApiUrl = `https://${location}-aiplatform.googleapis.com/v1/projects/${project_id}/locations/${location}/publishers/google/models/${model}:generateContent`;
+    console.log(`Calling Vertex AI: ${vertexApiUrl}`);
 
     const vertexResponse = await fetch(vertexApiUrl, {
       method: 'POST',
@@ -177,12 +192,14 @@ serve(async (req) => {
 
     if (!vertexResponse.ok) {
       const errorBody = await vertexResponse.text();
+      console.error("Vertex AI API error:", errorBody);
       throw new Error(`Vertex AI API error: ${vertexResponse.status} ${errorBody}`);
     }
 
     const vertexData = await vertexResponse.json();
     const summary = vertexData.candidates[0].content.parts[0].text;
     responseBody = { summary };
+    console.log("Summary generated successfully.");
 
     return new Response(JSON.stringify(responseBody), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -192,6 +209,7 @@ serve(async (req) => {
     errorMsg = error.message;
     responseStatus = responseStatus || 500;
     responseBody = { error: error.message };
+    console.error("An error occurred in `generate-dream-buyer-summary`:", error);
     return new Response(JSON.stringify(responseBody), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: responseStatus,
