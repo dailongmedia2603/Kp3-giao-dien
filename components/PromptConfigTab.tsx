@@ -1,10 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Save, RotateCcw, Loader2, Bot } from 'lucide-react';
+import { Save, RotateCcw, Loader2, Bot, Copy } from 'lucide-react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
 import toast from 'react-hot-toast';
 
-const DEFAULT_DREAM_BUYER_PROMPT = `You are a world-class marketing strategist and psychologist. Based on the following answers about a "Dream Buyer", create a concise, insightful summary of the avatar. The summary should be a narrative that brings the person to life, focusing on their core motivations, fears, and what would make them say "yes" to an offer. Synthesize the provided information into a compelling persona description.`;
+const DEFAULT_DREAM_BUYER_PROMPT = `You are a world-class marketing strategist and psychologist. Based on the following answers about a "Dream Buyer" named {{name}}, create a concise, insightful summary of the avatar.
+
+Here are the details:
+- Where they hang out: {{q1_hangouts}}
+- Information sources: {{q2_info_sources}}
+- Frustrations: {{q3_frustrations}}
+- Dreams: {{q4_dreams}}
+- Fears: {{q5_fears}}
+- Communication channels: {{q6_communication_channel}}
+- Language they use: {{q7_language}}
+- Daily routine: {{q8_daily_routine}}
+- Happiness triggers: {{q9_happiness_triggers}}
+
+Synthesize this information into a compelling persona description in Vietnamese. The summary should be a narrative that brings the person to life, focusing on their core motivations, fears, and what would make them say "yes" to an offer.`;
+
+const promptVariables = [
+  { name: 'Tên Avatar', value: '{{name}}' },
+  { name: 'Họ tụ tập ở đâu?', value: '{{q1_hangouts}}' },
+  { name: 'Nguồn thông tin', value: '{{q2_info_sources}}' },
+  { name: 'Thất vọng & Thách thức', value: '{{q3_frustrations}}' },
+  { name: 'Ước mơ & Khao khát', value: '{{q4_dreams}}' },
+  { name: 'Nỗi sợ hãi', value: '{{q5_fears}}' },
+  { name: 'Kênh giao tiếp', value: '{{q6_communication_channel}}' },
+  { name: 'Ngôn ngữ sử dụng', value: '{{q7_language}}' },
+  { name: 'Thói quen hàng ngày', value: '{{q8_daily_routine}}' },
+  { name: 'Điều làm họ hạnh phúc', value: '{{q9_happiness_triggers}}' },
+];
 
 const PromptConfigTab: React.FC = () => {
   const { user } = useSession();
@@ -88,12 +114,33 @@ const PromptConfigTab: React.FC = () => {
               <label className="text-[14px] font-bold text-slate-900">Dream Buyer Avatar System Prompt</label>
             </div>
             <textarea 
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-[13px] font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349] leading-relaxed resize-y min-h-[180px]"
+              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-[13px] font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349] leading-relaxed resize-y min-h-[240px]"
               value={dreamBuyerPrompt}
               onChange={(e) => setDreamBuyerPrompt(e.target.value)}
             />
             <div className="flex items-center gap-3 mt-3">
               <button onClick={handleReset} className="text-[12px] font-bold text-[#16A349] hover:underline">Reset to Default</button>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-slate-100">
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Biến dữ liệu động</h4>
+              <p className="text-xs text-slate-500 mb-3">Nhấp vào để sao chép và dán vào prompt của bạn. Các biến này sẽ được tự động thay thế bằng dữ liệu từ form "Dream Buyer".</p>
+              <div className="flex flex-wrap gap-2">
+                {promptVariables.map(variable => (
+                  <button
+                    key={variable.value}
+                    onClick={() => {
+                      navigator.clipboard.writeText(variable.value);
+                      toast.success(`Đã sao chép: ${variable.value}`);
+                    }}
+                    className="bg-slate-100 text-slate-700 text-xs font-mono px-3 py-1.5 rounded-lg hover:bg-slate-200 transition-colors flex items-center gap-1.5"
+                    title={variable.name}
+                  >
+                    {variable.value}
+                    <Copy size={12} />
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>

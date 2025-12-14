@@ -9,6 +9,21 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+const DEFAULT_DREAM_BUYER_PROMPT = `You are a world-class marketing strategist and psychologist. Based on the following answers about a "Dream Buyer" named {{name}}, create a concise, insightful summary of the avatar.
+
+Here are the details:
+- Where they hang out: {{q1_hangouts}}
+- Information sources: {{q2_info_sources}}
+- Frustrations: {{q3_frustrations}}
+- Dreams: {{q4_dreams}}
+- Fears: {{q5_fears}}
+- Communication channels: {{q6_communication_channel}}
+- Language they use: {{q7_language}}
+- Daily routine: {{q8_daily_routine}}
+- Happiness triggers: {{q9_happiness_triggers}}
+
+Synthesize this information into a compelling persona description in Vietnamese. The summary should be a narrative that brings the person to life, focusing on their core motivations, fears, and what would make them say "yes" to an offer.`;
+
 // Helper to Base64URL encode
 function base64url(source: ArrayBuffer): string {
   return btoa(String.fromCharCode(...new Uint8Array(source)))
@@ -77,17 +92,17 @@ serve(async (req) => {
 
     const { data: apiConfig, error: configError } = await serviceClient
       .from('api_configurations')
-      .select('*')
+      .select('dream_buyer_prompt, project_id, location, model, service_account_json')
       .eq('user_id', user.id)
       .single();
 
-    if (configError || !apiConfig) {
+    if (configError && configError.code !== 'PGRST116') {
       console.error("API config error:", configError?.message);
       throw new Error('API configuration not found. Please configure your API settings in the settings page.');
     }
     console.log("API configuration loaded.");
 
-    const { project_id, location, model, service_account_json, dream_buyer_prompt } = apiConfig;
+    const { project_id, location, model, service_account_json, dream_buyer_prompt } = apiConfig || {};
 
     if (!project_id || !location || !model || !service_account_json) {
       throw new Error('Incomplete API configuration. Please check your settings for Project ID, Location, Model, and Service Account JSON.');
@@ -118,12 +133,7 @@ serve(async (req) => {
     const encodedPayload = base64url(new TextEncoder().encode(JSON.stringify(payload)));
     
     const dataToSign = new TextEncoder().encode(`${encodedHeader}.${encodedPayload}`);
-    const signature = await crypto.subtle.sign(
-      "RSASSA-PKCS1-v1_5",
-      privateKey,
-      dataToSign
-    );
-
+    const signature = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", privateKey, dataToSign);
     const encodedSignature = base64url(signature);
     const jwt = `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
     console.log("JWT created.");
@@ -151,26 +161,28 @@ serve(async (req) => {
     }
     console.log("Access token fetched.");
 
-    const systemPrompt = dream_buyer_prompt || `You are a world-class marketing strategist and psychologist. Based on the following answers about a "Dream Buyer", create a concise, insightful summary of the avatar. The summary should be a narrative that brings the person to life, focusing on their core motivations, fears, and what would make them say "yes" to an offer. Synthesize the provided information into a compelling persona description.`;
+    const systemPromptTemplate = dream_buyer_prompt || DEFAULT_DREAM_BUYER_PROMPT;
 
-    const userPrompt = `
-      Here are the details of the Dream Buyer:
-      - Name: ${answers.name}
-      - Where they hang out: ${answers.q1}
-      - Information sources: ${answers.q2}
-      - Frustrations: ${answers.q3}
-      - Dreams: ${answers.q4}
-      - Fears: ${answers.q5}
-      - Communication channels: ${answers.q6}
-      - Language they use: ${answers.q7}
-      - Daily routine: ${answers.q8}
-      - Happiness triggers: ${answers.q9}
+    const keyMap = {
+      '{{name}}': answers.name,
+      '{{q1_hangouts}}': answers.q1,
+      '{{q2_info_sources}}': answers.q2,
+      '{{q3_frustrations}}': answers.q3,
+      '{{q4_dreams}}': answers.q4,
+      '{{q5_fears}}': answers.q5,
+      '{{q6_communication_channel}}': answers.q6,
+      '{{q7_language}}': answers.q7,
+      '{{q8_daily_routine}}': answers.q8,
+      '{{q9_happiness_triggers}}': answers.q9,
+    };
 
-      Please generate the summary in Vietnamese.
-    `;
+    let processedPrompt = systemPromptTemplate;
+    for (const [placeholder, value] of Object.entries(keyMap)) {
+      processedPrompt = processedPrompt.replace(new RegExp(placeholder.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), value || '');
+    }
 
     const vertexApiUrl = `https://${location}-aiplatform.googleapis.com/v1/projects/${project_id}/locations/${location}/publishers/google/models/${model}:generateContent`;
-    console.log(`Calling Vertex AI: ${vertexApiUrl}`);
+    console.log(`Calling Vertex AI with processed prompt.`);
 
     const vertexResponse = await fetch(vertexApiUrl, {
       method: 'POST',
@@ -182,7 +194,7 @@ serve(async (req) => {
         contents: [
           {
             role: "user",
-            parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }]
+            parts: [{ text: processedPrompt }]
           }
         ]
       }),
@@ -209,16 +221,7 @@ serve(async (req) => {
     errorMsg = error.message;
     responseStatus = responseStatus || 500;
     responseBody = { error: error.message };
-    
-    console.error("--- ERROR in `generate-dream-buyer-summary` ---");
-    console.error("Error Message:", error.message);
-    if (error instanceof Error && error.stack) {
-      console.error("Stack Trace:", error.stack);
-    } else {
-      console.error("Full Error Object:", JSON.stringify(error, null, 2));
-    }
-    console.error("--- END ERROR ---");
-
+    console.error("An error occurred in `generate-dream-buyer-summary`:", error);
     return new Response(JSON.stringify(responseBody), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: responseStatus,
