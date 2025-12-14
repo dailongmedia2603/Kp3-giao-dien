@@ -15,11 +15,9 @@ interface Course {
   outcome: string | null;
 }
 
-// Mock data for Dream Buyer Avatars, in a real app this would be fetched
+// Cập nhật dữ liệu mẫu để chỉ chứa avatar thực tế
 const MOCK_AVATARS = [
   { id: '1', name: 'Growth-Focused HR Director' },
-  { id: '2', name: 'E-commerce Founder' },
-  { id: '3', name: 'Agency Owner' },
 ];
 
 const CourseCard: React.FC<{ course: Course; onDelete: (id: string) => void; }> = ({ course, onDelete }) => {
