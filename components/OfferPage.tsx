@@ -12,18 +12,25 @@ import {
   Loader2,
   Trash2,
   LayoutGrid,
-  Gift
+  Gift,
+  ShoppingBag
 } from 'lucide-react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
 import toast from 'react-hot-toast';
 
-interface Offer {
+interface Product {
   id: string;
   title: string;
   category: string;
   description: string;
-  [key: string]: any; // Allow other properties
+  [key: string]: any;
+}
+
+interface Offer {
+  id: string;
+  title: string;
+  description: string;
 }
 
 interface Bonus {
@@ -60,16 +67,7 @@ const CategorySidebarItem: React.FC<{ icon: React.ElementType, label: string, is
   </button>
 );
 
-interface ProductCardProps {
-    title: string;
-    category: string;
-    description: string;
-    icon: any;
-    onClick: () => void;
-    onDelete: (e: React.MouseEvent) => void;
-}
-
-const ProductCard: React.FC<ProductCardProps> = ({ title, category, description, icon: Icon, onClick, onDelete }) => {
+const ProductCard: React.FC<{ product: Product; icon: any; onClick: () => void; onDelete: (e: React.MouseEvent) => void; }> = ({ product, icon: Icon, onClick, onDelete }) => {
     return (
         <div onClick={onClick} className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full group cursor-pointer">
             <div className="p-6 flex-1">
@@ -78,13 +76,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ title, category, description,
                        <Icon size={24} strokeWidth={1.5} />
                     </div>
                     <div>
-                        <h3 className="text-[15px] font-bold text-slate-900 leading-tight mb-1 group-hover:text-[#16A349] transition-colors">{title}</h3>
-                        <p className="text-[13px] text-slate-500">{category}</p>
+                        <h3 className="text-[15px] font-bold text-slate-900 leading-tight mb-1 group-hover:text-[#16A349] transition-colors">{product.title}</h3>
+                        <p className="text-[13px] text-slate-500">{product.category}</p>
                     </div>
                 </div>
                 
                 <p className="text-[13px] text-slate-500 leading-relaxed mb-8 flex-1">
-                    {description}
+                    {product.description}
                 </p>
             </div>
 
@@ -100,107 +98,131 @@ const ProductCard: React.FC<ProductCardProps> = ({ title, category, description,
     )
 }
 
-const BonusCard: React.FC<{ bonus: Bonus }> = ({ bonus }) => {
-  return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 group hover:shadow-md transition-shadow flex flex-col h-full">
-      <div className="flex items-start gap-4 mb-4">
-        <div className="w-12 h-12 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 bg-white shrink-0 group-hover:border-[#A5D6A7] group-hover:text-[#16A349] transition-colors">
-          <Gift size={24} />
-        </div>
-        <div>
-          <h3 className="text-[15px] font-bold text-slate-900 leading-tight mb-1 group-hover:text-[#16A349] transition-colors">{bonus.title}</h3>
-          <p className="text-[13px] text-slate-500 font-bold">${bonus.value} Value</p>
-        </div>
+const OfferCard: React.FC<{ offer: Offer }> = ({ offer }) => (
+  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 group hover:shadow-md transition-shadow flex flex-col h-full">
+    <div className="flex items-start gap-4 mb-4">
+      <div className="w-12 h-12 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 bg-white shrink-0 group-hover:border-[#A5D6A7] group-hover:text-[#16A349] transition-colors">
+        <ShoppingBag size={24} />
       </div>
-      <p className="text-[13px] text-slate-500 leading-relaxed mb-8 flex-1">
-        {bonus.description}
-      </p>
-      <div className="flex items-center justify-end pt-4 border-t border-slate-100 mt-auto">
-        <button className="text-[13px] font-bold text-[#16A349] hover:text-[#149641] transition-colors">
-          Edit Bonus
-        </button>
+      <div>
+        <h3 className="text-[15px] font-bold text-slate-900 leading-tight mb-1 group-hover:text-[#16A349] transition-colors">{offer.title}</h3>
       </div>
     </div>
-  );
-}
+    <p className="text-[13px] text-slate-500 leading-relaxed mb-8 flex-1">
+      {offer.description}
+    </p>
+    <div className="flex items-center justify-end pt-4 border-t border-slate-100 mt-auto">
+      <button className="text-[13px] font-bold text-[#16A349] hover:text-[#149641] transition-colors">
+        Edit Offer
+      </button>
+    </div>
+  </div>
+);
 
-const BonusView: React.FC = () => {
-  const [bonuses, setBonuses] = useState<Bonus[]>([
-    { id: '1', title: 'Bonus #1: The Ultimate Swipe File', description: 'My private collection of winning ad copy and headlines.', value: 497 },
-    { id: '2', title: 'Bonus #2: Community Access', description: 'Lifetime access to our private community of agency owners.', value: 997 },
-  ]);
-
-  return (
-    <div className="animate-in fade-in duration-300">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-slate-900">
-          Bonus
-        </h2>
-        <button 
-          className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#16A349] text-white text-[14px] font-bold hover:bg-[#149641] transition-colors shadow-sm"
-        >
-          <Plus size={18} strokeWidth={3} />
-          Thêm Bonus
-        </button>
+const BonusCard: React.FC<{ bonus: Bonus }> = ({ bonus }) => (
+  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 group hover:shadow-md transition-shadow flex flex-col h-full">
+    <div className="flex items-start gap-4 mb-4">
+      <div className="w-12 h-12 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 bg-white shrink-0 group-hover:border-[#A5D6A7] group-hover:text-[#16A349] transition-colors">
+        <Gift size={24} />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {bonuses.map(bonus => (
-          <BonusCard key={bonus.id} bonus={bonus} />
-        ))}
+      <div>
+        <h3 className="text-[15px] font-bold text-slate-900 leading-tight mb-1 group-hover:text-[#16A349] transition-colors">{bonus.title}</h3>
+        <p className="text-[13px] text-slate-500 font-bold">${bonus.value} Value</p>
       </div>
     </div>
-  );
-}
+    <p className="text-[13px] text-slate-500 leading-relaxed mb-8 flex-1">
+      {bonus.description}
+    </p>
+    <div className="flex items-center justify-end pt-4 border-t border-slate-100 mt-auto">
+      <button className="text-[13px] font-bold text-[#16A349] hover:text-[#149641] transition-colors">
+        Edit Bonus
+      </button>
+    </div>
+  </div>
+);
+
+const OfferView: React.FC<{ offers: Offer[] }> = ({ offers }) => (
+  <div className="animate-in fade-in duration-300">
+    <div className="flex justify-between items-center mb-6">
+      <h2 className="text-xl font-bold text-slate-900">Offer Stack</h2>
+      <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#16A349] text-white text-[14px] font-bold hover:bg-[#149641] transition-colors shadow-sm">
+        <Plus size={18} strokeWidth={3} />
+        Thêm Offer
+      </button>
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {offers.map(offer => (
+        <OfferCard key={offer.id} offer={offer} />
+      ))}
+    </div>
+  </div>
+);
+
+const BonusView: React.FC<{ bonuses: Bonus[] }> = ({ bonuses }) => (
+  <div className="animate-in fade-in duration-300">
+    <div className="flex justify-between items-center mb-6">
+      <h2 className="text-xl font-bold text-slate-900">Bonus</h2>
+      <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#16A349] text-white text-[14px] font-bold hover:bg-[#149641] transition-colors shadow-sm">
+        <Plus size={18} strokeWidth={3} />
+        Thêm Bonus
+      </button>
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {bonuses.map(bonus => (
+        <BonusCard key={bonus.id} bonus={bonus} />
+      ))}
+    </div>
+  </div>
+);
 
 export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
   const { user } = useSession();
   const [mainTab, setMainTab] = useState<'products' | 'offer' | 'bonus'>('products');
   const [activeCategory, setActiveCategory] = useState<'all' | 'service' | 'physical' | 'software' | 'digital' | 'e-learning' | 'affiliate'>('all');
+  
+  const [products, setProducts] = useState<Product[]>([]);
   const [offers, setOffers] = useState<Offer[]>([]);
+  const [bonuses, setBonuses] = useState<Bonus[]>([]);
+  
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchOffers = async () => {
+    const fetchData = async () => {
       if (!user) {
         setIsLoading(false);
         return;
       }
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('offers')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+      
+      const productsPromise = supabase.from('products').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
+      const offersPromise = supabase.from('offers').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
+      const bonusesPromise = supabase.from('bonuses').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching offers:', error);
-        toast.error('Không thể tải danh sách offer.');
-      } else {
-        setOffers(data || []);
-      }
+      const [productsResult, offersResult, bonusesResult] = await Promise.all([productsPromise, offersPromise, bonusesPromise]);
+
+      if (productsResult.error) toast.error('Không thể tải Products.');
+      else setProducts(productsResult.data || []);
+
+      if (offersResult.error) toast.error('Không thể tải Offers.');
+      else setOffers(offersResult.data || []);
+
+      if (bonusesResult.error) toast.error('Không thể tải Bonuses.');
+      else setBonuses(bonusesResult.data || []);
+
       setIsLoading(false);
     };
 
-    fetchOffers();
+    fetchData();
   }, [user]);
 
-  const handleDelete = async (offerId: string) => {
-    if (!user) return;
+  const handleDeleteProduct = async (productId: string) => {
+    if (!user || !window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) return;
 
-    if (!window.confirm('Bạn có chắc chắn muốn xóa offer này không?')) {
-      return;
-    }
-
-    const { error } = await supabase
-      .from('offers')
-      .delete()
-      .match({ id: offerId, user_id: user.id });
-
-    if (error) {
-      toast.error('Xóa offer thất bại: ' + error.message);
-    } else {
-      setOffers(prev => prev.filter(o => o.id !== offerId));
-      toast.success('Đã xóa offer thành công.');
+    const { error } = await supabase.from('products').delete().match({ id: productId, user_id: user.id });
+    if (error) toast.error('Xóa sản phẩm thất bại: ' + error.message);
+    else {
+      setProducts(prev => prev.filter(p => p.id !== productId));
+      toast.success('Đã xóa sản phẩm thành công.');
     }
   };
 
@@ -212,14 +234,12 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
     if (lowerCategory.includes('digital')) return Download;
     if (lowerCategory.includes('e-learning')) return BookOpen;
     if (lowerCategory.includes('affiliate')) return Link2;
-    return Briefcase; // Default icon
+    return Briefcase;
   };
 
-  const filteredOffers = offers.filter(offer => {
-    if (activeCategory === 'all') {
-      return true;
-    }
-    const lowerCategory = offer.category?.toLowerCase() || '';
+  const filteredProducts = products.filter(product => {
+    if (activeCategory === 'all') return true;
+    const lowerCategory = product.category?.toLowerCase() || '';
     return lowerCategory.includes(activeCategory);
   });
 
@@ -243,14 +263,8 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
             Products & Offers
           </span>
         </div>
-
-        <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight">
-          Products & Offers
-        </h1>
-        
-        <p className="text-slate-500 text-[13px] leading-relaxed mb-8 max-w-2xl mx-auto">
-          Manage your services, products, and digital assets in one central location.
-        </p>
+        <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight">Products & Offers</h1>
+        <p className="text-slate-500 text-[13px] leading-relaxed mb-8 max-w-2xl mx-auto">Manage your services, products, and digital assets in one central location.</p>
       </div>
 
       <div className="bg-slate-100/50 rounded-xl border border-slate-200 p-1.5 flex mb-8 gap-1 max-w-lg mx-auto">
@@ -265,74 +279,38 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden sticky top-6">
               <div className="p-2 space-y-1">
                 {categories.map(cat => (
-                  <CategorySidebarItem
-                    key={cat.id}
-                    icon={cat.icon}
-                    label={cat.label}
-                    isActive={activeCategory === cat.id}
-                    onClick={() => setActiveCategory(cat.id as any)}
-                  />
+                  <CategorySidebarItem key={cat.id} icon={cat.icon} label={cat.label} isActive={activeCategory === cat.id} onClick={() => setActiveCategory(cat.id as any)} />
                 ))}
               </div>
             </div>
           </div>
-
           <div className="flex-1 w-full">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-slate-900">
-                {categories.find(c => c.id === activeCategory)?.label} Products
-              </h2>
-              <button 
-                onClick={() => onNavigate && onNavigate('create-product', activeCategory === 'all' ? undefined : activeCategory)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#16A349] text-white text-[14px] font-bold hover:bg-[#149641] transition-colors shadow-sm"
-              >
+              <h2 className="text-xl font-bold text-slate-900">{categories.find(c => c.id === activeCategory)?.label} Products</h2>
+              <button onClick={() => onNavigate && onNavigate('create-product', activeCategory === 'all' ? undefined : activeCategory)} className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#16A349] text-white text-[14px] font-bold hover:bg-[#149641] transition-colors shadow-sm">
                 <Plus size={18} strokeWidth={3} />
                 Thêm Product
               </button>
             </div>
-
             <div className="min-h-[400px]">
               {isLoading ? (
-                <div className="flex justify-center items-center h-64">
-                  <Loader2 size={32} className="animate-spin text-slate-400" />
-                </div>
-              ) : filteredOffers.length > 0 ? (
+                <div className="flex justify-center items-center h-64"><Loader2 size={32} className="animate-spin text-slate-400" /></div>
+              ) : filteredProducts.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-in fade-in duration-300">
-                  {filteredOffers.map(offer => (
-                    <ProductCard 
-                      key={offer.id}
-                      title={offer.title}
-                      category={offer.category}
-                      description={offer.description}
-                      icon={getIconForCategory(offer.category)}
-                      onClick={() => onNavigate && onNavigate('offer-detail', offer)}
-                      onDelete={(e) => {
-                        e.stopPropagation();
-                        handleDelete(offer.id);
-                      }}
-                    />
+                  {filteredProducts.map(product => (
+                    <ProductCard key={product.id} product={product} icon={getIconForCategory(product.category)} onClick={() => onNavigate && onNavigate('offer-detail', product)} onDelete={(e) => { e.stopPropagation(); handleDeleteProduct(product.id); }} />
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-16 bg-slate-50 rounded-xl border border-dashed">
-                  <p className="text-slate-500">Không có sản phẩm nào trong danh mục này.</p>
-                </div>
+                <div className="text-center py-16 bg-slate-50 rounded-xl border border-dashed"><p className="text-slate-500">Không có sản phẩm nào trong danh mục này.</p></div>
               )}
             </div>
           </div>
         </div>
       )}
 
-      {mainTab === 'offer' && (
-        <div className="text-center py-20 bg-white rounded-xl border border-slate-200">
-          <h2 className="text-xl font-bold text-slate-700">Offer View</h2>
-          <p className="text-slate-500">This section is under construction.</p>
-        </div>
-      )}
-
-      {mainTab === 'bonus' && (
-        <BonusView />
-      )}
+      {mainTab === 'offer' && <OfferView offers={offers} />}
+      {mainTab === 'bonus' && <BonusView bonuses={bonuses} />}
 
       <div className="h-10"></div>
     </div>
