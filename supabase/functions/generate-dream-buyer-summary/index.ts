@@ -3,7 +3,7 @@
 
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
-import { GoogleAuth } from "https://deno.land/x/google_auth@v0.4.1/mod.ts";
+import { GoogleAuth } from "https://deno.land/x/google_auth/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
