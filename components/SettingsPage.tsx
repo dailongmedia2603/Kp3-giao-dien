@@ -10,12 +10,14 @@ import {
   Save,
   RotateCcw,
   Bot,
-  Palette // Import new icon
+  Palette,
+  Key // Import new icon
 } from 'lucide-react';
-import DesignSettingsTab from './DesignSettingsTab'; // Import the new component
+import DesignSettingsTab from './DesignSettingsTab';
+import ApiSettingsTab from './ApiSettingsTab'; // Import the new component
 
 export const SettingsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'prompts' | 'general' | 'billing' | 'notifications' | 'design'>('design');
+  const [activeTab, setActiveTab] = useState<'prompts' | 'general' | 'billing' | 'notifications' | 'design' | 'api'>('design');
 
   return (
     <div className="p-8 max-w-[1200px] mx-auto font-sans">
@@ -57,6 +59,13 @@ export const SettingsPage: React.FC = () => {
                         Prompt Config
                     </button>
                     <button 
+                        onClick={() => setActiveTab('api')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 text-[14px] font-medium rounded-lg transition-colors ${activeTab === 'api' ? 'bg-[#E8F5E9] text-[#16A349]' : 'text-slate-600 hover:bg-slate-50'}`}
+                    >
+                        <Key size={18} />
+                        API
+                    </button>
+                    <button 
                         onClick={() => setActiveTab('general')}
                         className={`w-full flex items-center gap-3 px-4 py-3 text-[14px] font-medium rounded-lg transition-colors ${activeTab === 'general' ? 'bg-[#E8F5E9] text-[#16A349]' : 'text-slate-600 hover:bg-slate-50'}`}
                     >
@@ -86,6 +95,9 @@ export const SettingsPage: React.FC = () => {
             
             {/* Design Tab */}
             {activeTab === 'design' && <DesignSettingsTab />}
+
+            {/* API Tab */}
+            {activeTab === 'api' && <ApiSettingsTab />}
 
             {/* Prompt Configuration Tab */}
             {activeTab === 'prompts' && (
