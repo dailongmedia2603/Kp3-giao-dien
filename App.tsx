@@ -76,6 +76,7 @@ const AppContent: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
   const [productToEdit, setProductToEdit] = useState<any | null>(null);
   const [selectedOffer, setSelectedOffer] = useState<any | null>(null);
+  const [offerToEdit, setOfferToEdit] = useState<any | null>(null);
   const [isSOPOpen, setIsSOPOpen] = useState(false);
 
   const handleNavigate = (view: string, data?: any) => {
@@ -101,6 +102,12 @@ const AppContent: React.FC = () => {
       setProductToEdit(data);
     } else {
       setProductToEdit(null);
+    }
+
+    if (view === 'edit-offer' && data) {
+      setOfferToEdit(data);
+    } else {
+      setOfferToEdit(null);
     }
     setCurrentView(view);
   };
@@ -139,10 +146,12 @@ const AppContent: React.FC = () => {
         return <CreateProductPage onCancel={() => handleNavigate('offer')} onNavigate={handleNavigate} productToEdit={productToEdit} />;
       case 'create-offer':
         return <CreateOfferPage onCancel={() => handleNavigate('offer')} onNavigate={handleNavigate} />;
+      case 'edit-offer':
+        return <CreateOfferPage onCancel={() => handleNavigate('offer')} onNavigate={handleNavigate} offerToEdit={offerToEdit} />;
       case 'offer-detail':
         return selectedProduct ? <OfferDetailPage product={selectedProduct} onBack={() => handleNavigate('offer')} onDelete={() => {}} onEdit={(product) => handleNavigate('edit-product', product)} /> : <div>Product not found</div>;
       case 'godfather-offer-detail':
-        return selectedOffer ? <GodfatherOfferDetailPage offer={selectedOffer} onBack={() => handleNavigate('offer')} onDelete={() => {}} onEdit={(offer) => {}} /> : <div>Offer not found</div>;
+        return selectedOffer ? <GodfatherOfferDetailPage offer={selectedOffer} onBack={() => handleNavigate('offer')} onDelete={() => {}} onEdit={(offer) => handleNavigate('edit-offer', offer)} /> : <div>Offer not found</div>;
       case 'goal':
         return <GoalPage />;
       case 'settings':

@@ -25,6 +25,7 @@ interface Product {
 interface CreateOfferPageProps {
   onCancel: () => void;
   onNavigate: (view: string, data?: any) => void;
+  offerToEdit?: any | null;
 }
 
 const FormField: React.FC<{
@@ -54,7 +55,7 @@ const FormField: React.FC<{
   </div>
 );
 
-export const CreateOfferPage: React.FC<CreateOfferPageProps> = ({ onCancel, onNavigate }) => {
+export const CreateOfferPage: React.FC<CreateOfferPageProps> = ({ onCancel, onNavigate, offerToEdit }) => {
   const { user } = useSession();
   const [isSaving, setIsSaving] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -69,6 +70,32 @@ export const CreateOfferPage: React.FC<CreateOfferPageProps> = ({ onCancel, onNa
   const [powerGuarantee, setPowerGuarantee] = useState('');
   const [scarcity, setScarcity] = useState('');
   const [generatedSummary, setGeneratedSummary] = useState('');
+
+  const isEditMode = !!offerToEdit;
+
+  useEffect(() => {
+    if (isEditMode && offerToEdit) {
+      setSelectedProductId(offerToEdit.product_id || '');
+      setRationale(offerToEdit.rationale || '');
+      setValueBuild(offerToEdit.value_build || '');
+      setPricing(offerToEdit.pricing || '');
+      setPaymentOptions(offerToEdit.payment_options || '');
+      setPremiums(offerToEdit.premiums || '');
+      setPowerGuarantee(offerToEdit.power_guarantee || '');
+      setScarcity(offerToEdit.scarcity || '');
+      setGeneratedSummary(offerToEdit.description || '');
+    } else {
+      setSelectedProductId('');
+      setRationale('');
+      setValueBuild('');
+      setPricing('');
+      setPaymentOptions('');
+      setPremiums('');
+      setPowerGuarantee('');
+      setScarcity('');
+      setGeneratedSummary('');
+    }
+  }, [offerToEdit, isEditMode]);
 
   useEffect(() => {
     if (!user) return;
@@ -127,7 +154,7 @@ export const CreateOfferPage: React.FC<CreateOfferPageProps> = ({ onCancel, onNa
       user_id: user.id,
       product_id: selectedProductId,
       title: products.find(p => p.id === selectedProductId)?.title || 'New Offer',
-      description: generatedSummary, // Save the AI summary as the description
+      description: generatedSummary,
       rationale,
       value_build: valueBuild,
       pricing,
@@ -137,13 +164,23 @@ export const CreateOfferPage: React.FC<CreateOfferPageProps> = ({ onCancel, onNa
       scarcity,
     };
 
-    const { error } = await supabase.from('offers').insert(offerData);
+    let error;
+    if (isEditMode) {
+        const { error: updateError } = await supabase
+            .from('offers')
+            .update(offerData)
+            .eq('id', offerToEdit.id);
+        error = updateError;
+    } else {
+        const { error: insertError } = await supabase.from('offers').insert(offerData);
+        error = insertError;
+    }
 
     setIsSaving(false);
     if (error) {
-      toast.error('Lỗi khi lưu offer: ' + error.message);
+      toast.error(`Lỗi khi ${isEditMode ? 'cập nhật' : 'lưu'} offer: ` + error.message);
     } else {
-      toast.success('Đã tạo offer thành công!');
+      toast.success(`Đã ${isEditMode ? 'cập nhật' : 'tạo'} offer thành công!`);
       onNavigate('offer');
     }
   };
@@ -163,9 +200,9 @@ export const CreateOfferPage: React.FC<CreateOfferPageProps> = ({ onCancel, onNa
               <div className="w-16 h-16 bg-[#E8F5E9] rounded-full flex items-center justify-center mx-auto mb-4 text-[#16A349]">
                 <Sparkles size={32} />
               </div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Tạo Offer Mới</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">{isEditMode ? 'Chỉnh sửa Offer' : 'Tạo Offer Mới'}</h2>
               <p className="text-slate-500 text-[15px]">
-                Xây dựng một "Godfather Offer" không thể chối từ bằng cách điền các thông tin bên dưới.
+                {isEditMode ? 'Cập nhật thông tin cho Godfather Offer của bạn.' : 'Xây dựng một "Godfather Offer" không thể chối từ bằng cách điền các thông tin bên dưới.'}
               </p>
             </div>
 
@@ -236,7 +273,7 @@ export const CreateOfferPage: React.FC<CreateOfferPageProps> = ({ onCancel, onNa
               className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-slate-200 text-slate-700 text-[14px] font-bold hover:bg-slate-50 transition-colors disabled:opacity-50"
             >
               {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-              Lưu Offer
+              {isEditMode ? 'Lưu thay đổi' : 'Lưu Offer'}
             </button>
           </div>
         </div>
