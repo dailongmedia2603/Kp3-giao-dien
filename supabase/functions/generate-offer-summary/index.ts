@@ -53,12 +53,20 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders })
   }
 
+  const startTime = Date.now();
+  let responseStatus: number | undefined;
+  let responseBody: any;
+  let errorMsg: string | undefined;
+  let userId: string | undefined;
+  let requestBody: any;
+
   const serviceClient = createClient(
     Deno.env.get('SUPABASE_URL') ?? '',
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
   );
 
   try {
+    console.log("Function `generate-offer-summary` invoked.");
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -69,11 +77,15 @@ serve(async (req) => {
     if (!user) {
       throw new Error('Unauthorized: User not found.');
     }
+    userId = user.id;
+    console.log(`Authenticated user: ${userId}`);
 
-    const { offerDetails } = await req.json();
+    requestBody = await req.json();
+    const { offerDetails } = requestBody;
     if (!offerDetails) {
       throw new Error('Bad Request: Missing offerDetails payload.');
     }
+    console.log("Request body parsed successfully.");
 
     const { data: apiConfig, error: configError } = await serviceClient
       .from('api_configurations')
@@ -82,17 +94,25 @@ serve(async (req) => {
       .single();
 
     if (configError && configError.code !== 'PGRST116') {
+      console.error("API config error:", configError?.message);
       throw new Error('API configuration not found. Please save your settings first.');
     }
+    console.log("API configuration loaded.");
 
     const { project_id, location, model, service_account_json, offer_summary_prompt } = apiConfig || {};
 
     if (!project_id || !location || !model || !service_account_json) {
-      throw new Error('Incomplete API configuration. Please check your settings.');
+      throw new Error('Incomplete API configuration. Please check your settings for Project ID, Location, Model, and Service Account JSON.');
     }
 
     const serviceAccount = JSON.parse(service_account_json);
+    if (!serviceAccount.private_key || !serviceAccount.client_email) {
+        throw new Error("Service Account JSON must contain 'private_key' and 'client_email'.");
+    }
+    console.log("Service account parsed.");
+
     const privateKey = await importKey(serviceAccount.private_key);
+    console.log("Private key imported.");
 
     const now = Math.floor(Date.now() / 1000);
     const exp = now + 3600;
@@ -113,6 +133,7 @@ serve(async (req) => {
     const signature = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", privateKey, dataToSign);
     const encodedSignature = base64url(signature);
     const jwt = `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
+    console.log("JWT created.");
 
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
@@ -125,6 +146,7 @@ serve(async (req) => {
 
     if (!tokenResponse.ok) {
       const errorBody = await tokenResponse.text();
+      console.error("Failed to get access token:", errorBody);
       throw new Error(`Failed to get access token: ${tokenResponse.status} ${errorBody}`);
     }
 
@@ -134,6 +156,7 @@ serve(async (req) => {
     if (!accessToken) {
       throw new Error('Access token not found in Google Auth response.');
     }
+    console.log("Access token fetched.");
 
     const systemPrompt = offer_summary_prompt || DEFAULT_OFFER_SUMMARY_PROMPT;
     let processedPrompt = systemPrompt;
@@ -142,6 +165,7 @@ serve(async (req) => {
     }
 
     const vertexApiUrl = `https://${location}-aiplatform.googleapis.com/v1/projects/${project_id}/locations/${location}/publishers/google/models/${model}:generateContent`;
+    console.log(`Calling Vertex AI with processed prompt.`);
 
     const vertexResponse = await fetch(vertexApiUrl, {
       method: 'POST',
@@ -154,22 +178,45 @@ serve(async (req) => {
       }),
     });
     
+    responseStatus = vertexResponse.status;
+
     if (!vertexResponse.ok) {
       const errorBody = await vertexResponse.text();
+      console.error("Vertex AI API error:", errorBody);
       throw new Error(`Vertex AI API error: ${vertexResponse.status} ${errorBody}`);
     }
 
     const vertexData = await vertexResponse.json();
     const generatedSummary = vertexData.candidates[0].content.parts[0].text;
+    responseBody = { summary: generatedSummary };
+    console.log("Summary generated successfully.");
 
-    return new Response(JSON.stringify({ summary: generatedSummary }), {
+    return new Response(JSON.stringify(responseBody), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    errorMsg = error.message;
+    responseStatus = responseStatus || 500;
+    responseBody = { error: error.message };
+    console.error("An error occurred in `generate-offer-summary`:", error);
+    return new Response(JSON.stringify(responseBody), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500,
+      status: responseStatus,
     })
+  } finally {
+    const durationMs = Date.now() - startTime;
+    if (userId) {
+      await serviceClient.from('api_logs').insert({
+        user_id: userId,
+        method: 'POST',
+        endpoint: 'supabase/functions/generate-offer-summary',
+        request_payload: requestBody,
+        response_status: responseStatus,
+        response_body: responseBody,
+        duration_ms: durationMs,
+        error_message: errorMsg,
+      });
+    }
   }
 })
