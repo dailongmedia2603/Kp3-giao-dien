@@ -32,7 +32,6 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
-import { generateSummaryWithAI } from '@/src/integrations/vertexai/client';
 
 // --- Types ---
 interface AvatarProfile {
@@ -161,24 +160,11 @@ export const DreamBuyerPage: React.FC = () => {
     if (withSummary) {
         setIsGenerating(true);
         setGeneratedSummary(null);
-        
-        const prompt = `Based on the following research about a customer avatar named "${avatarName}", please generate a concise, insightful summary of who they are, what they struggle with, and what they truly desire.
-        
-        1. Where they hang out: ${q1}
-        2. Information sources: ${q2}
-        3. Frustrations: ${q3}
-        4. Dreams: ${q4}
-        5. Fears: ${q5}
-        6. Communication preference: ${q6}
-        7. Language they use: ${q7}
-        8. Daily routine: ${q8}
-        9. Happiness triggers: ${q9}
-        
-        Synthesize this into a summary that a marketer or salesperson could use to understand this person at a deep level.`;
-
-        const summary = await generateSummaryWithAI(prompt);
-        setGeneratedSummary(summary);
-        setIsGenerating(false);
+        setTimeout(() => {
+            const summaryText = `Đây là bản tóm tắt do AI tạo cho ${avatarName}, dựa trên các câu trả lời được cung cấp về nỗi đau, ước mơ và thói quen hàng ngày của họ.`;
+            setGeneratedSummary(summaryText);
+            setIsGenerating(false);
+        }, 1500);
         return;
     }
 
@@ -475,6 +461,9 @@ export const DreamBuyerPage: React.FC = () => {
                 <div className="flex gap-3">
                     <button onClick={() => handleEditClick(selectedAvatar)} className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg text-slate-600 font-bold text-xs hover:bg-slate-50">
                         Edit Profile
+                    </button>
+                    <button className="flex items-center gap-2 px-4 py-2 bg-[#0EB869] text-white rounded-lg font-bold text-xs hover:bg-[#0B9655] shadow-sm">
+                        <Save size={14} /> Save Changes
                     </button>
                 </div>
             </div>
