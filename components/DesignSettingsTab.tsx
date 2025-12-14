@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '@/src/contexts/ThemeContext';
 import { Save, RotateCcw } from 'lucide-react';
 
 const DesignSettingsTab: React.FC = () => {
