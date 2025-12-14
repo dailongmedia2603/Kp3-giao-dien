@@ -15,10 +15,10 @@ interface Course {
   outcome: string | null;
 }
 
-// Cập nhật dữ liệu mẫu để chỉ chứa avatar thực tế
-const MOCK_AVATARS = [
-  { id: '1', name: 'Growth-Focused HR Director' },
-];
+interface Avatar {
+  id: string;
+  name: string;
+}
 
 const CourseCard: React.FC<{ course: Course; onDelete: (id: string) => void; }> = ({ course, onDelete }) => {
   return (
@@ -61,32 +61,48 @@ const CourseCard: React.FC<{ course: Course; onDelete: (id: string) => void; }> 
 export const CourseOutlineTool: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const { user } = useSession();
   const [courses, setCourses] = useState<Course[]>([]);
+  const [avatars, setAvatars] = useState<Avatar[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const fetchCourses = async () => {
+    const fetchData = async () => {
       if (!user) {
         setIsLoading(false);
         return;
       }
       
       setIsLoading(true);
-      const { data, error } = await supabase
+      
+      const coursesPromise = supabase
         .from('courses')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching courses:', error);
+      const avatarsPromise = supabase
+        .from('dream_buyer_avatars')
+        .select('id, name')
+        .eq('user_id', user.id);
+
+      const [coursesResult, avatarsResult] = await Promise.all([coursesPromise, avatarsPromise]);
+
+      if (coursesResult.error) {
+        console.error('Error fetching courses:', coursesResult.error);
       } else {
-        setCourses(data || []);
+        setCourses(coursesResult.data || []);
       }
+
+      if (avatarsResult.error) {
+        console.error('Error fetching avatars:', avatarsResult.error);
+      } else {
+        setAvatars(avatarsResult.data || []);
+      }
+
       setIsLoading(false);
     };
 
-    fetchCourses();
+    fetchData();
   }, [user]);
 
   const handleSaveCourse = async (newCourseData: { title: string; dream_buyer_avatar: string; outcome: string }) => {
@@ -167,7 +183,7 @@ export const CourseOutlineTool: React.FC<{ onBack: () => void }> = ({ onBack }) 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveCourse}
-        avatars={MOCK_AVATARS}
+        avatars={avatars}
       />
     </div>
   );
