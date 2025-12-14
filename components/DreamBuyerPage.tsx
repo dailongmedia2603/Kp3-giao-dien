@@ -64,6 +64,31 @@ interface AvatarProfile {
   summary?: string;
 }
 
+const FormField: React.FC<{
+  icon: React.ElementType;
+  label: string;
+  description: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  placeholder: string;
+}> = ({ icon: Icon, label, description, value, onChange, placeholder }) => (
+  <div>
+    <label className="block text-[13px] font-bold text-slate-900 mb-2 flex items-center gap-2">
+      <Icon size={16} className="text-[#0EB869]" /> 
+      {label}
+    </label>
+    <p className="text-xs text-slate-500 mb-2">
+      {description}
+    </p>
+    <textarea 
+      className="w-full p-4 border border-slate-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869] min-h-[100px] resize-none"
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+    />
+  </div>
+);
+
 export const DreamBuyerPage: React.FC = () => {
   const { user } = useSession();
   const [view, setView] = useState<'list' | 'create' | 'detail'>('list');
@@ -173,31 +198,6 @@ export const DreamBuyerPage: React.FC = () => {
     setSelectedAvatar(avatar);
     setView('detail');
   };
-
-  const FormField: React.FC<{
-    icon: React.ElementType;
-    label: string;
-    description: string;
-    value: string;
-    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-    placeholder: string;
-  }> = ({ icon: Icon, label, description, value, onChange, placeholder }) => (
-    <div>
-      <label className="block text-[13px] font-bold text-slate-900 mb-2 flex items-center gap-2">
-        <Icon size={16} className="text-[#0EB869]" /> 
-        {label}
-      </label>
-      <p className="text-xs text-slate-500 mb-2">
-        {description}
-      </p>
-      <textarea 
-        className="w-full p-4 border border-slate-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869] min-h-[100px] resize-none"
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-      />
-    </div>
-  );
 
   return (
     <div className="p-8 max-w-[1600px] mx-auto font-sans h-full flex flex-col">
