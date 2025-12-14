@@ -11,7 +11,7 @@ const ApiSettingsTab: React.FC = () => {
   const [projectId, setProjectId] = useState('');
   const [serviceAccountJson, setServiceAccountJson] = useState('');
   const [location, setLocation] = useState('us-central1');
-  const [model, setModel] = useState('gemini-1.5-pro-preview-0409');
+  const [model, setModel] = useState('gemini-2.5-pro');
   const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
   const [testPrompt, setTestPrompt] = useState('Say "Hello World" in Vietnamese.');
 
@@ -30,7 +30,7 @@ const ApiSettingsTab: React.FC = () => {
         setProjectId(data.project_id || '');
         setServiceAccountJson(data.service_account_json || '');
         setLocation(data.location || 'us-central1');
-        setModel(data.model || 'gemini-1.5-pro-preview-0409');
+        setModel(data.model || 'gemini-2.5-pro');
       } else if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
         console.error('Error fetching API settings:', error);
         toast.error('Không thể tải cài đặt API.');
@@ -161,8 +161,7 @@ const ApiSettingsTab: React.FC = () => {
                   onChange={(e) => setModel(e.target.value)}
                   className="w-full p-3 bg-white border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349]"
                 >
-                  <option value="gemini-1.5-pro-preview-0409">Gemini 1.5 Pro</option>
-                  <option value="gemini-1.0-pro">Gemini 1.0 Pro</option>
+                  <option value="gemini-2.5-pro">Gemini 2.5 Pro (Recommended)</option>
                 </select>
               </div>
               
