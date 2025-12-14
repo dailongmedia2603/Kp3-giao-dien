@@ -134,7 +134,7 @@ const BonusView: React.FC = () => {
     <div className="animate-in fade-in duration-300">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold text-slate-900">
-          Bonus / Quà tặng
+          Bonus
         </h2>
         <button 
           className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#16A349] text-white text-[14px] font-bold hover:bg-[#149641] transition-colors shadow-sm"
@@ -256,7 +256,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
       <div className="bg-slate-100/50 rounded-xl border border-slate-200 p-1.5 flex mb-8 gap-1 max-w-lg mx-auto">
         <MainTabButton active={mainTab === 'products'} onClick={() => setMainTab('products')} label="Products" />
         <MainTabButton active={mainTab === 'offer'} onClick={() => setMainTab('offer')} label="Offer" />
-        <MainTabButton active={mainTab === 'bonus'} onClick={() => setMainTab('bonus')} label="Bonus / Quà tặng" />
+        <MainTabButton active={mainTab === 'bonus'} onClick={() => setMainTab('bonus')} label="Bonus" />
       </div>
 
       {mainTab === 'products' && (
