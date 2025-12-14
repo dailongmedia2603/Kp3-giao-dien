@@ -66,8 +66,9 @@ serve(async (req) => {
     const encodedPayload = base64url(new TextEncoder().encode(JSON.stringify(payload)));
     
     const dataToSign = new TextEncoder().encode(`${encodedHeader}.${encodedPayload}`);
+    
     const signature = await crypto.subtle.sign(
-      { name: "RSASSA-PKCS1-v1_5" },
+      "RSASSA-PKCS1-v1_5",
       privateKey,
       dataToSign
     );

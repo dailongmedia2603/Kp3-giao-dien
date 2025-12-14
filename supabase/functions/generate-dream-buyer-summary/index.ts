@@ -108,7 +108,7 @@ serve(async (req) => {
     
     const dataToSign = new TextEncoder().encode(`${encodedHeader}.${encodedPayload}`);
     const signature = await crypto.subtle.sign(
-      { name: "RSASSA-PKCS1-v1_5" },
+      "RSASSA-PKCS1-v1_5",
       privateKey,
       dataToSign
     );
