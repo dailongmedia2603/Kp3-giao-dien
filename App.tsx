@@ -100,7 +100,7 @@ const AppContent: React.FC = () => {
       case 'offer':
         return <OfferPage onNavigate={setCurrentView} />;
       case 'create-product':
-        return <CreateProductPage onCancel={() => setCurrentView('offer')} />;
+        return <CreateProductPage onCancel={() => setCurrentView('offer')} onNavigate={setCurrentView} />;
       case 'goal':
         return <GoalPage />;
       case 'settings':
@@ -187,7 +187,7 @@ const AppContent: React.FC = () => {
             <WelcomeBanner />
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               <DashboardCard 
-                title="Offers"
+                title="Products & Offers"
                 description="A central place for your services, products, and digital assets details."
                 icon={ShoppingBag}
                 variant="highlighted"
