@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Save, RotateCcw, Loader2, Bot } from 'lucide-react';
+import { Save, RotateCcw, Loader2, Bot, ChevronDown } from 'lucide-react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
 import toast from 'react-hot-toast';
@@ -71,13 +71,38 @@ const offerVariables = [
     { name: 'Phản hồi', value: '{{testimonials}}' },
 ];
 
+const CollapsiblePromptEditor: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="border border-slate-200 rounded-xl transition-all duration-300 hover:border-[#A5D6A7]">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between p-5 text-left"
+      >
+        <h3 className="text-[14px] font-bold text-slate-900">{title}</h3>
+        <ChevronDown
+          size={20}
+          className={`text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+        />
+      </button>
+      {isOpen && (
+        <div className="px-5 pb-5 animate-in fade-in duration-300">
+          <div className="border-t border-slate-100 pt-5">
+            {children}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const PromptEditor: React.FC<{
-    title: string;
     prompt: string;
     setPrompt: (value: string) => void;
     variables: { name: string; value: string }[];
     defaultPrompt: string;
-}> = ({ title, prompt, setPrompt, variables, defaultPrompt }) => {
+}> = ({ prompt, setPrompt, variables, defaultPrompt }) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const handleInsertVariable = (variableValue: string) => {
@@ -96,8 +121,7 @@ const PromptEditor: React.FC<{
     };
 
     return (
-        <div className="border border-slate-200 rounded-xl p-5 hover:border-[#A5D6A7] transition-colors">
-            <h3 className="text-[14px] font-bold text-slate-900 mb-3">{title}</h3>
+        <div>
             <textarea 
                 ref={textareaRef}
                 className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-[13px] font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349] leading-relaxed resize-y min-h-[240px]"
@@ -201,21 +225,23 @@ const PromptConfigTab: React.FC = () => {
           <Bot className="text-[#16A349] h-8 w-8 opacity-20" />
         </div>
 
-        <div className="space-y-6">
-          <PromptEditor 
-            title="Dream Buyer Avatar System Prompt"
-            prompt={dreamBuyerPrompt}
-            setPrompt={setDreamBuyerPrompt}
-            variables={dreamBuyerVariables}
-            defaultPrompt={DEFAULT_DREAM_BUYER_PROMPT}
-          />
-          <PromptEditor 
-            title="Offer Summary System Prompt"
-            prompt={offerSummaryPrompt}
-            setPrompt={setOfferSummaryPrompt}
-            variables={offerVariables}
-            defaultPrompt={DEFAULT_OFFER_PROMPT}
-          />
+        <div className="space-y-4">
+          <CollapsiblePromptEditor title="Dream Buyer Avatar System Prompt">
+            <PromptEditor 
+              prompt={dreamBuyerPrompt}
+              setPrompt={setDreamBuyerPrompt}
+              variables={dreamBuyerVariables}
+              defaultPrompt={DEFAULT_DREAM_BUYER_PROMPT}
+            />
+          </CollapsiblePromptEditor>
+          <CollapsiblePromptEditor title="Offer Summary System Prompt">
+            <PromptEditor 
+              prompt={offerSummaryPrompt}
+              setPrompt={setOfferSummaryPrompt}
+              variables={offerVariables}
+              defaultPrompt={DEFAULT_OFFER_PROMPT}
+            />
+          </CollapsiblePromptEditor>
         </div>
         
         <div className="flex justify-end pt-6 border-t border-slate-100 mt-6 gap-3">
