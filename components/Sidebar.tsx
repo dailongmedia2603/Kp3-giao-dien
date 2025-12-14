@@ -116,7 +116,7 @@ const SidebarCategory: React.FC<{
       >
         <div className="flex items-center gap-3">
           <Icon size={18} style={{ color }} />
-          <span className="text-[12px] font-bold uppercase tracking-wider" style={{ color }}>
+          <span className="text-[15px] font-bold uppercase tracking-wider" style={{ color }}>
             {label}
           </span>
         </div>
