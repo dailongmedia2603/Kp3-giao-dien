@@ -9,26 +9,17 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const DEFAULT_OFFER_PROMPT = `You are a world-class direct response copywriter. Based on the following details for a new offer, write a compelling and persuasive description in Vietnamese.
+const DEFAULT_OFFER_SUMMARY_PROMPT = `You are a master copywriter specializing in "Godfather Offers". Synthesize the following 7 components for an offer titled "{{title}}" into a single, powerful, and persuasive offer summary in Vietnamese.
 
-Offer Details:
-- Title: {{title}}
-- Category: {{category}}
-- Target Market: {{target_market}}
-- Pressing Problem it Solves: {{pressing_problem}}
-- Desired Outcome it Delivers: {{desired_outcome}}
-- Features/USPs: {{features}}
-- Specific Technology/Method: {{technology}}
-- Scientific Studies/Statistics: {{studies}}
-- Social Proof (Featured in): {{social_proof}}
-- Credible Authority Figure: {{authority_figure}}
-- Unique Mechanism: {{unique_mechanism}}
-- Number of Reviews: {{review_count}}
-- Average Review Rating: {{avg_review_rating}}
-- Total Customers: {{total_customers}}
-- Testimonials: {{testimonials}}
+1.  **Rationale (Lý do hợp lý):** {{rationale}}
+2.  **Build Value (Xây dựng giá trị):** {{value_build}}
+3.  **Pricing (Định giá):** {{pricing}}
+4.  **Payment Options (Tùy chọn thanh toán):** {{payment_options}}
+5.  **Premiums (Quà tặng kèm/Bonuses):** {{premiums}}
+6.  **Power Guarantee (Cam kết mạnh mẽ):** {{power_guarantee}}
+7.  **Scarcity (Sự khan hiếm):** {{scarcity}}
 
-Your task is to synthesize this information into a powerful description that can be used on a landing page or in an ad. The tone should be persuasive and clearly articulate the value proposition. The output should be in Vietnamese.`;
+Combine these elements into a cohesive and irresistible offer description. The output should be in Vietnamese.`;
 
 // Helper to Base64URL encode
 function base64url(source: ArrayBuffer): string {
@@ -144,7 +135,7 @@ serve(async (req) => {
       throw new Error('Access token not found in Google Auth response.');
     }
 
-    const systemPrompt = offer_summary_prompt || DEFAULT_OFFER_PROMPT;
+    const systemPrompt = offer_summary_prompt || DEFAULT_OFFER_SUMMARY_PROMPT;
     let processedPrompt = systemPrompt;
     for (const [key, value] of Object.entries(offerDetails)) {
       processedPrompt = processedPrompt.replace(new RegExp(`{{${key}}}`, 'g'), value as string || '');
@@ -169,9 +160,9 @@ serve(async (req) => {
     }
 
     const vertexData = await vertexResponse.json();
-    const generatedDescription = vertexData.candidates[0].content.parts[0].text;
+    const generatedSummary = vertexData.candidates[0].content.parts[0].text;
 
-    return new Response(JSON.stringify({ description: generatedDescription }), {
+    return new Response(JSON.stringify({ summary: generatedSummary }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })

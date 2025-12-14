@@ -19,26 +19,17 @@ Here are the details:
 
 Synthesize this information into a compelling persona description in Vietnamese. The summary should be a narrative that brings the person to life, focusing on their core motivations, fears, and what would make them say "yes" to an offer.`;
 
-const DEFAULT_OFFER_PROMPT = `You are a world-class direct response copywriter. Based on the following details for a new offer, write a compelling and persuasive description in Vietnamese.
+const DEFAULT_OFFER_SUMMARY_PROMPT = `You are a master copywriter specializing in "Godfather Offers". Synthesize the following 7 components for an offer titled "{{title}}" into a single, powerful, and persuasive offer summary in Vietnamese.
 
-Offer Details:
-- Title: {{title}}
-- Category: {{category}}
-- Target Market: {{target_market}}
-- Pressing Problem it Solves: {{pressing_problem}}
-- Desired Outcome it Delivers: {{desired_outcome}}
-- Features/USPs: {{features}}
-- Specific Technology/Method: {{technology}}
-- Scientific Studies/Statistics: {{studies}}
-- Social Proof (Featured in): {{social_proof}}
-- Credible Authority Figure: {{authority_figure}}
-- Unique Mechanism: {{unique_mechanism}}
-- Number of Reviews: {{review_count}}
-- Average Review Rating: {{avg_review_rating}}
-- Total Customers: {{total_customers}}
-- Testimonials: {{testimonials}}
+1.  **Rationale (Lý do hợp lý):** {{rationale}}
+2.  **Build Value (Xây dựng giá trị):** {{value_build}}
+3.  **Pricing (Định giá):** {{pricing}}
+4.  **Payment Options (Tùy chọn thanh toán):** {{payment_options}}
+5.  **Premiums (Quà tặng kèm/Bonuses):** {{premiums}}
+6.  **Power Guarantee (Cam kết mạnh mẽ):** {{power_guarantee}}
+7.  **Scarcity (Sự khan hiếm):** {{scarcity}}
 
-Your task is to synthesize this information into a powerful description that can be used on a landing page or in an ad. The tone should be persuasive and clearly articulate the value proposition. The output should be in Vietnamese.`;
+Combine these elements into a cohesive and irresistible offer description. The output should be in Vietnamese.`;
 
 const dreamBuyerVariables = [
   { name: 'Tên Avatar', value: '{{name}}' },
@@ -55,20 +46,13 @@ const dreamBuyerVariables = [
 
 const offerVariables = [
     { name: 'Tiêu đề', value: '{{title}}' },
-    { name: 'Danh mục', value: '{{category}}' },
-    { name: 'Thị trường mục tiêu', value: '{{target_market}}' },
-    { name: 'Vấn đề cấp bách', value: '{{pressing_problem}}' },
-    { name: 'Kết quả mong muốn', value: '{{desired_outcome}}' },
-    { name: 'Tính năng/USP', value: '{{features}}' },
-    { name: 'Công nghệ/Phương pháp', value: '{{technology}}' },
-    { name: 'Nghiên cứu/Thống kê', value: '{{studies}}' },
-    { name: 'Bằng chứng xã hội', value: '{{social_proof}}' },
-    { name: 'Nhân vật có uy tín', value: '{{authority_figure}}' },
-    { name: 'Cơ chế độc đáo', value: '{{unique_mechanism}}' },
-    { name: 'Số lượng đánh giá', value: '{{review_count}}' },
-    { name: 'Xếp hạng trung bình', value: '{{avg_review_rating}}' },
-    { name: 'Tổng số khách hàng', value: '{{total_customers}}' },
-    { name: 'Phản hồi', value: '{{testimonials}}' },
+    { name: 'Lý do hợp lý', value: '{{rationale}}' },
+    { name: 'Xây dựng giá trị', value: '{{value_build}}' },
+    { name: 'Định giá', value: '{{pricing}}' },
+    { name: 'Tùy chọn thanh toán', value: '{{payment_options}}' },
+    { name: 'Quà tặng kèm', value: '{{premiums}}' },
+    { name: 'Cam kết', value: '{{power_guarantee}}' },
+    { name: 'Sự khan hiếm', value: '{{scarcity}}' },
 ];
 
 const CollapsiblePromptEditor: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
@@ -155,7 +139,7 @@ const PromptConfigTab: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [dreamBuyerPrompt, setDreamBuyerPrompt] = useState(DEFAULT_DREAM_BUYER_PROMPT);
-  const [offerSummaryPrompt, setOfferSummaryPrompt] = useState(DEFAULT_OFFER_PROMPT);
+  const [offerSummaryPrompt, setOfferSummaryPrompt] = useState(DEFAULT_OFFER_SUMMARY_PROMPT);
 
   useEffect(() => {
     if (!user) return;
@@ -170,7 +154,7 @@ const PromptConfigTab: React.FC = () => {
 
       if (data) {
         setDreamBuyerPrompt(data.dream_buyer_prompt || DEFAULT_DREAM_BUYER_PROMPT);
-        setOfferSummaryPrompt(data.offer_summary_prompt || DEFAULT_OFFER_PROMPT);
+        setOfferSummaryPrompt(data.offer_summary_prompt || DEFAULT_OFFER_SUMMARY_PROMPT);
       } else if (error && error.code !== 'PGRST116') {
         console.error('Error fetching prompt settings:', error);
         toast.error('Không thể tải cài đặt prompt.');
@@ -234,12 +218,12 @@ const PromptConfigTab: React.FC = () => {
               defaultPrompt={DEFAULT_DREAM_BUYER_PROMPT}
             />
           </CollapsiblePromptEditor>
-          <CollapsiblePromptEditor title="Offer Summary System Prompt">
+          <CollapsiblePromptEditor title="Godfather Offer System Prompt">
             <PromptEditor 
               prompt={offerSummaryPrompt}
               setPrompt={setOfferSummaryPrompt}
               variables={offerVariables}
-              defaultPrompt={DEFAULT_OFFER_PROMPT}
+              defaultPrompt={DEFAULT_OFFER_SUMMARY_PROMPT}
             />
           </CollapsiblePromptEditor>
         </div>

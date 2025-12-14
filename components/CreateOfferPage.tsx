@@ -57,6 +57,7 @@ const FormField: React.FC<{
 export const CreateOfferPage: React.FC<CreateOfferPageProps> = ({ onCancel, onNavigate }) => {
   const { user } = useSession();
   const [isSaving, setIsSaving] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   
   const [selectedProductId, setSelectedProductId] = useState('');
@@ -67,6 +68,7 @@ export const CreateOfferPage: React.FC<CreateOfferPageProps> = ({ onCancel, onNa
   const [premiums, setPremiums] = useState('');
   const [powerGuarantee, setPowerGuarantee] = useState('');
   const [scarcity, setScarcity] = useState('');
+  const [generatedSummary, setGeneratedSummary] = useState('');
 
   useEffect(() => {
     if (!user) return;
@@ -84,6 +86,36 @@ export const CreateOfferPage: React.FC<CreateOfferPageProps> = ({ onCancel, onNa
     fetchProducts();
   }, [user]);
 
+  const handleGenerateSummary = async () => {
+    setIsGenerating(true);
+    setGeneratedSummary('');
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-offer-summary', {
+        body: { 
+          offerDetails: {
+            rationale,
+            value_build: valueBuild,
+            pricing,
+            payment_options: paymentOptions,
+            premiums,
+            power_guarantee: powerGuarantee,
+            scarcity,
+            title: products.find(p => p.id === selectedProductId)?.title || ''
+          }
+        },
+      });
+      if (error) throw error;
+      setGeneratedSummary(data.summary);
+      toast.success('Đã tạo tóm tắt offer bằng AI!');
+    } catch (error: any) {
+      const errorMessage = error.context?.json?.error || error.message || 'Lỗi khi tạo tóm tắt.';
+      setGeneratedSummary(`Không thể tạo tóm tắt: ${errorMessage}`);
+      toast.error(errorMessage, { duration: 5000 });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const handleSave = async () => {
     if (!user || !selectedProductId) {
       toast.error('Vui lòng chọn một sản phẩm.');
@@ -95,6 +127,7 @@ export const CreateOfferPage: React.FC<CreateOfferPageProps> = ({ onCancel, onNa
       user_id: user.id,
       product_id: selectedProductId,
       title: products.find(p => p.id === selectedProductId)?.title || 'New Offer',
+      description: generatedSummary, // Save the AI summary as the description
       rationale,
       value_build: valueBuild,
       pricing,
@@ -172,17 +205,35 @@ export const CreateOfferPage: React.FC<CreateOfferPageProps> = ({ onCancel, onNa
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 sticky top-8">
             <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
               <BrainCircuit size={18} className="text-[#16A349]" />
-              Offer của bạn
+              Tóm tắt Offer do AI tạo
             </h3>
-            <div className="bg-slate-50 rounded-lg p-5 border border-slate-200 min-h-[300px]">
-              <p className="text-sm text-slate-500 italic">
-                Khi bạn điền thông tin, một bản tóm tắt về offer của bạn sẽ xuất hiện ở đây.
-              </p>
+            <div className="mb-4">
+              {isGenerating ? (
+                <div className="flex flex-col items-center justify-center h-[250px] bg-slate-50 rounded-lg border border-dashed">
+                  <Loader2 size={32} className="animate-spin text-slate-400" />
+                  <p className="text-sm text-slate-500 mt-4">AI đang suy nghĩ...</p>
+                </div>
+              ) : (
+                <textarea 
+                  className="w-full p-4 border border-slate-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349] min-h-[250px] resize-none bg-slate-50"
+                  placeholder="Nhấp vào 'Tạo tóm tắt' để AI viết nội dung cho bạn ở đây..."
+                  value={generatedSummary}
+                  onChange={(e) => setGeneratedSummary(e.target.value)}
+                />
+              )}
             </div>
+            <button 
+              onClick={handleGenerateSummary}
+              disabled={isGenerating || isSaving}
+              className="w-full mb-2 flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#0EB869] text-white text-[14px] font-bold hover:bg-[#0B9655] transition-colors shadow-sm disabled:opacity-50"
+            >
+              {isGenerating ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
+              Tạo tóm tắt Offer
+            </button>
             <button 
               onClick={handleSave}
               disabled={isSaving}
-              className="w-full mt-4 flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#16A349] text-white text-[14px] font-bold hover:bg-[#149641] transition-colors shadow-sm disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-slate-200 text-slate-700 text-[14px] font-bold hover:bg-slate-50 transition-colors disabled:opacity-50"
             >
               {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
               Lưu Offer
