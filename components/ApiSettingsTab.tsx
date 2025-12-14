@@ -3,15 +3,16 @@ import { Save, RotateCcw, CheckCircle, AlertTriangle, Loader2, Key } from 'lucid
 
 const ApiSettingsTab: React.FC = () => {
   const [projectId, setProjectId] = useState('');
-  const [apiKey, setApiKey] = useState('');
-  const [model, setModel] = useState('gemini-1.5-pro'); // Mặc định là model có sẵn
+  const [serviceAccountJson, setServiceAccountJson] = useState('');
+  const [location, setLocation] = useState('us-central1');
+  const [model, setModel] = useState('gemini-2.5-pro');
   const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
 
   const handleTestConnection = () => {
     setTestStatus('testing');
     // Mô phỏng cuộc gọi API
     setTimeout(() => {
-      if (projectId && apiKey) {
+      if (projectId && serviceAccountJson && location) {
         setTestStatus('success');
       } else {
         setTestStatus('error');
@@ -22,7 +23,7 @@ const ApiSettingsTab: React.FC = () => {
 
   const handleSave = () => {
     // Trong ứng dụng thực tế, điều này sẽ lưu vào backend hoặc context an toàn
-    console.log('Saving API settings:', { projectId, apiKey, model });
+    console.log('Saving API settings:', { projectId, serviceAccountJson, location, model });
     alert('Settings saved! (Simulated)');
   };
 
@@ -54,14 +55,25 @@ const ApiSettingsTab: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[13px] font-bold text-slate-700 mb-2">Vertex AI API Key</label>
+                <label className="block text-[13px] font-bold text-slate-700 mb-2">Location</label>
                 <input 
-                  type="password" 
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  placeholder="••••••••••••••••••••••••••••••"
+                  type="text" 
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="e.g., us-central1"
                   className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-[13px] font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349]"
                 />
+              </div>
+
+              <div>
+                <label className="block text-[13px] font-bold text-slate-700 mb-2">Google Service Account JSON Key</label>
+                <textarea 
+                  value={serviceAccountJson}
+                  onChange={(e) => setServiceAccountJson(e.target.value)}
+                  placeholder='{ "type": "service_account", "project_id": "...", ... }'
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-[13px] font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349] h-32 resize-none"
+                />
+                <p className="text-xs text-slate-400 mt-2">Dán toàn bộ nội dung của file JSON service account bạn đã tải về từ Google Cloud Console vào đây.</p>
               </div>
 
               <div>
@@ -71,11 +83,10 @@ const ApiSettingsTab: React.FC = () => {
                   onChange={(e) => setModel(e.target.value)}
                   className="w-full p-3 bg-white border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349]"
                 >
-                  <option value="gemini-1.5-pro">Gemini 1.5 Pro (Recommended)</option>
-                  <option value="gemini-2.5-pro" disabled>Gemini 2.5 Pro (Coming Soon)</option>
+                  <option value="gemini-2.5-pro">Gemini 2.5 Pro (Recommended)</option>
+                  <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
                   <option value="gemini-1.0-pro">Gemini 1.0 Pro</option>
                 </select>
-                <p className="text-xs text-slate-400 mt-2">Gemini 2.5 Pro chưa có sẵn. Cài đặt này sẽ sẵn sàng khi nó được phát hành.</p>
               </div>
             </div>
           </div>
