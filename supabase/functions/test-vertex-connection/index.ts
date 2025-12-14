@@ -2,6 +2,7 @@
 /// <reference types="https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts" />
 
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -36,40 +37,61 @@ async function importKey(pem: string) {
 }
 
 serve(async (req) => {
-  console.log("Function `test-vertex-connection` invoked for content generation test.");
-
   if (req.method === 'OPTIONS') {
-    console.log("Handling OPTIONS request.");
     return new Response(null, { headers: corsHeaders })
   }
 
+  const serviceClient = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  );
+
   try {
-    console.log("Parsing request body...");
-    const { projectId, location, serviceAccountJson, model, prompt } = await req.json();
-    console.log(`Received projectId: ${projectId}, location: ${location}, model: ${model}`);
+    console.log("Function `test-vertex-connection` invoked.");
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+    )
 
-    if (!projectId || !location || !serviceAccountJson || !model || !prompt) {
-      console.error("Missing required fields in request body.");
-      throw new Error('Missing required fields: projectId, location, serviceAccountJson, model, or prompt');
+    const { data: { user } } = await supabaseClient.auth.getUser()
+    if (!user) {
+      throw new Error('Unauthorized: User not found.');
+    }
+    console.log(`Authenticated user: ${user.id}`);
+
+    const { prompt } = await req.json();
+    if (!prompt) {
+      throw new Error('Bad Request: Missing test prompt.');
+    }
+    console.log("Request body parsed successfully.");
+
+    const { data: apiConfig, error: configError } = await serviceClient
+      .from('api_configurations')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
+
+    if (configError || !apiConfig) {
+      console.error("API config error:", configError?.message);
+      throw new Error('API configuration not found. Please save your settings first.');
+    }
+    console.log("API configuration loaded from database.");
+
+    const { project_id, location, model, service_account_json } = apiConfig;
+
+    if (!project_id || !location || !model || !service_account_json) {
+      throw new Error('Incomplete API configuration. Please check your settings.');
     }
 
-    let serviceAccount;
-    try {
-      serviceAccount = JSON.parse(serviceAccountJson);
-      console.log("Service Account JSON parsed successfully.");
-    } catch (e) {
-      console.error("Failed to parse Service Account JSON:", e.message);
-      throw new Error('Invalid Service Account JSON format.');
-    }
-
+    const serviceAccount = JSON.parse(service_account_json);
     if (!serviceAccount.private_key || !serviceAccount.client_email) {
-        console.error("Service Account JSON is missing `private_key` or `client_email`.");
         throw new Error("Service Account JSON must contain 'private_key' and 'client_email'.");
     }
+    console.log("Service account parsed.");
 
-    console.log("Importing private key...");
     const privateKey = await importKey(serviceAccount.private_key);
-    console.log("Private key imported successfully.");
+    console.log("Private key imported.");
 
     const now = Math.floor(Date.now() / 1000);
     const exp = now + 3600;
@@ -83,7 +105,6 @@ serve(async (req) => {
       iat: now,
     };
 
-    console.log("Creating JWT...");
     const encodedHeader = base64url(new TextEncoder().encode(JSON.stringify(header)));
     const encodedPayload = base64url(new TextEncoder().encode(JSON.stringify(payload)));
     
@@ -91,9 +112,8 @@ serve(async (req) => {
     const signature = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", privateKey, dataToSign);
     const encodedSignature = base64url(signature);
     const jwt = `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
-    console.log("JWT created successfully.");
+    console.log("JWT created.");
 
-    console.log("Fetching access token from Google...");
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -105,23 +125,22 @@ serve(async (req) => {
 
     if (!tokenResponse.ok) {
       const errorBody = await tokenResponse.text();
-      console.error("Failed to get access token. Status:", tokenResponse.status, "Body:", errorBody);
+      console.error("Failed to get access token:", errorBody);
       throw new Error(`Failed to get access token: ${tokenResponse.status} ${errorBody}`);
     }
 
     const tokenData = await tokenResponse.json();
     const accessToken = tokenData.access_token;
-    console.log("Access token fetched successfully.");
 
     if (!accessToken) {
-      console.error("Access token not found in Google Auth response.");
       throw new Error('Access token not found in Google Auth response.');
     }
+    console.log("Access token fetched.");
 
-    const testApiUrl = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${model}:generateContent`;
-    console.log(`Testing connection to Vertex AI endpoint: ${testApiUrl}`);
+    const vertexApiUrl = `https://${location}-aiplatform.googleapis.com/v1/projects/${project_id}/locations/${location}/publishers/google/models/${model}:generateContent`;
+    console.log(`Calling Vertex AI: ${vertexApiUrl}`);
 
-    const testResponse = await fetch(testApiUrl, {
+    const vertexResponse = await fetch(vertexApiUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -131,35 +150,27 @@ serve(async (req) => {
         contents: [{ parts: [{ text: prompt }] }]
       }),
     });
-
-    if (!testResponse.ok) {
-      const errorBody = await testResponse.text();
-      console.error("Vertex AI connection test failed. Status:", testResponse.status, "Body:", errorBody);
-      throw new Error(`Connection failed: ${testResponse.status} ${errorBody}`);
+    
+    if (!vertexResponse.ok) {
+      const errorBody = await vertexResponse.text();
+      console.error("Vertex AI API error:", errorBody);
+      throw new Error(`Vertex AI API error: ${vertexResponse.status} ${errorBody}`);
     }
 
-    const responseData = await testResponse.json();
-    const generatedText = responseData.candidates[0].content.parts[0].text;
+    const vertexData = await vertexResponse.json();
+    const generatedText = vertexData.candidates[0].content.parts[0].text;
+    console.log("Test summary generated successfully.");
 
-    console.log("Connection to Vertex AI successful! Response:", generatedText);
     return new Response(JSON.stringify({ message: 'Connection successful!', text: generatedText }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
-    });
-
+    })
   } catch (error) {
     console.error("--- ERROR in `test-vertex-connection` ---");
     console.error("Error Message:", error.message);
-    if (error instanceof Error && error.stack) {
-      console.error("Stack Trace:", error.stack);
-    } else {
-      console.error("Full Error Object:", JSON.stringify(error, null, 2));
-    }
-    console.error("--- END ERROR ---");
-
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
-    });
+    })
   }
-});
+})
