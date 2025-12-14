@@ -108,22 +108,21 @@ export const DreamBuyerPage: React.FC = () => {
   const [avatars, setAvatars] = useState<AvatarProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  // --- NEW STATE FOR THE FORM ---
+  const [editingAvatarId, setEditingAvatarId] = useState<string | null>(null);
   const [avatarName, setAvatarName] = useState('');
-  const [q1, setQ1] = useState(''); // hangouts
-  const [q2, setQ2] = useState(''); // info sources
-  const [q3, setQ3] = useState(''); // frustrations
-  const [q4, setQ4] = useState(''); // dreams
-  const [q5, setQ5] = useState(''); // fears
-  const [q6, setQ6] = useState(''); // communication
-  const [q7, setQ7] = useState(''); // language
-  const [q8, setQ8] = useState(''); // daily routine
-  const [q9, setQ9] = useState(''); // happiness
+  const [q1, setQ1] = useState('');
+  const [q2, setQ2] = useState('');
+  const [q3, setQ3] = useState('');
+  const [q4, setQ4] = useState('');
+  const [q5, setQ5] = useState('');
+  const [q6, setQ6] = useState('');
+  const [q7, setQ7] = useState('');
+  const [q8, setQ8] = useState('');
+  const [q9, setQ9] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [generatedSummary, setGeneratedSummary] = useState<string | null>(null);
 
-  // Fetch avatars from Supabase
   useEffect(() => {
     if (!user) {
       setIsLoading(false);
@@ -152,27 +151,25 @@ export const DreamBuyerPage: React.FC = () => {
     setQ1(''); setQ2(''); setQ3(''); setQ4(''); setQ5(''); 
     setQ6(''); setQ7(''); setQ8(''); setQ9('');
     setGeneratedSummary(null);
+    setEditingAvatarId(null);
   };
 
   const handleSave = async (withSummary: boolean = false) => {
     if (!user || !avatarName) return;
 
-    // Logic for "Tạo tóm tắt" button
     if (withSummary) {
         setIsGenerating(true);
         setGeneratedSummary(null);
-        // Simulate AI call
         setTimeout(() => {
             const summaryText = `Đây là bản tóm tắt do AI tạo cho ${avatarName}, dựa trên các câu trả lời được cung cấp về nỗi đau, ước mơ và thói quen hàng ngày của họ.`;
             setGeneratedSummary(summaryText);
             setIsGenerating(false);
         }, 1500);
-        return; // Exit without saving, just for preview
+        return;
     }
 
-    // Logic for "Lưu" button
     setIsSaving(true);
-    const newAvatarData = {
+    const avatarData = {
         user_id: user.id,
         name: avatarName,
         persona_name: avatarName,
@@ -185,22 +182,40 @@ export const DreamBuyerPage: React.FC = () => {
         q7_language: q7,
         q8_daily_routine: q8,
         q9_happiness_triggers: q9,
-        summary: generatedSummary, // Save the generated summary if it exists
+        summary: generatedSummary,
     };
 
-    const { data, error } = await supabase
-      .from('dream_buyer_avatars')
-      .insert(newAvatarData)
-      .select()
-      .single();
+    if (editingAvatarId) {
+        const { data, error } = await supabase
+            .from('dream_buyer_avatars')
+            .update(avatarData)
+            .eq('id', editingAvatarId)
+            .select()
+            .single();
+        
+        if (error) {
+            console.error("Error updating avatar:", error);
+        } else if (data) {
+            setAvatars(prev => prev.map(a => a.id === editingAvatarId ? data : a));
+            setSelectedAvatar(data);
+            setView('detail');
+            resetForm();
+        }
+    } else {
+        const { data, error } = await supabase
+            .from('dream_buyer_avatars')
+            .insert(avatarData)
+            .select()
+            .single();
 
-    if (error) {
-        console.error("Error creating avatar:", error);
-    } else if (data) {
-        setAvatars(prev => [data, ...prev]);
-        setSelectedAvatar(data);
-        setView('detail');
-        resetForm();
+        if (error) {
+            console.error("Error creating avatar:", error);
+        } else if (data) {
+            setAvatars(prev => [data, ...prev]);
+            setSelectedAvatar(data);
+            setView('detail');
+            resetForm();
+        }
     }
     
     setIsSaving(false);
@@ -211,10 +226,25 @@ export const DreamBuyerPage: React.FC = () => {
     setView('detail');
   };
 
+  const handleEditClick = (avatarToEdit: AvatarProfile) => {
+    setEditingAvatarId(avatarToEdit.id);
+    setAvatarName(avatarToEdit.name || '');
+    setQ1(avatarToEdit.q1_hangouts || '');
+    setQ2(avatarToEdit.q2_info_sources || '');
+    setQ3(avatarToEdit.q3_frustrations || '');
+    setQ4(avatarToEdit.q4_dreams || '');
+    setQ5(avatarToEdit.q5_fears || '');
+    setQ6(avatarToEdit.q6_communication_channel || '');
+    setQ7(avatarToEdit.q7_language || '');
+    setQ8(avatarToEdit.q8_daily_routine || '');
+    setQ9(avatarToEdit.q9_happiness_triggers || '');
+    setGeneratedSummary(avatarToEdit.summary || null);
+    setView('create');
+  };
+
   return (
     <div className="p-8 max-w-[1600px] mx-auto font-sans h-full flex flex-col">
       
-      {/* Header / Breadcrumb */}
       <div className="flex flex-col items-center mb-8 text-center shrink-0">
         <div className="flex items-center gap-2 mb-6 text-[13px] text-slate-500">
           <Home size={16} className="text-slate-400" />
@@ -229,7 +259,7 @@ export const DreamBuyerPage: React.FC = () => {
              <>
                 <ChevronRight size={14} className="text-slate-300" />
                 <span className="bg-[#E8FCF3] text-[#0EB869] px-3 py-1 rounded text-xs font-bold">
-                    {view === 'create' ? 'Research Lab' : 'Avatar Profile'}
+                    {view === 'create' ? (editingAvatarId ? 'Edit Avatar' : 'Research Lab') : 'Avatar Profile'}
                 </span>
              </>
           )}
@@ -247,7 +277,6 @@ export const DreamBuyerPage: React.FC = () => {
         )}
       </div>
 
-      {/* VIEW: LIST */}
       {view === 'list' && (
         <div className="animate-in fade-in duration-300">
             <div className="flex justify-between items-center mb-8">
@@ -330,7 +359,6 @@ export const DreamBuyerPage: React.FC = () => {
         </div>
       )}
 
-      {/* VIEW: CREATE (RESEARCH LAB) */}
       {view === 'create' && (
         <div className="flex flex-col lg:flex-row gap-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
             <div className="flex-1">
@@ -339,9 +367,9 @@ export const DreamBuyerPage: React.FC = () => {
                         <div className="w-16 h-16 bg-[#E8FCF3] rounded-full flex items-center justify-center mx-auto mb-4 text-[#0EB869]">
                             <BrainCircuit size={32} />
                         </div>
-                        <h2 className="text-2xl font-bold text-slate-900 mb-2">Avatar Research Lab</h2>
+                        <h2 className="text-2xl font-bold text-slate-900 mb-2">{editingAvatarId ? `Chỉnh sửa: ${avatarName}` : 'Avatar Research Lab'}</h2>
                         <p className="text-slate-500 text-[15px]">
-                            Trả lời các câu hỏi dưới đây để xây dựng hồ sơ tâm lý khách hàng.
+                            {editingAvatarId ? 'Cập nhật thông tin hồ sơ tâm lý khách hàng.' : 'Trả lời các câu hỏi dưới đây để xây dựng hồ sơ tâm lý khách hàng.'}
                         </p>
                     </div>
 
@@ -377,7 +405,7 @@ export const DreamBuyerPage: React.FC = () => {
                                 className="flex items-center gap-2 px-6 py-3 rounded-lg border border-slate-200 text-slate-700 text-[14px] font-bold hover:bg-slate-50 transition-colors disabled:opacity-50"
                             >
                                 {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                                Lưu
+                                {editingAvatarId ? 'Lưu thay đổi' : 'Lưu'}
                             </button>
                             <button 
                                 onClick={() => handleSave(true)}
@@ -420,7 +448,6 @@ export const DreamBuyerPage: React.FC = () => {
         </div>
       )}
 
-      {/* VIEW: DETAIL (THE DOSSIER) */}
       {view === 'detail' && selectedAvatar && (
         <div className="h-full flex flex-col animate-in fade-in duration-300">
             <div className="flex items-center justify-between mb-6">
@@ -431,7 +458,7 @@ export const DreamBuyerPage: React.FC = () => {
                     <ArrowLeft size={16} /> Back to Avatars
                 </button>
                 <div className="flex gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg text-slate-600 font-bold text-xs hover:bg-slate-50">
+                    <button onClick={() => handleEditClick(selectedAvatar)} className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg text-slate-600 font-bold text-xs hover:bg-slate-50">
                         Edit Profile
                     </button>
                     <button className="flex items-center gap-2 px-4 py-2 bg-[#0EB869] text-white rounded-lg font-bold text-xs hover:bg-[#0B9655] shadow-sm">
