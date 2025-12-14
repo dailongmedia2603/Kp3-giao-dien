@@ -71,17 +71,27 @@ const AppContent: React.FC = () => {
   const { session, loading } = useSession();
   const [currentView, setCurrentView] = useState<string>('offer');
   const [initialCategory, setInitialCategory] = useState<string | null>(null);
-  const [selectedOffer, setSelectedOffer] = useState<any | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
+  const [productToEdit, setProductToEdit] = useState<any | null>(null);
   const [isSOPOpen, setIsSOPOpen] = useState(false);
 
   const handleNavigate = (view: string, data?: any) => {
     if (view === 'create-product' && typeof data === 'string') {
       setInitialCategory(data);
-    } else if (view === 'offer-detail' && data) {
-      setSelectedOffer(data);
     } else {
       setInitialCategory(null);
-      setSelectedOffer(null);
+    }
+    
+    if (view === 'offer-detail' && data) {
+      setSelectedProduct(data);
+    } else {
+      setSelectedProduct(null);
+    }
+
+    if (view === 'edit-product' && data) {
+      setProductToEdit(data);
+    } else {
+      setProductToEdit(null);
     }
     setCurrentView(view);
   };
@@ -116,8 +126,10 @@ const AppContent: React.FC = () => {
         return <OfferPage onNavigate={handleNavigate} />;
       case 'create-product':
         return <CreateProductPage onCancel={() => handleNavigate('offer')} onNavigate={handleNavigate} initialCategory={initialCategory} />;
+      case 'edit-product':
+        return <CreateProductPage onCancel={() => handleNavigate('offer')} onNavigate={handleNavigate} productToEdit={productToEdit} />;
       case 'offer-detail':
-        return selectedOffer ? <OfferDetailPage offer={selectedOffer} onBack={() => handleNavigate('offer')} onDelete={() => {}} /> : <div>Offer not found</div>;
+        return selectedProduct ? <OfferDetailPage product={selectedProduct} onBack={() => handleNavigate('offer')} onDelete={() => {}} onEdit={(product) => handleNavigate('edit-product', product)} /> : <div>Product not found</div>;
       case 'goal':
         return <GoalPage />;
       case 'settings':

@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Home, 
-  ChevronRight, 
-  Sparkles, 
   ArrowLeft,
   Loader2,
   Save,
+  Sparkles,
   BrainCircuit,
   Type,
   Tag,
@@ -31,6 +29,7 @@ interface CreateProductPageProps {
   onCancel: () => void;
   onNavigate: (view: string) => void;
   initialCategory?: string | null;
+  productToEdit?: any | null;
 }
 
 const FormField: React.FC<{
@@ -72,7 +71,7 @@ const FormField: React.FC<{
   </div>
 );
 
-export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, onNavigate, initialCategory }) => {
+export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, onNavigate, initialCategory, productToEdit }) => {
   const { user } = useSession();
   const [isSaving, setIsSaving] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -94,11 +93,45 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
   const [totalCustomers, setTotalCustomers] = useState('');
   const [testimonials, setTestimonials] = useState('');
 
+  const isEditMode = !!productToEdit;
+
   useEffect(() => {
-    if (initialCategory) {
-      setCategory(initialCategory);
+    if (isEditMode) {
+      setTitle(productToEdit.title || '');
+      setCategory(productToEdit.category || initialCategory || '');
+      setDescription(productToEdit.description || '');
+      setTargetMarket(productToEdit.target_market || '');
+      setPressingProblem(productToEdit.pressing_problem || '');
+      setDesiredOutcome(productToEdit.desired_outcome || '');
+      setFeatures(productToEdit.features || '');
+      setTechnology(productToEdit.technology || '');
+      setStudies(productToEdit.studies || '');
+      setSocialProof(productToEdit.social_proof || '');
+      setAuthorityFigure(productToEdit.authority_figure || '');
+      setUniqueMechanism(productToEdit.unique_mechanism || '');
+      setReviewCount(productToEdit.review_count?.toString() || '');
+      setAvgReviewRating(productToEdit.avg_review_rating?.toString() || '');
+      setTotalCustomers(productToEdit.total_customers?.toString() || '');
+      setTestimonials(productToEdit.testimonials || '');
+    } else {
+      setTitle('');
+      setCategory(initialCategory || '');
+      setDescription('');
+      setTargetMarket('');
+      setPressingProblem('');
+      setDesiredOutcome('');
+      setFeatures('');
+      setTechnology('');
+      setStudies('');
+      setSocialProof('');
+      setAuthorityFigure('');
+      setUniqueMechanism('');
+      setReviewCount('');
+      setAvgReviewRating('');
+      setTotalCustomers('');
+      setTestimonials('');
     }
-  }, [initialCategory]);
+  }, [productToEdit, isEditMode, initialCategory]);
 
   const offerTypes = [
     { value: 'service', label: 'Service' },
@@ -111,7 +144,7 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
 
   const handleGenerateDescription = async () => {
     if (!title) {
-      toast.error('Vui lòng nhập Tiêu đề Offer trước.');
+      toast.error('Vui lòng nhập Tiêu đề Product trước.');
       return;
     }
     setIsGenerating(true);
@@ -154,16 +187,16 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
 
   const handleSave = async () => {
     if (!user) {
-      toast.error('Bạn cần đăng nhập để tạo offer.');
+      toast.error('Bạn cần đăng nhập để thực hiện.');
       return;
     }
     if (!title || !category) {
-      toast.error('Vui lòng điền Tiêu đề và Loại Offer.');
+      toast.error('Vui lòng điền Tiêu đề và Loại Product.');
       return;
     }
 
     setIsSaving(true);
-    const { error } = await supabase.from('offers').insert({
+    const productData = {
       user_id: user.id,
       title,
       category,
@@ -181,14 +214,26 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
       avg_review_rating: avgReviewRating ? parseFloat(avgReviewRating) : null,
       total_customers: totalCustomers ? parseInt(totalCustomers) : null,
       testimonials,
-    });
+    };
+
+    let error;
+    if (isEditMode) {
+      const { error: updateError } = await supabase
+        .from('products')
+        .update(productData)
+        .eq('id', productToEdit.id);
+      error = updateError;
+    } else {
+      const { error: insertError } = await supabase.from('products').insert(productData);
+      error = insertError;
+    }
 
     setIsSaving(false);
     if (error) {
-      console.error('Error saving offer:', error);
-      toast.error('Lỗi khi lưu offer: ' + error.message);
+      console.error('Error saving product:', error);
+      toast.error('Lỗi khi lưu sản phẩm: ' + error.message);
     } else {
-      toast.success('Đã tạo offer thành công!');
+      toast.success(`Đã ${isEditMode ? 'cập nhật' : 'tạo'} sản phẩm thành công!`);
       onNavigate('offer');
     }
   };
@@ -197,7 +242,7 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
     <div className="p-8 max-w-[1600px] mx-auto font-sans">
       <div className="flex items-center gap-4 mb-8">
         <button onClick={onCancel} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors text-sm font-medium">
-          <ArrowLeft size={16} /> Quay lại Tất cả Offer
+          <ArrowLeft size={16} /> Quay lại Tất cả Products
         </button>
       </div>
 
@@ -205,12 +250,12 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
         <div className="flex-1">
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8">
             <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-[#E8FCF3] rounded-full flex items-center justify-center mx-auto mb-4 text-[#0EB869]">
+              <div className="w-16 h-16 bg-[#E8F5E9] rounded-full flex items-center justify-center mx-auto mb-4 text-[#16A349]">
                 <Sparkles size={32} />
               </div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Tạo Offer Mới</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">{isEditMode ? 'Chỉnh sửa Product' : 'Tạo Product Mới'}</h2>
               <p className="text-slate-500 text-[15px]">
-                Điền các thông tin chi tiết bên dưới để AI tạo mô tả cho bạn.
+                {isEditMode ? 'Cập nhật thông tin chi tiết cho sản phẩm của bạn.' : 'Điền các thông tin chi tiết bên dưới để AI tạo mô tả cho bạn.'}
               </p>
             </div>
 
@@ -218,10 +263,10 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
               <div>
                 <label className="block text-[13px] font-bold text-slate-900 mb-2 flex items-center gap-2">
                   <LayoutGrid size={16} className="text-[#0EB869]" /> 
-                  Loại Offer*
+                  Loại Product*
                 </label>
                 <p className="text-xs text-slate-500 mb-2">
-                  Chọn loại offer để phân loại chính xác.
+                  Chọn loại product để phân loại chính xác.
                 </p>
                 <select
                   value={category}
@@ -235,7 +280,7 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
                 </select>
               </div>
 
-              <FormField icon={Type} label="Tiêu đề Offer/Sản phẩm/Dịch vụ*" description="Tên của sản phẩm/dịch vụ/HVCO bạn đang quảng bá." placeholder="e.g., Khóa học Marketing Tinh gọn" value={title} onChange={(e) => setTitle(e.target.value)} />
+              <FormField icon={Type} label="Tiêu đề Product/Sản phẩm/Dịch vụ*" description="Tên của sản phẩm/dịch vụ/HVCO bạn đang quảng bá." placeholder="e.g., Khóa học Marketing Tinh gọn" value={title} onChange={(e) => setTitle(e.target.value)} />
               
               <div className="bg-blue-50 rounded-lg p-5 border border-blue-100">
                   <p className="text-[13px] text-slate-700 leading-relaxed font-medium">
@@ -273,7 +318,7 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
               className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-slate-200 text-slate-700 text-[14px] font-bold hover:bg-slate-50 transition-colors disabled:opacity-50"
             >
               {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-              Lưu Offer
+              {isEditMode ? 'Lưu thay đổi' : 'Lưu Product'}
             </button>
           </div>
         </div>
