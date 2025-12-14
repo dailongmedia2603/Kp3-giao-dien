@@ -34,7 +34,7 @@ const DetailItem: React.FC<{ icon: React.ElementType; label: string; value: stri
   </div>
 );
 
-export const OfferDetailPage: React.FC<{ offer: any; onBack: () => void; onDelete: (id: string) => void }> = ({ offer, onBack, onDelete }) => {
+export const OfferDetailPage: React.FC<{ offer: any; onBack: () => void; onDelete: (id: string) => void; onEdit: (offer: any) => void; }> = ({ offer, onBack, onDelete, onEdit }) => {
   return (
     <div className="p-8 max-w-[800px] mx-auto font-sans animate-in fade-in duration-300">
       <div className="flex justify-between items-center mb-8">
@@ -42,7 +42,7 @@ export const OfferDetailPage: React.FC<{ offer: any; onBack: () => void; onDelet
           <ArrowLeft size={16} /> Quay lại All Offers
         </button>
         <div className="flex gap-2">
-          <button className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg text-slate-600 font-bold text-xs hover:bg-slate-50">
+          <button onClick={() => onEdit(offer)} className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg text-slate-600 font-bold text-xs hover:bg-slate-50">
             <Edit size={14} /> Chỉnh sửa
           </button>
           <button onClick={() => onDelete(offer.id)} className="flex items-center gap-2 px-4 py-2 border border-red-200 bg-red-50 rounded-lg text-red-600 font-bold text-xs hover:bg-red-100">
