@@ -200,6 +200,178 @@ const CreateAvatarView: React.FC<{ onBack: () => void; onSaveSuccess: (newAvatar
   );
 };
 
+const AvatarDetailView: React.FC<{ avatar: AvatarProfile; onBack: () => void; }> = ({ avatar, onBack }) => {
+  return (
+    <div className="h-full flex flex-col animate-in fade-in duration-300">
+      <div className="flex items-center justify-between mb-6">
+        <button onClick={onBack} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors text-sm font-medium">
+          <ArrowLeft size={16} /> Back to Avatars
+        </button>
+        <div className="flex gap-3">
+          <button className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg text-slate-600 font-bold text-xs hover:bg-slate-50">
+            Edit Profile
+          </button>
+          <button className="flex items-center gap-2 px-4 py-2 bg-[#0EB869] text-white rounded-lg font-bold text-xs hover:bg-[#0B9655] shadow-sm">
+            <Save size={14} /> Save Changes
+          </button>
+        </div>
+      </div>
+      <div className="flex flex-col xl:flex-row gap-6 h-full min-h-0">
+        <div className="w-full xl:w-[320px] shrink-0 space-y-6">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 text-center">
+            <div className="w-24 h-24 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full mx-auto mb-4 border-4 border-white shadow-sm flex items-center justify-center text-3xl font-bold text-slate-400">
+              {avatar.role ? avatar.role.charAt(0) : 'A'}
+            </div>
+            <h2 className="text-xl font-bold text-slate-900 mb-1">{avatar.persona_name}</h2>
+            <p className="text-sm text-slate-500 font-medium mb-1">{avatar.role}</p>
+            <span className="inline-block px-3 py-1 bg-slate-100 rounded-full text-xs font-bold text-slate-500 mb-6">
+              Age: {avatar.age}
+            </span>
+            <div className="space-y-4 text-left">
+              <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                <Briefcase size={18} className="text-[#0EB869] shrink-0" />
+                <div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase">Industry</div>
+                  <div className="text-sm font-bold text-slate-800">{avatar.industry}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                <Users size={18} className="text-[#0EB869] shrink-0" />
+                <div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase">Company Size</div>
+                  <div className="text-sm font-bold text-slate-800">{avatar.company_size}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                <MapPin size={18} className="text-[#0EB869] shrink-0" />
+                <div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase">Location</div>
+                  <div className="text-sm font-bold text-slate-800">{avatar.location}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="bg-[#E8FCF3] border border-[#86EFAC] rounded-xl p-5">
+            <h4 className="text-[#0EB869] font-bold text-sm mb-2 flex items-center gap-2">
+              <Sparkles size={16} /> Generated Context
+            </h4>
+            <p className="text-xs text-[#065F46] leading-relaxed italic">
+              "Generated based on offer: {avatar.offer_context}"
+            </p>
+          </div>
+          {avatar.past_client_feedback && avatar.past_client_feedback.length > 0 && (
+            <div className="bg-blue-50 border border-blue-100 rounded-xl p-5">
+              <h4 className="text-blue-600 font-bold text-sm mb-2 flex items-center gap-2">
+                <ThumbsUp size={16} /> Past Feedback
+              </h4>
+              <ul className="space-y-2">
+                {avatar.past_client_feedback.map((fb, idx) => (
+                  <li key={idx} className="text-xs text-blue-800 leading-relaxed italic">
+                    "{fb}"
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+        <div className="flex-1 overflow-y-auto pr-2 space-y-6">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100 bg-red-50/50 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-red-100 text-red-500 flex items-center justify-center"><Frown size={18} /></div>
+              <h3 className="text-lg font-bold text-slate-900">Pain Points & Frustrations</h3>
+            </div>
+            <div className="p-6">
+              <p className="text-sm text-slate-500 mb-4 italic">What keeps them awake at night?</p>
+              <div className="space-y-3">
+                {avatar.pain_points?.map((pain, idx) => (
+                  <div key={idx} className="flex items-start gap-4 p-4 rounded-lg border border-red-100 bg-red-50/30">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-red-100 text-red-600 font-bold text-xs flex items-center justify-center mt-0.5">{idx + 1}</span>
+                    <span className="text-[15px] text-slate-800 font-medium leading-relaxed">{pain}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100 bg-[#E8FCF3]/50 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-[#E8FCF3] text-[#0EB869] flex items-center justify-center"><Target size={18} /></div>
+              <h3 className="text-lg font-bold text-slate-900">Goals & Desires</h3>
+            </div>
+            <div className="p-6">
+              <p className="text-sm text-slate-500 mb-4 italic">What specific results do they want?</p>
+              <div className="grid grid-cols-1 gap-3">
+                {avatar.goals?.map((goal, idx) => (
+                  <div key={idx} className="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:border-[#86EFAC] transition-colors bg-slate-50 hover:bg-white">
+                    <CheckCircle2 size={18} className="text-[#0EB869] flex-shrink-0" />
+                    <span className="text-[14px] text-slate-700 font-medium">{goal}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100 bg-amber-50/50 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center"><Zap size={18} /></div>
+              <h3 className="text-lg font-bold text-slate-900">Current Solutions & Gaps</h3>
+            </div>
+            <div className="p-6">
+              <p className="text-sm text-slate-500 mb-4 italic">How are they trying to solve this now? Why is it failing?</p>
+              <div className="space-y-4">
+                {avatar.current_solutions?.map((item, idx) => (
+                  <div key={idx} className="border border-slate-200 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-[11px] font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded uppercase">Current Fix</span>
+                      <span className="text-sm font-bold text-slate-900">{item.solution}</span>
+                    </div>
+                    <div className="flex items-start gap-2 text-sm text-slate-600 bg-amber-50 p-3 rounded border border-amber-100">
+                      <span className="font-bold text-amber-700 shrink-0">The Gap:</span>
+                      {item.gap}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 flex items-center justify-center"><ShieldAlert size={18} /></div>
+              <h3 className="text-lg font-bold text-slate-900">Objections & Hesitations</h3>
+            </div>
+            <div className="p-6">
+              <p className="text-sm text-slate-500 mb-4 italic">Why might they doubt your offer?</p>
+              <ul className="space-y-3">
+                {avatar.objections?.map((obj, idx) => (
+                  <li key={idx} className="flex items-start gap-3 text-[14px] text-slate-700">
+                    <XCircle size={18} className="text-slate-400 mt-0.5 shrink-0" />
+                    <span>"{obj}"</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100 bg-orange-50/50 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center"><MessageSquare size={18} /></div>
+              <h3 className="text-lg font-bold text-slate-900">Negative Discussions & Rants</h3>
+            </div>
+            <div className="p-6">
+              <p className="text-sm text-slate-500 mb-4 italic">What are they complaining about online?</p>
+              <div className="space-y-3">
+                {avatar.negative_discussions?.map((disc, idx) => (
+                  <div key={idx} className="flex items-start gap-4 p-4 rounded-lg border border-orange-100 bg-orange-50/30">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-200 text-orange-700 font-bold text-xs flex items-center justify-center mt-0.5">!</span>
+                    <span className="text-[14px] text-slate-800 font-medium leading-relaxed italic">"{disc}"</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const DreamBuyerPage: React.FC = () => {
   const { user } = useSession();
   const [view, setView] = useState<'list' | 'create' | 'detail'>('list');
@@ -255,8 +427,7 @@ export const DreamBuyerPage: React.FC = () => {
       case 'create':
         return <CreateAvatarView onBack={() => setView('list')} onSaveSuccess={handleSaveSuccess} />;
       case 'detail':
-        // Detail view can be implemented later if needed
-        return <div>Detail View for {selectedAvatar?.name}</div>;
+        return selectedAvatar ? <AvatarDetailView avatar={selectedAvatar} onBack={() => setView('list')} /> : <div>Avatar not found. <button onClick={() => setView('list')}>Go Back</button></div>;
       case 'list':
       default:
         return (
@@ -301,7 +472,7 @@ export const DreamBuyerPage: React.FC = () => {
                       </p>
                     </div>
                     <div className="mt-auto border-t border-slate-100 p-4 bg-slate-50/50 flex justify-between items-center">
-                      <button onClick={() => handleDelete(avatar.id)} className="text-xs font-bold text-red-500 hover:text-red-700">Delete</button>
+                      <button onClick={(e) => { e.stopPropagation(); handleDelete(avatar.id); }} className="text-xs font-bold text-red-500 hover:text-red-700">Delete</button>
                       <button onClick={() => handleViewDetail(avatar)} className="text-xs font-bold text-[#0EB869] hover:text-[#0B9655]">View Dossier</button>
                     </div>
                   </div>
