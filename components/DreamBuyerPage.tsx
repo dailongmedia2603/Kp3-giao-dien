@@ -13,7 +13,18 @@ import {
   ArrowLeft,
   Sparkles,
   Loader2,
-  Trash2
+  Trash2,
+  Users,
+  MapPin,
+  Frown,
+  CheckCircle2,
+  XCircle,
+  ShieldAlert,
+  MessageSquare,
+  ShoppingBag,
+  Clock,
+  ThumbsUp,
+  MessageCircleWarning
 } from 'lucide-react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
@@ -232,6 +243,11 @@ export const DreamBuyerPage: React.FC = () => {
     } else {
       setAvatars(prev => prev.filter(a => a.id !== id));
     }
+  };
+
+  const handleViewDetail = (avatar: AvatarProfile) => {
+    setSelectedAvatar(avatar);
+    setView('detail');
   };
 
   const renderContent = () => {
