@@ -495,7 +495,7 @@ export const DreamBuyerPage: React.FC = () => {
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 sticky top-8">
                     <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
                         <BrainCircuit size={18} className="text-[#0EB869]" />
-                        AI Generated Summary
+                        Dream Buyer Avatars của bạn:
                     </h3>
                     {isGenerating ? (
                         <div className="flex flex-col items-center justify-center h-64 bg-slate-50 rounded-lg border border-dashed">
