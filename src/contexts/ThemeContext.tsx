@@ -1,4 +1,6 @@
-import { createContext, useContext, useState, useMemo, ReactNode } from 'react';
+import { createContext, useContext, useState, useMemo, useEffect, ReactNode } from 'react';
+import { supabase } from '@/src/integrations/supabase/client';
+import { useSession } from './SessionContext';
 
 // Định nghĩa cấu trúc của theme
 interface Theme {
@@ -52,6 +54,7 @@ const ThemeContext = createContext<ThemeContextType>({
 
 // Component Provider để bao bọc ứng dụng
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
+  const { user } = useSession();
   const THEME_STORAGE_KEY = 'kp3-dashboard-theme';
 
   const [theme, setThemeState] = useState<Theme>(() => {
@@ -68,14 +71,54 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     return defaultTheme;
   });
 
-  const setTheme = (newTheme: Theme) => {
+  // Effect to fetch theme from Supabase when user logs in
+  useEffect(() => {
+    if (user) {
+      const fetchTheme = async () => {
+        const { data, error } = await supabase
+          .from('user_settings')
+          .select('theme')
+          .eq('user_id', user.id)
+          .single();
+
+        if (data?.theme) {
+          // Compare with local storage to see if an update is needed
+          const localTheme = JSON.stringify(theme);
+          const remoteTheme = JSON.stringify(data.theme);
+          if (localTheme !== remoteTheme) {
+            setThemeState(data.theme as Theme);
+            localStorage.setItem(THEME_STORAGE_KEY, remoteTheme);
+          }
+        } else if (error && error.code !== 'PGRST116') {
+          console.error("Error fetching theme from Supabase:", error);
+        }
+      };
+      fetchTheme();
+    }
+  }, [user]);
+
+  const setTheme = async (newTheme: Theme) => {
+    // 1. Update state immediately for responsiveness
+    setThemeState(newTheme);
+
+    // 2. Save to localStorage for fast reloads
     try {
-      setThemeState(newTheme);
       if (typeof window !== 'undefined') {
         window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(newTheme));
       }
     } catch (error) {
       console.error("Could not save theme to localStorage", error);
+    }
+
+    // 3. Save to Supabase for cross-device sync
+    if (user) {
+      const { error } = await supabase
+        .from('user_settings')
+        .upsert({ user_id: user.id, theme: newTheme }, { onConflict: 'user_id' });
+      
+      if (error) {
+        console.error("Could not save theme to Supabase", error);
+      }
     }
   };
 
