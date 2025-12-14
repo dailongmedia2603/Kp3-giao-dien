@@ -212,7 +212,7 @@ export const AgencyPortalPage: React.FC = () => {
         <div className="flex items-center gap-2 mb-6 text-[13px] text-slate-500">
           <Home size={16} className="text-slate-400" />
           <ChevronRight size={14} className="text-slate-300" />
-          <span className="bg-[#E8FCF3] text-[#0EB869] px-3 py-1 rounded text-xs font-bold">
+          <span className="bg-[#E8F5E9] text-[#16A349] px-3 py-1 rounded text-xs font-bold">
             Agency Portal
           </span>
         </div>
