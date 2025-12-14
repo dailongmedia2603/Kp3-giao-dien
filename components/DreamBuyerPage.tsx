@@ -84,6 +84,7 @@ export const DreamBuyerPage: React.FC = () => {
   const [q9, setQ9] = useState(''); // happiness
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [generatedSummary, setGeneratedSummary] = useState<string | null>(null);
 
   // Fetch avatars from Supabase
   useEffect(() => {
@@ -113,21 +114,27 @@ export const DreamBuyerPage: React.FC = () => {
     setAvatarName('');
     setQ1(''); setQ2(''); setQ3(''); setQ4(''); setQ5(''); 
     setQ6(''); setQ7(''); setQ8(''); setQ9('');
+    setGeneratedSummary(null);
   };
 
   const handleSave = async (withSummary: boolean = false) => {
     if (!user || !avatarName) return;
-    
-    if (withSummary) setIsGenerating(true);
-    else setIsSaving(true);
 
-    let summary = null;
+    // Logic for "Tạo tóm tắt" button
     if (withSummary) {
-      // In a real scenario, you'd call an AI service here.
-      // For now, we'll create a placeholder summary.
-      summary = `Đây là bản tóm tắt do AI tạo cho ${avatarName}, dựa trên các câu trả lời được cung cấp về nỗi đau, ước mơ và thói quen hàng ngày của họ.`;
+        setIsGenerating(true);
+        setGeneratedSummary(null);
+        // Simulate AI call
+        setTimeout(() => {
+            const summaryText = `Đây là bản tóm tắt do AI tạo cho ${avatarName}, dựa trên các câu trả lời được cung cấp về nỗi đau, ước mơ và thói quen hàng ngày của họ.`;
+            setGeneratedSummary(summaryText);
+            setIsGenerating(false);
+        }, 1500);
+        return; // Exit without saving, just for preview
     }
 
+    // Logic for "Lưu" button
+    setIsSaving(true);
     const newAvatarData = {
         user_id: user.id,
         name: avatarName,
@@ -141,7 +148,7 @@ export const DreamBuyerPage: React.FC = () => {
         q7_language: q7,
         q8_daily_routine: q8,
         q9_happiness_triggers: q9,
-        summary: summary,
+        summary: generatedSummary, // Save the generated summary if it exists
     };
 
     const { data, error } = await supabase
@@ -159,8 +166,7 @@ export const DreamBuyerPage: React.FC = () => {
         resetForm();
     }
     
-    if (withSummary) setIsGenerating(false);
-    else setIsSaving(false);
+    setIsSaving(false);
   };
 
   const handleViewDetail = (avatar: AvatarProfile) => {
@@ -194,7 +200,7 @@ export const DreamBuyerPage: React.FC = () => {
   );
 
   return (
-    <div className="p-8 max-w-[1400px] mx-auto font-sans h-full flex flex-col">
+    <div className="p-8 max-w-[1600px] mx-auto font-sans h-full flex flex-col">
       
       {/* Header / Breadcrumb */}
       <div className="flex flex-col items-center mb-8 text-center shrink-0">
@@ -203,7 +209,7 @@ export const DreamBuyerPage: React.FC = () => {
           <ChevronRight size={14} className="text-slate-300" />
           <span 
             className={`cursor-pointer hover:text-slate-700 ${view === 'list' ? 'bg-[#E8FCF3] text-[#0EB869] px-3 py-1 rounded text-xs font-bold' : ''}`}
-            onClick={() => setView('list')}
+            onClick={() => { setView('list'); resetForm(); }}
           >
             Dream Buyer Avatars
           </span>
@@ -242,7 +248,7 @@ export const DreamBuyerPage: React.FC = () => {
                     />
                 </div>
                 <button 
-                    onClick={() => setView('create')}
+                    onClick={() => { setView('create'); resetForm(); }}
                     className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#0EB869] text-white text-[14px] font-bold hover:bg-[#0B9655] transition-colors shadow-sm"
                 >
                     <Plus size={18} strokeWidth={3} />
@@ -314,61 +320,89 @@ export const DreamBuyerPage: React.FC = () => {
 
       {/* VIEW: CREATE (RESEARCH LAB) */}
       {view === 'create' && (
-        <div className="max-w-3xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-300">
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8">
-                <div className="text-center mb-8">
-                    <div className="w-16 h-16 bg-[#E8FCF3] rounded-full flex items-center justify-center mx-auto mb-4 text-[#0EB869]">
-                        <BrainCircuit size={32} />
+        <div className="flex flex-col lg:flex-row gap-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <div className="flex-1">
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8">
+                    <div className="text-center mb-8">
+                        <div className="w-16 h-16 bg-[#E8FCF3] rounded-full flex items-center justify-center mx-auto mb-4 text-[#0EB869]">
+                            <BrainCircuit size={32} />
+                        </div>
+                        <h2 className="text-2xl font-bold text-slate-900 mb-2">Avatar Research Lab</h2>
+                        <p className="text-slate-500 text-[15px]">
+                            Trả lời các câu hỏi dưới đây để xây dựng hồ sơ tâm lý khách hàng.
+                        </p>
                     </div>
-                    <h2 className="text-2xl font-bold text-slate-900 mb-2">Avatar Research Lab</h2>
-                    <p className="text-slate-500 text-[15px]">
-                        Trả lời các câu hỏi dưới đây để xây dựng hồ sơ tâm lý khách hàng.
-                    </p>
+
+                    <div className="space-y-6">
+                        <div>
+                            <label className="block text-[13px] font-bold text-slate-900 mb-2 flex items-center gap-2">
+                                <User size={16} className="text-[#0EB869]" />
+                                Tên avatar
+                            </label>
+                            <input 
+                                type="text"
+                                className="w-full p-3 border border-slate-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869]"
+                                placeholder="e.g., Agency Owner Alan"
+                                value={avatarName}
+                                onChange={(e) => setAvatarName(e.target.value)}
+                            />
+                        </div>
+
+                        <FormField icon={Globe} label="1. Họ tụ tập ở đâu?" description="Website, diễn đàn, nhóm cụ thể nào?" placeholder="e.g., Các nhóm Facebook về marketing, diễn đàn Indie Hackers, Twitter..." value={q1} onChange={(e) => setQ1(e.target.value)} />
+                        <FormField icon={BookOpen} label="2. Họ lấy thông tin từ đâu?" description="Họ tin tưởng ai? Đọc sách báo gì?" placeholder="e.g., Theo dõi Russell Brunson, đọc sách của Dan Kennedy, nghe podcast My First Million..." value={q2} onChange={(e) => setQ2(e.target.value)} />
+                        <FormField icon={Frown} label="3. Nỗi thất vọng và thách thức lớn nhất là gì?" description="Điều gì khiến họ đau khổ?" placeholder="e.g., Không có đủ khách hàng tiềm năng chất lượng, mệt mỏi vì phải 'săn' khách hàng..." value={q3} onChange={(e) => setQ3(e.target.value)} />
+                        <FormField icon={Sparkles} label="4. Hy vọng, ước mơ và khao khát của họ là gì?" description="Họ muốn đạt được điều gì?" placeholder="e.g., Có một dòng khách hàng ổn định, tự động hóa việc kinh doanh, có nhiều thời gian hơn cho gia đình..." value={q4} onChange={(e) => setQ4(e.target.value)} />
+                        <FormField icon={ShieldAlert} label="5. Nỗi sợ hãi lớn nhất của họ là gì?" description="Điều gì khiến họ mất ngủ?" placeholder="e.g., Sợ phải quay lại làm công việc cũ, sợ không đủ tiền trả lương cho nhân viên..." value={q5} onChange={(e) => setQ5(e.target.value)} />
+                        <FormField icon={MessageSquare} label="6. Họ thích giao tiếp qua kênh nào?" description="Email, chat, hay điện thoại?" placeholder="e.g., Thích email hơn vì có thể trả lời bất cứ lúc nào, ghét các cuộc gọi không báo trước..." value={q6} onChange={(e) => setQ6(e.target.value)} />
+                        <FormField icon={Type} label="7. Họ sử dụng ngôn ngữ gì?" description="Các từ ngữ cụ thể bạn đã ghi chép lại." placeholder="e.g., 'scale', 'ROAS', 'bottleneck', 'automation', 'predictable'..." value={q7} onChange={(e) => setQ7(e.target.value)} />
+                        <FormField icon={Clock} label="8. Một ngày của họ diễn ra như thế nào?" description="Hình dung chi tiết từ lúc thức dậy đến khi đi ngủ." placeholder="e.g., 6:00 sáng: tập thể dục. 7:00: kiểm tra email. 9:00: họp team..." value={q8} onChange={(e) => setQ8(e.target.value)} />
+                        <FormField icon={Smile} label="9. Điều gì làm họ hạnh phúc?" description="Ngoài công việc, điều gì mang lại niềm vui cho họ?" placeholder="e.g., Dành thời gian cho con cái, đi du lịch, được công nhận là chuyên gia trong ngành..." value={q9} onChange={(e) => setQ9(e.target.value)} />
+
+                        <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
+                            <button 
+                                onClick={() => handleSave(false)}
+                                disabled={isSaving || isGenerating || !avatarName}
+                                className="flex items-center gap-2 px-6 py-3 rounded-lg border border-slate-200 text-slate-700 text-[14px] font-bold hover:bg-slate-50 transition-colors disabled:opacity-50"
+                            >
+                                {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
+                                Lưu
+                            </button>
+                            <button 
+                                onClick={() => handleSave(true)}
+                                disabled={isSaving || isGenerating || !avatarName}
+                                className="flex items-center gap-2 px-6 py-3 rounded-lg bg-[#0EB869] text-white text-[14px] font-bold hover:bg-[#0B9655] transition-colors shadow-sm disabled:opacity-50"
+                            >
+                                {isGenerating ? <Loader2 size={18} className="animate-spin" /> : <BrainCircuit size={18} />}
+                                Tạo tóm tắt
+                            </button>
+                        </div>
+                    </div>
                 </div>
-
-                <div className="space-y-6">
-                    <div>
-                        <label className="block text-[13px] font-bold text-slate-900 mb-2 flex items-center gap-2">
-                            <User size={16} className="text-[#0EB869]" />
-                            Tên avatar
-                        </label>
-                        <input 
-                            type="text"
-                            className="w-full p-3 border border-slate-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869]"
-                            placeholder="e.g., Agency Owner Alan"
-                            value={avatarName}
-                            onChange={(e) => setAvatarName(e.target.value)}
-                        />
-                    </div>
-
-                    <FormField icon={Globe} label="1. Họ tụ tập ở đâu?" description="Website, diễn đàn, nhóm cụ thể nào?" placeholder="e.g., Các nhóm Facebook về marketing, diễn đàn Indie Hackers, Twitter..." value={q1} onChange={(e) => setQ1(e.target.value)} />
-                    <FormField icon={BookOpen} label="2. Họ lấy thông tin từ đâu?" description="Họ tin tưởng ai? Đọc sách báo gì?" placeholder="e.g., Theo dõi Russell Brunson, đọc sách của Dan Kennedy, nghe podcast My First Million..." value={q2} onChange={(e) => setQ2(e.target.value)} />
-                    <FormField icon={Frown} label="3. Nỗi thất vọng và thách thức lớn nhất là gì?" description="Điều gì khiến họ đau khổ?" placeholder="e.g., Không có đủ khách hàng tiềm năng chất lượng, mệt mỏi vì phải 'săn' khách hàng..." value={q3} onChange={(e) => setQ3(e.target.value)} />
-                    <FormField icon={Sparkles} label="4. Hy vọng, ước mơ và khao khát của họ là gì?" description="Họ muốn đạt được điều gì?" placeholder="e.g., Có một dòng khách hàng ổn định, tự động hóa việc kinh doanh, có nhiều thời gian hơn cho gia đình..." value={q4} onChange={(e) => setQ4(e.target.value)} />
-                    <FormField icon={ShieldAlert} label="5. Nỗi sợ hãi lớn nhất của họ là gì?" description="Điều gì khiến họ mất ngủ?" placeholder="e.g., Sợ phải quay lại làm công việc cũ, sợ không đủ tiền trả lương cho nhân viên..." value={q5} onChange={(e) => setQ5(e.target.value)} />
-                    <FormField icon={MessageSquare} label="6. Họ thích giao tiếp qua kênh nào?" description="Email, chat, hay điện thoại?" placeholder="e.g., Thích email hơn vì có thể trả lời bất cứ lúc nào, ghét các cuộc gọi không báo trước..." value={q6} onChange={(e) => setQ6(e.target.value)} />
-                    <FormField icon={Type} label="7. Họ sử dụng ngôn ngữ gì?" description="Các từ ngữ cụ thể bạn đã ghi chép lại." placeholder="e.g., 'scale', 'ROAS', 'bottleneck', 'automation', 'predictable'..." value={q7} onChange={(e) => setQ7(e.target.value)} />
-                    <FormField icon={Clock} label="8. Một ngày của họ diễn ra như thế nào?" description="Hình dung chi tiết từ lúc thức dậy đến khi đi ngủ." placeholder="e.g., 6:00 sáng: tập thể dục. 7:00: kiểm tra email. 9:00: họp team..." value={q8} onChange={(e) => setQ8(e.target.value)} />
-                    <FormField icon={Smile} label="9. Điều gì làm họ hạnh phúc?" description="Ngoài công việc, điều gì mang lại niềm vui cho họ?" placeholder="e.g., Dành thời gian cho con cái, đi du lịch, được công nhận là chuyên gia trong ngành..." value={q9} onChange={(e) => setQ9(e.target.value)} />
-
-                    <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
-                        <button 
-                            onClick={() => handleSave(false)}
-                            disabled={isSaving || isGenerating || !avatarName}
-                            className="flex items-center gap-2 px-6 py-3 rounded-lg border border-slate-200 text-slate-700 text-[14px] font-bold hover:bg-slate-50 transition-colors disabled:opacity-50"
-                        >
-                            {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                            Lưu
-                        </button>
-                        <button 
-                            onClick={() => handleSave(true)}
-                            disabled={isSaving || isGenerating || !avatarName}
-                            className="flex items-center gap-2 px-6 py-3 rounded-lg bg-[#0EB869] text-white text-[14px] font-bold hover:bg-[#0B9655] transition-colors shadow-sm disabled:opacity-50"
-                        >
-                            {isGenerating ? <Loader2 size={18} className="animate-spin" /> : <BrainCircuit size={18} />}
-                            Tạo tóm tắt
-                        </button>
-                    </div>
+            </div>
+            <div className="w-full lg:w-[450px] shrink-0">
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 sticky top-8">
+                    <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <BrainCircuit size={18} className="text-[#0EB869]" />
+                        AI Generated Summary
+                    </h3>
+                    {isGenerating ? (
+                        <div className="flex flex-col items-center justify-center h-64 bg-slate-50 rounded-lg border border-dashed">
+                            <Loader2 size={32} className="animate-spin text-slate-400" />
+                            <p className="text-sm text-slate-500 mt-4">AI is thinking...</p>
+                        </div>
+                    ) : generatedSummary ? (
+                        <div className="bg-blue-50 border border-blue-100 rounded-xl p-5">
+                            <p className="text-sm text-blue-800 leading-relaxed italic">
+                                "{generatedSummary}"
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center h-64 bg-slate-50 rounded-lg border border-dashed">
+                            <p className="text-sm text-slate-500 text-center">
+                                Click "Tạo tóm tắt" after filling out the form to generate a summary here.
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
