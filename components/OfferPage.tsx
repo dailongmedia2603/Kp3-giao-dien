@@ -25,7 +25,7 @@ interface Offer {
 }
 
 interface OfferPageProps {
-  onNavigate?: (view: string) => void;
+  onNavigate?: (view: string, category?: string) => void;
 }
 
 export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
@@ -138,7 +138,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
 
       <div className="flex justify-end mb-6">
         <button 
-          onClick={() => onNavigate && onNavigate('create-product')}
+          onClick={() => onNavigate && onNavigate('create-product', activeTab === 'all' ? undefined : activeTab)}
           className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#16A349] text-white text-[14px] font-bold hover:bg-[#149641] transition-colors shadow-sm"
         >
             <Plus size={18} strokeWidth={3} />

@@ -69,7 +69,17 @@ import {
 const AppContent: React.FC = () => {
   const { session, loading } = useSession();
   const [currentView, setCurrentView] = useState<string>('offer');
+  const [initialCategory, setInitialCategory] = useState<string | null>(null);
   const [isSOPOpen, setIsSOPOpen] = useState(false);
+
+  const handleNavigate = (view: string, category?: string) => {
+    if (category) {
+      setInitialCategory(category);
+    } else {
+      setInitialCategory(null);
+    }
+    setCurrentView(view);
+  };
 
   const FacebookIcon = forwardRef<SVGSVGElement, LucideProps>(({ size = 24, className, ...props }, ref) => (
     <svg 
@@ -90,7 +100,7 @@ const AppContent: React.FC = () => {
       case 'ceo-dashboard':
         return <CeoDashboardPage />;
       case 'direct-response':
-        return <DirectResponsePage onNavigate={setCurrentView} />;
+        return <DirectResponsePage onNavigate={handleNavigate} />;
       case 'new-headline-set':
         return <NewHeadlineSetPage />;
       case 'hvco':
@@ -98,9 +108,9 @@ const AppContent: React.FC = () => {
       case 'facebook-ads':
         return <FacebookAdGeneratorPage />;
       case 'offer':
-        return <OfferPage onNavigate={setCurrentView} />;
+        return <OfferPage onNavigate={handleNavigate} />;
       case 'create-product':
-        return <CreateProductPage onCancel={() => setCurrentView('offer')} onNavigate={setCurrentView} />;
+        return <CreateProductPage onCancel={() => handleNavigate('offer')} onNavigate={handleNavigate} initialCategory={initialCategory} />;
       case 'goal':
         return <GoalPage />;
       case 'settings':
@@ -193,11 +203,11 @@ const AppContent: React.FC = () => {
                 variant="highlighted"
                 actionLeft={{
                   text: "View All",
-                  onClick: () => setCurrentView('offer')
+                  onClick: () => handleNavigate('offer')
                 }}
                 actionRight={{
                   text: "Create New Offer",
-                  onClick: () => setCurrentView('create-product')
+                  onClick: () => handleNavigate('create-product')
                 }}
               />
               <DashboardCard 
@@ -207,7 +217,7 @@ const AppContent: React.FC = () => {
                 variant="default"
                 actionRight={{
                   text: "Generate",
-                  onClick: () => setCurrentView('dream-buyer')
+                  onClick: () => handleNavigate('dream-buyer')
                 }}
               />
               <DashboardCard 
@@ -217,7 +227,7 @@ const AppContent: React.FC = () => {
                 variant="default"
                 actionRight={{
                   text: "Generate",
-                  onClick: () => setCurrentView('facebook-ads')
+                  onClick: () => handleNavigate('facebook-ads')
                 }}
               />
               <DashboardCard 
@@ -227,7 +237,7 @@ const AppContent: React.FC = () => {
                 variant="default"
                 actionRight={{
                   text: "Generate",
-                  onClick: () => setCurrentView('direct-response')
+                  onClick: () => handleNavigate('direct-response')
                 }}
               />
               <DashboardCard 
@@ -237,7 +247,7 @@ const AppContent: React.FC = () => {
                 variant="default"
                 actionRight={{
                   text: "Generate",
-                  onClick: () => setCurrentView('hvco')
+                  onClick: () => handleNavigate('hvco')
                 }}
               />
             </div>
@@ -260,7 +270,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-[#FDFDFD] font-sans overflow-hidden">
-      <Sidebar currentView={currentView} onNavigate={setCurrentView} />
+      <Sidebar currentView={currentView} onNavigate={handleNavigate} />
       
       <main className="flex-1 flex flex-col h-full bg-[#F8F9FB] overflow-hidden relative">
         

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Home, 
   ChevronRight, 
@@ -20,7 +20,8 @@ import {
   UserCheck,
   Wrench,
   Star,
-  Heart
+  Heart,
+  LayoutGrid
 } from 'lucide-react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
@@ -29,6 +30,7 @@ import toast from 'react-hot-toast';
 interface CreateProductPageProps {
   onCancel: () => void;
   onNavigate: (view: string) => void;
+  initialCategory?: string | null;
 }
 
 const FormField: React.FC<{
@@ -70,7 +72,7 @@ const FormField: React.FC<{
   </div>
 );
 
-export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, onNavigate }) => {
+export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, onNavigate, initialCategory }) => {
   const { user } = useSession();
   const [isSaving, setIsSaving] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -91,6 +93,21 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
   const [avgReviewRating, setAvgReviewRating] = useState('');
   const [totalCustomers, setTotalCustomers] = useState('');
   const [testimonials, setTestimonials] = useState('');
+
+  useEffect(() => {
+    if (initialCategory) {
+      setCategory(initialCategory);
+    }
+  }, [initialCategory]);
+
+  const offerTypes = [
+    { value: 'service', label: 'Service' },
+    { value: 'physical', label: 'Physical' },
+    { value: 'software', label: 'Software' },
+    { value: 'digital', label: 'Digital' },
+    { value: 'e-learning', label: 'E-learning' },
+    { value: 'affiliate', label: 'Affiliate' },
+  ];
 
   const handleGenerateDescription = async () => {
     if (!title) {
@@ -127,9 +144,9 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
 
     } catch (error: any) {
       console.error("Failed to generate description:", error);
-      const errorMessage = error.message || 'Lỗi khi tạo mô tả.';
+      const errorMessage = error.context?.json?.error || error.message || 'Lỗi khi tạo mô tả.';
       setDescription(`Không thể tạo mô tả: ${errorMessage}`);
-      toast.error(errorMessage);
+      toast.error(errorMessage, { duration: 5000 });
     } finally {
       setIsGenerating(false);
     }
@@ -141,7 +158,7 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
       return;
     }
     if (!title || !category) {
-      toast.error('Vui lòng điền Tiêu đề và Danh mục.');
+      toast.error('Vui lòng điền Tiêu đề và Loại Offer.');
       return;
     }
 
@@ -198,8 +215,27 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
             </div>
 
             <div className="space-y-6">
+              <div>
+                <label className="block text-[13px] font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <LayoutGrid size={16} className="text-[#0EB869]" /> 
+                  Loại Offer*
+                </label>
+                <p className="text-xs text-slate-500 mb-2">
+                  Chọn loại offer để phân loại chính xác.
+                </p>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full p-3 border border-slate-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869] bg-white"
+                >
+                  <option value="" disabled>-- Chọn một loại --</option>
+                  {offerTypes.map(type => (
+                    <option key={type.value} value={type.value}>{type.label}</option>
+                  ))}
+                </select>
+              </div>
+
               <FormField icon={Type} label="Tiêu đề Offer/Sản phẩm/Dịch vụ*" description="Tên của sản phẩm/dịch vụ/HVCO bạn đang quảng bá." placeholder="e.g., Khóa học Marketing Tinh gọn" value={title} onChange={(e) => setTitle(e.target.value)} />
-              <FormField icon={Tag} label="Danh mục*" description="Ví dụ: Nha khoa, Mỹ phẩm, Đầu tư Bất động sản, Digital Marketing" placeholder="e.g., Digital Marketing" value={category} onChange={(e) => setCategory(e.target.value)} />
               
               <div className="bg-blue-50 rounded-lg p-5 border border-blue-100">
                   <p className="text-[13px] text-slate-700 leading-relaxed font-medium">
