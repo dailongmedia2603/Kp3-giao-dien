@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
+import { callApi } from '@/src/utils/api'; // Import hàm mới
 
 // --- Types ---
 interface AvatarProfile {
@@ -154,19 +155,38 @@ export const DreamBuyerPage: React.FC = () => {
     setEditingAvatarId(null);
   };
 
-  const handleSave = async (withSummary: boolean = false) => {
-    if (!user || !avatarName) return;
+  const handleGenerateSummary = async () => {
+    if (!avatarName) return;
+    setIsGenerating(true);
+    setGeneratedSummary(null);
+    try {
+      // Đây là nơi bạn sẽ gọi API thực tế của mình
+      // Vì không có backend, tôi sẽ mô phỏng một cuộc gọi
+      const response = await callApi('/api/generate-summary', {
+        method: 'POST',
+        payload: {
+          name: avatarName,
+          q1, q2, q3, q4, q5, q6, q7, q8, q9
+        }
+      });
+      // Trong một ứng dụng thực tế, bạn sẽ sử dụng response.summary
+      // setGeneratedSummary(response.summary);
+      
+      // Mô phỏng phản hồi
+      const summaryText = `Đây là bản tóm tắt do AI tạo cho ${avatarName}, dựa trên các câu trả lời được cung cấp về nỗi đau, ước mơ và thói quen hàng ngày của họ.`;
+      setGeneratedSummary(summaryText);
 
-    if (withSummary) {
-        setIsGenerating(true);
-        setGeneratedSummary(null);
-        setTimeout(() => {
-            const summaryText = `Đây là bản tóm tắt do AI tạo cho ${avatarName}, dựa trên các câu trả lời được cung cấp về nỗi đau, ước mơ và thói quen hàng ngày của họ.`;
-            setGeneratedSummary(summaryText);
-            setIsGenerating(false);
-        }, 1500);
-        return;
+    } catch (error) {
+      console.error("Failed to generate summary:", error);
+      // Mô phỏng một tóm tắt lỗi
+      setGeneratedSummary("Không thể tạo tóm tắt vào lúc này. Vui lòng thử lại.");
+    } finally {
+      setIsGenerating(false);
     }
+  };
+
+  const handleSave = async () => {
+    if (!user || !avatarName) return;
 
     setIsSaving(true);
     const avatarData = {
@@ -400,7 +420,7 @@ export const DreamBuyerPage: React.FC = () => {
 
                         <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
                             <button 
-                                onClick={() => handleSave(false)}
+                                onClick={() => handleSave()}
                                 disabled={isSaving || isGenerating || !avatarName}
                                 className="flex items-center gap-2 px-6 py-3 rounded-lg border border-slate-200 text-slate-700 text-[14px] font-bold hover:bg-slate-50 transition-colors disabled:opacity-50"
                             >
@@ -408,7 +428,7 @@ export const DreamBuyerPage: React.FC = () => {
                                 {editingAvatarId ? 'Lưu thay đổi' : 'Lưu'}
                             </button>
                             <button 
-                                onClick={() => handleSave(true)}
+                                onClick={handleGenerateSummary}
                                 disabled={isSaving || isGenerating || !avatarName}
                                 className="flex items-center gap-2 px-6 py-3 rounded-lg bg-[#0EB869] text-white text-[14px] font-bold hover:bg-[#0B9655] transition-colors shadow-sm disabled:opacity-50"
                             >
