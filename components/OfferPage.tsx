@@ -10,7 +10,8 @@ import {
   Link2,
   BookOpen,
   Loader2,
-  Trash2
+  Trash2,
+  LayoutGrid
 } from 'lucide-react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
@@ -29,7 +30,7 @@ interface OfferPageProps {
 
 export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
   const { user } = useSession();
-  const [activeTab, setActiveTab] = useState<'service' | 'physical' | 'software' | 'digital' | 'e-learning' | 'affiliate'>('service');
+  const [activeTab, setActiveTab] = useState<'all' | 'service' | 'physical' | 'software' | 'digital' | 'e-learning' | 'affiliate'>('all');
   const [offers, setOffers] = useState<Offer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -90,6 +91,9 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
   };
 
   const filteredOffers = offers.filter(offer => {
+    if (activeTab === 'all') {
+      return true;
+    }
     const lowerCategory = offer.category?.toLowerCase() || '';
     switch (activeTab) {
       case 'service': return lowerCategory.includes('service');
@@ -123,6 +127,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
       </div>
 
       <div className="bg-slate-100/50 rounded-xl border border-slate-200 p-1.5 flex mb-8 gap-1 max-w-5xl mx-auto overflow-x-auto">
+        <TabButton active={activeTab === 'all'} onClick={() => setActiveTab('all')} icon={LayoutGrid} label="All" />
         <TabButton active={activeTab === 'service'} onClick={() => setActiveTab('service')} icon={Briefcase} label="Service" />
         <TabButton active={activeTab === 'physical'} onClick={() => setActiveTab('physical')} icon={Package} label="Physical" />
         <TabButton active={activeTab === 'software'} onClick={() => setActiveTab('software')} icon={Monitor} label="Software" />
