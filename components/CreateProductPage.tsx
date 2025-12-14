@@ -27,31 +27,10 @@ import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
 import toast from 'react-hot-toast';
 
-interface Offer {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  target_market?: string;
-  pressing_problem?: string;
-  desired_outcome?: string;
-  features?: string;
-  technology?: string;
-  studies?: string;
-  social_proof?: string;
-  authority_figure?: string;
-  unique_mechanism?: string;
-  review_count?: number | null;
-  avg_review_rating?: number | null;
-  total_customers?: number | null;
-  testimonials?: string;
-}
-
 interface CreateProductPageProps {
   onCancel: () => void;
-  onNavigate: (view: string, context?: any) => void;
+  onNavigate: (view: string) => void;
   initialCategory?: string | null;
-  initialOffer?: Offer | null;
 }
 
 const FormField: React.FC<{
@@ -93,7 +72,7 @@ const FormField: React.FC<{
   </div>
 );
 
-export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, onNavigate, initialCategory, initialOffer }) => {
+export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, onNavigate, initialCategory }) => {
   const { user } = useSession();
   const [isSaving, setIsSaving] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -116,27 +95,10 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
   const [testimonials, setTestimonials] = useState('');
 
   useEffect(() => {
-    if (initialOffer) {
-      setTitle(initialOffer.title || '');
-      setCategory(initialOffer.category || '');
-      setDescription(initialOffer.description || '');
-      setTargetMarket(initialOffer.target_market || '');
-      setPressingProblem(initialOffer.pressing_problem || '');
-      setDesiredOutcome(initialOffer.desired_outcome || '');
-      setFeatures(initialOffer.features || '');
-      setTechnology(initialOffer.technology || '');
-      setStudies(initialOffer.studies || '');
-      setSocialProof(initialOffer.social_proof || '');
-      setAuthorityFigure(initialOffer.authority_figure || '');
-      setUniqueMechanism(initialOffer.unique_mechanism || '');
-      setReviewCount(initialOffer.review_count?.toString() || '');
-      setAvgReviewRating(initialOffer.avg_review_rating?.toString() || '');
-      setTotalCustomers(initialOffer.total_customers?.toString() || '');
-      setTestimonials(initialOffer.testimonials || '');
-    } else {
-      setCategory(initialCategory || '');
+    if (initialCategory) {
+      setCategory(initialCategory);
     }
-  }, [initialOffer, initialCategory]);
+  }, [initialCategory]);
 
   const offerTypes = [
     { value: 'service', label: 'Service' },
@@ -192,7 +154,7 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
 
   const handleSave = async () => {
     if (!user) {
-      toast.error('Bạn cần đăng nhập để lưu.');
+      toast.error('Bạn cần đăng nhập để tạo offer.');
       return;
     }
     if (!title || !category) {
@@ -201,7 +163,7 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
     }
 
     setIsSaving(true);
-    const offerData = {
+    const { error } = await supabase.from('offers').insert({
       user_id: user.id,
       title,
       category,
@@ -219,28 +181,14 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
       avg_review_rating: avgReviewRating ? parseFloat(avgReviewRating) : null,
       total_customers: totalCustomers ? parseInt(totalCustomers) : null,
       testimonials,
-    };
-
-    let error;
-    if (initialOffer) {
-      // Update existing offer
-      const { error: updateError } = await supabase
-        .from('offers')
-        .update(offerData)
-        .eq('id', initialOffer.id);
-      error = updateError;
-    } else {
-      // Insert new offer
-      const { error: insertError } = await supabase.from('offers').insert(offerData);
-      error = insertError;
-    }
+    });
 
     setIsSaving(false);
     if (error) {
       console.error('Error saving offer:', error);
       toast.error('Lỗi khi lưu offer: ' + error.message);
     } else {
-      toast.success(`Đã ${initialOffer ? 'cập nhật' : 'tạo'} offer thành công!`);
+      toast.success('Đã tạo offer thành công!');
       onNavigate('offer');
     }
   };
@@ -260,9 +208,9 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
               <div className="w-16 h-16 bg-[#E8FCF3] rounded-full flex items-center justify-center mx-auto mb-4 text-[#0EB869]">
                 <Sparkles size={32} />
               </div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">{initialOffer ? 'Chỉnh sửa Offer' : 'Tạo Offer Mới'}</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">Tạo Offer Mới</h2>
               <p className="text-slate-500 text-[15px]">
-                {initialOffer ? 'Cập nhật thông tin chi tiết cho offer của bạn.' : 'Điền các thông tin chi tiết bên dưới để AI tạo mô tả cho bạn.'}
+                Điền các thông tin chi tiết bên dưới để AI tạo mô tả cho bạn.
               </p>
             </div>
 
@@ -310,6 +258,24 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
               <FormField icon={Heart} label="Phản hồi của khách hàng" description="Ví dụ: các phản hồi thực tế từ người dùng, mỗi phản hồi trên một dòng." placeholder="Dán các phản hồi tốt nhất vào đây." value={testimonials} onChange={(e) => setTestimonials(e.target.value)} isTextarea />
             </div>
           </div>
+          <div className="mt-8 flex flex-col gap-4">
+            <button 
+              onClick={handleGenerateDescription}
+              disabled={isGenerating || isSaving || !title}
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#0EB869] text-white text-[14px] font-bold hover:bg-[#0B9655] transition-colors shadow-sm disabled:opacity-50"
+            >
+              {isGenerating ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
+              Tạo mô tả
+            </button>
+            <button 
+              onClick={handleSave}
+              disabled={isSaving || isGenerating || !title || !category}
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-slate-200 text-slate-700 text-[14px] font-bold hover:bg-slate-50 transition-colors disabled:opacity-50"
+            >
+              {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
+              Lưu Offer
+            </button>
+          </div>
         </div>
 
         <div className="w-full lg:w-[450px] shrink-0">
@@ -332,24 +298,6 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
                   onChange={(e) => setDescription(e.target.value)}
                 />
               )}
-            </div>
-            <div className="flex flex-col gap-3">
-              <button 
-                onClick={handleGenerateDescription}
-                disabled={isGenerating || isSaving || !title}
-                className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#0EB869] text-white text-[14px] font-bold hover:bg-[#0B9655] transition-colors shadow-sm disabled:opacity-50"
-              >
-                {isGenerating ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
-                Tạo mô tả
-              </button>
-              <button 
-                onClick={handleSave}
-                disabled={isSaving || isGenerating || !title || !category}
-                className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-slate-200 text-slate-700 text-[14px] font-bold hover:bg-slate-50 transition-colors disabled:opacity-50"
-              >
-                {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                {initialOffer ? 'Cập nhật Offer' : 'Lưu Offer'}
-              </button>
             </div>
           </div>
         </div>

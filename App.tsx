@@ -70,11 +70,19 @@ import {
 const AppContent: React.FC = () => {
   const { session, loading } = useSession();
   const [currentView, setCurrentView] = useState<string>('offer');
-  const [navigationContext, setNavigationContext] = useState<any>(null);
+  const [initialCategory, setInitialCategory] = useState<string | null>(null);
+  const [selectedOffer, setSelectedOffer] = useState<any | null>(null);
   const [isSOPOpen, setIsSOPOpen] = useState(false);
 
-  const handleNavigate = (view: string, context?: any) => {
-    setNavigationContext(context);
+  const handleNavigate = (view: string, data?: any) => {
+    if (view === 'create-product' && typeof data === 'string') {
+      setInitialCategory(data);
+    } else if (view === 'offer-detail' && data) {
+      setSelectedOffer(data);
+    } else {
+      setInitialCategory(null);
+      setSelectedOffer(null);
+    }
     setCurrentView(view);
   };
 
@@ -107,20 +115,9 @@ const AppContent: React.FC = () => {
       case 'offer':
         return <OfferPage onNavigate={handleNavigate} />;
       case 'create-product':
-        return <CreateProductPage 
-                  onCancel={() => handleNavigate('offer')} 
-                  onNavigate={handleNavigate} 
-                  initialCategory={navigationContext?.category}
-                  initialOffer={navigationContext?.offer}
-               />;
+        return <CreateProductPage onCancel={() => handleNavigate('offer')} onNavigate={handleNavigate} initialCategory={initialCategory} />;
       case 'offer-detail':
-        return navigationContext?.offer ? 
-               <OfferDetailPage 
-                  offer={navigationContext.offer} 
-                  onBack={() => handleNavigate('offer')} 
-                  onEdit={(offerToEdit) => handleNavigate('create-product', { offer: offerToEdit })}
-                  onDelete={() => {}} 
-               /> : <div>Offer not found</div>;
+        return selectedOffer ? <OfferDetailPage offer={selectedOffer} onBack={() => handleNavigate('offer')} onDelete={() => {}} /> : <div>Offer not found</div>;
       case 'goal':
         return <GoalPage />;
       case 'settings':
