@@ -1,20 +1,18 @@
-import React, { useState } from 'react';
-import { ArrowLeft, Plus, MoreHorizontal, Trash2, Edit, BookOpen, Users } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, Plus, MoreHorizontal, Trash2, Edit, BookOpen, Users, Loader2 } from 'lucide-react';
+import { supabase } from '@/src/integrations/supabase/client';
+import { useSession } from '@/src/contexts/SessionContext';
 
 interface Course {
-  id: number;
+  id: string; // UUID from Supabase
   title: string;
   modules: number;
   students: number;
+  user_id: string;
+  created_at: string;
 }
 
-const MOCK_COURSES: Course[] = [
-  { id: 1, title: 'The Godfather Offer', modules: 12, students: 4500 },
-  { id: 2, title: 'Direct Response Mastery', modules: 8, students: 2100 },
-  { id: 3, title: 'AI Content Engine', modules: 15, students: 1800 },
-];
-
-const CourseCard: React.FC<{ course: Course; onDelete: (id: number) => void; }> = ({ course, onDelete }) => {
+const CourseCard: React.FC<{ course: Course; onDelete: (id: string) => void; }> = ({ course, onDelete }) => {
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 group hover:shadow-md transition-shadow">
       <div className="flex justify-between items-start mb-4">
@@ -43,20 +41,70 @@ const CourseCard: React.FC<{ course: Course; onDelete: (id: number) => void; }> 
 };
 
 export const CourseOutlineTool: React.FC<{ onBack: () => void }> = ({ onBack }) => {
-  const [courses, setCourses] = useState<Course[]>(MOCK_COURSES);
+  const { user } = useSession();
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAdding, setIsAdding] = useState(false);
 
-  const handleAddCourse = () => {
-    const newCourse: Course = {
-      id: Date.now(),
-      title: `New Course #${courses.length + 1}`,
-      modules: 0,
-      students: 0,
+  useEffect(() => {
+    const fetchCourses = async () => {
+      if (!user) {
+        setIsLoading(false);
+        return;
+      }
+      
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('courses')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching courses:', error);
+      } else {
+        setCourses(data || []);
+      }
+      setIsLoading(false);
     };
-    setCourses([newCourse, ...courses]);
+
+    fetchCourses();
+  }, [user]);
+
+  const handleAddCourse = async () => {
+    if (!user || isAdding) return;
+    
+    setIsAdding(true);
+    const { data, error } = await supabase
+      .from('courses')
+      .insert({ 
+        title: `New Course #${courses.length + 1}`, 
+        user_id: user.id 
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error adding course:', error);
+    } else if (data) {
+      setCourses(prevCourses => [data, ...prevCourses]);
+    }
+    setIsAdding(false);
   };
 
-  const handleDeleteCourse = (id: number) => {
-    setCourses(courses.filter(course => course.id !== id));
+  const handleDeleteCourse = async (id: string) => {
+    if (!user) return;
+
+    const { error } = await supabase
+      .from('courses')
+      .delete()
+      .match({ id: id, user_id: user.id });
+
+    if (error) {
+      console.error('Error deleting course:', error);
+    } else {
+      setCourses(courses.filter(course => course.id !== id));
+    }
   };
 
   return (
@@ -76,17 +124,33 @@ export const CourseOutlineTool: React.FC<{ onBack: () => void }> = ({ onBack }) 
         </div>
         <button 
           onClick={handleAddCourse}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 shadow-sm"
+          disabled={isAdding}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 shadow-sm disabled:bg-blue-400"
         >
-          <Plus size={14} /> New Course
+          {isAdding ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />} 
+          New Course
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {courses.map(course => (
-          <CourseCard key={course.id} course={course} onDelete={handleDeleteCourse} />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <Loader2 size={32} className="animate-spin text-slate-400" />
+        </div>
+      ) : courses.length === 0 ? (
+        <div className="text-center py-20 bg-slate-50 rounded-xl border border-dashed">
+            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                <BookOpen size={24} />
+            </div>
+            <h3 className="text-slate-900 font-bold mb-1">No Courses Yet</h3>
+            <p className="text-slate-500 text-sm mb-4">Click "New Course" to get started.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {courses.map(course => (
+            <CourseCard key={course.id} course={course} onDelete={handleDeleteCourse} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
