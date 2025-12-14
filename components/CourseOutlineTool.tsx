@@ -3,6 +3,7 @@ import { ArrowLeft, Plus, MoreHorizontal, Trash2, Edit, BookOpen, Users, Loader2
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
 import { AddCourseModal } from './AddCourseModal';
+import { CourseDetailPage } from './CourseDetailPage'; // Import the new detail page
 
 interface Course {
   id: string;
@@ -20,7 +21,7 @@ interface Avatar {
   name: string;
 }
 
-const CourseCard: React.FC<{ course: Course; onDelete: (id: string) => void; }> = ({ course, onDelete }) => {
+const CourseCard: React.FC<{ course: Course; onDelete: (id: string) => void; onSelect: () => void; }> = ({ course, onDelete, onSelect }) => {
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 group hover:shadow-md transition-shadow flex flex-col">
       <div className="flex justify-between items-start mb-4">
@@ -46,12 +47,12 @@ const CourseCard: React.FC<{ course: Course; onDelete: (id: string) => void; }> 
         </div>
       )}
 
-      <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-100 mt-auto">
-        <button onClick={() => onDelete(course.id)} className="text-xs font-bold text-red-500 hover:text-red-700 flex items-center gap-1 p-2 rounded hover:bg-red-50">
+      <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-auto">
+        <button onClick={(e) => { e.stopPropagation(); onDelete(course.id); }} className="text-xs font-bold text-red-500 hover:text-red-700 flex items-center gap-1 p-2 rounded hover:bg-red-50">
           <Trash2 size={14} /> Delete
         </button>
-        <button className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 p-2 rounded hover:bg-blue-50">
-          <Edit size={14} /> Edit
+        <button onClick={onSelect} className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 p-2 rounded hover:bg-blue-50">
+          <Edit size={14} /> View Outline
         </button>
       </div>
     </div>
@@ -64,6 +65,7 @@ export const CourseOutlineTool: React.FC<{ onBack: () => void }> = ({ onBack }) 
   const [avatars, setAvatars] = useState<Avatar[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -136,6 +138,10 @@ export const CourseOutlineTool: React.FC<{ onBack: () => void }> = ({ onBack }) 
     }
   };
 
+  if (selectedCourse) {
+    return <CourseDetailPage course={selectedCourse} onBack={() => setSelectedCourse(null)} />;
+  }
+
   return (
     <div className="animate-in fade-in duration-300">
       <div className="flex items-center justify-between mb-8">
@@ -174,7 +180,7 @@ export const CourseOutlineTool: React.FC<{ onBack: () => void }> = ({ onBack }) 
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {courses.map(course => (
-            <CourseCard key={course.id} course={course} onDelete={handleDeleteCourse} />
+            <CourseCard key={course.id} course={course} onDelete={handleDeleteCourse} onSelect={() => setSelectedCourse(course)} />
           ))}
         </div>
       )}
