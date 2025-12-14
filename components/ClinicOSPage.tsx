@@ -5,7 +5,8 @@ import {
   MessageSquare, 
   LayoutGrid, 
   ArrowLeft, 
-  Camera
+  Camera,
+  Users
 } from 'lucide-react';
 
 // --- MOCK DATA ---
