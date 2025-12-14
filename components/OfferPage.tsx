@@ -22,10 +22,11 @@ interface Offer {
   title: string;
   category: string;
   description: string;
+  [key: string]: any; // Allow other properties
 }
 
 interface OfferPageProps {
-  onNavigate?: (view: string, category?: string) => void;
+  onNavigate?: (view: string, data?: any) => void;
 }
 
 export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
@@ -43,7 +44,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
       setIsLoading(true);
       const { data, error } = await supabase
         .from('offers')
-        .select('id, title, category, description')
+        .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
@@ -80,7 +81,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
   };
 
   const getIconForCategory = (category: string) => {
-    const lowerCategory = category.toLowerCase();
+    const lowerCategory = category?.toLowerCase() || '';
     if (lowerCategory.includes('service')) return Briefcase;
     if (lowerCategory.includes('physical')) return Package;
     if (lowerCategory.includes('software')) return Monitor;
@@ -160,7 +161,11 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
                 category={offer.category}
                 description={offer.description}
                 icon={getIconForCategory(offer.category)}
-                onDelete={() => handleDelete(offer.id)}
+                onClick={() => onNavigate && onNavigate('offer-detail', offer)}
+                onDelete={(e) => {
+                  e.stopPropagation();
+                  handleDelete(offer.id);
+                }}
               />
             ))}
           </div>
@@ -195,32 +200,35 @@ interface ProductCardProps {
     category: string;
     description: string;
     icon: any;
-    onDelete: () => void;
+    onClick: () => void;
+    onDelete: (e: React.MouseEvent) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ title, category, description, icon: Icon, onDelete }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ title, category, description, icon: Icon, onClick, onDelete }) => {
     return (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col p-6 h-full group">
-            <div className="flex items-start gap-4 mb-4">
-                 <div className="w-12 h-12 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 bg-white shrink-0 group-hover:border-[#A5D6A7] group-hover:text-[#16A349] transition-colors">
-                   <Icon size={24} strokeWidth={1.5} />
+        <div onClick={onClick} className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full group cursor-pointer">
+            <div className="p-6 flex-1">
+                <div className="flex items-start gap-4 mb-4">
+                     <div className="w-12 h-12 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 bg-white shrink-0 group-hover:border-[#A5D6A7] group-hover:text-[#16A349] transition-colors">
+                       <Icon size={24} strokeWidth={1.5} />
+                    </div>
+                    <div>
+                        <h3 className="text-[15px] font-bold text-slate-900 leading-tight mb-1 group-hover:text-[#16A349] transition-colors">{title}</h3>
+                        <p className="text-[13px] text-slate-500">{category}</p>
+                    </div>
                 </div>
-                <div>
-                    <h3 className="text-[15px] font-bold text-slate-900 leading-tight mb-1">{title}</h3>
-                    <p className="text-[13px] text-slate-500">{category}</p>
-                </div>
+                
+                <p className="text-[13px] text-slate-500 leading-relaxed mb-8 flex-1">
+                    {description}
+                </p>
             </div>
-            
-            <p className="text-[13px] text-slate-500 leading-relaxed mb-8 flex-1">
-                {description}
-            </p>
 
-            <div className="flex items-center justify-between pt-5 border-t border-slate-100 mt-auto">
+            <div className="flex items-center justify-between pt-4 pb-4 px-6 border-t border-slate-100 mt-auto">
                  <button onClick={onDelete} className="text-[13px] font-bold text-red-500 hover:text-red-700 transition-colors flex items-center gap-1">
                     <Trash2 size={14} /> Delete
                 </button>
                 <button className="text-[13px] font-bold text-[#16A349] hover:text-[#149641] transition-colors">
-                    Edit Offer
+                    View Details
                 </button>
             </div>
         </div>
