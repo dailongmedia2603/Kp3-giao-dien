@@ -87,16 +87,16 @@ const ResearchInput: React.FC<{ label: string; placeholder: string; value: strin
 const CreateAvatarView: React.FC<{ onBack: () => void; onSaveSuccess: (newAvatar: AvatarProfile) => void; }> = ({ onBack, onSaveSuccess }) => {
   const { user } = useSession();
   const [formData, setFormData] = useState<Partial<AvatarProfile>>({ name: '' });
+  const [summary, setSummary] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleInputChange = (field: keyof AvatarProfile, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSave = async () => {
-    if (!user || !formData.name) return;
-    setIsSaving(true);
-    
+  const handleGenerateSummary = () => {
+    setIsGenerating(true);
     const summaryText = researchQuestions
       .map(q => {
         const answer = formData[q.id as keyof AvatarProfile] as string;
@@ -104,10 +104,19 @@ const CreateAvatarView: React.FC<{ onBack: () => void; onSaveSuccess: (newAvatar
       })
       .filter(Boolean)
       .join('\n');
+    
+    setTimeout(() => {
+      setSummary(summaryText || 'Không có đủ thông tin để tạo tóm tắt.');
+      setIsGenerating(false);
+    }, 1000);
+  };
 
+  const handleSave = async () => {
+    if (!user || !formData.name) return;
+    setIsSaving(true);
     const { data, error } = await supabase
       .from('dream_buyer_avatars')
-      .insert({ ...formData, user_id: user.id, summary: summaryText })
+      .insert({ ...formData, user_id: user.id, summary })
       .select()
       .single();
 
@@ -129,8 +138,9 @@ const CreateAvatarView: React.FC<{ onBack: () => void; onSaveSuccess: (newAvatar
           <p className="text-slate-500 text-sm">Điền vào các trường để xây dựng hồ sơ khách hàng của bạn.</p>
         </div>
       </div>
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-xl border border-slate-200 p-8 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left Panel: Inputs */}
+        <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-6 h-fit">
           <div>
             <label className="block text-sm font-bold text-slate-700 mb-2">Tên Avatar*</label>
             <input
@@ -150,11 +160,39 @@ const CreateAvatarView: React.FC<{ onBack: () => void; onSaveSuccess: (newAvatar
               onChange={(e) => handleInputChange(q.id as keyof AvatarProfile, e.target.value)}
             />
           ))}
-          <div className="pt-4 border-t border-slate-100">
-            <button onClick={handleSave} disabled={isSaving} className="w-full flex items-center justify-center gap-2 py-3 bg-[#0EB869] text-white font-bold rounded-lg shadow-sm hover:bg-[#0B9655] disabled:bg-slate-300">
+          <div className="flex gap-4 pt-4 border-t border-slate-100">
+            <button onClick={handleSave} disabled={isSaving} className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#0EB869] text-white font-bold rounded-lg shadow-sm hover:bg-[#0B9655] disabled:bg-slate-300">
               {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-              Lưu & Tạo Hồ sơ
+              Lưu
             </button>
+            <button onClick={handleGenerateSummary} disabled={isGenerating} className="flex-1 flex items-center justify-center gap-2 py-3 bg-slate-800 text-white font-bold rounded-lg hover:bg-slate-700 disabled:bg-slate-400">
+              {isGenerating ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+              Tạo tóm tắt
+            </button>
+          </div>
+        </div>
+        {/* Right Panel: Summary */}
+        <div className="bg-white rounded-xl border border-slate-200 p-6 sticky top-8 h-[calc(100vh-120px)] overflow-y-auto">
+          <h3 className="font-bold text-lg mb-4 text-slate-900">Tóm tắt Avatar</h3>
+          <div className="prose prose-sm max-w-none text-slate-700 whitespace-pre-wrap">
+            {isGenerating ? (
+              <div className="flex items-center justify-center h-40 text-slate-400">
+                <Loader2 size={24} className="animate-spin" />
+              </div>
+            ) : summary ? (
+              summary.split('\n\n').map((section, i) => (
+                <div key={i} className="mb-4">
+                  {section.split('\n').map((line, j) => {
+                    if (line.startsWith('**')) {
+                      return <h4 key={j} className="font-bold text-slate-800 text-sm mb-1">{line.replace(/\*\*/g, '')}</h4>
+                    }
+                    return <p key={j} className="text-slate-600 text-sm leading-relaxed">{line}</p>
+                  })}
+                </div>
+              ))
+            ) : (
+              <p className="italic text-slate-400">Nội dung tóm tắt sẽ được tạo ở đây sau khi bạn điền thông tin và nhấn "Tạo tóm tắt".</p>
+            )}
           </div>
         </div>
       </div>
@@ -223,22 +261,20 @@ export const DreamBuyerPage: React.FC = () => {
       default:
         return (
           <div className="animate-in fade-in duration-300">
-            <div className="flex justify-between items-center mb-8">
-                <div>
-                    <h1 className="text-[26px] font-bold text-slate-900 mb-1 tracking-tight">
-                      Dream Buyer Avatars
-                    </h1>
-                    <p className="text-slate-500 text-[13px] leading-relaxed">
-                      Research, define, and store your Dream Buyer Avatars.
-                    </p>
-                </div>
-                <button 
-                    onClick={() => setView('create')}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#0EB869] text-white text-[14px] font-bold hover:bg-[#0B9655] transition-colors shadow-sm"
-                >
-                    <Plus size={18} strokeWidth={3} />
-                    New Research
-                </button>
+            <div className="flex flex-col items-center mb-8 text-center">
+              <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight">
+                Dream Buyer Avatars
+              </h1>
+              <p className="text-slate-500 text-[13px] leading-relaxed mb-8 max-w-2xl mx-auto">
+                Research, define, and store your Dream Buyer Avatars. Use these deep profiles to write high-converting copy and train your closers.
+              </p>
+              <button 
+                onClick={() => setView('create')}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#0EB869] text-white text-[14px] font-bold hover:bg-[#0B9655] transition-colors shadow-sm"
+              >
+                <Plus size={18} strokeWidth={3} />
+                New Research
+              </button>
             </div>
             {isLoading ? (
               <div className="flex justify-center items-center h-64"><Loader2 size={32} className="animate-spin text-slate-400" /></div>
