@@ -3,13 +3,21 @@
 
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
-import { create, getNumericDate } from "https://deno.land/x/djwt@v2.9.1/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// Helper to Base64URL encode
+function base64url(source: ArrayBuffer): string {
+  return btoa(String.fromCharCode(...new Uint8Array(source)))
+    .replace(/=/g, "")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_");
+}
+
+// Helper to import a PEM-formatted key
 async function importKey(pem: string) {
   const pemHeader = "-----BEGIN PRIVATE KEY-----";
   const pemFooter = "-----END PRIVATE KEY-----";
@@ -86,17 +94,27 @@ serve(async (req) => {
     const now = Math.floor(Date.now() / 1000);
     const exp = now + 3600;
 
-    const jwt = await create(
-      { alg: "RS256", typ: "JWT" },
-      {
-        iss: serviceAccount.client_email,
-        scope: "https://www.googleapis.com/auth/cloud-platform",
-        aud: "https://oauth2.googleapis.com/token",
-        exp: getNumericDate(exp),
-        iat: getNumericDate(now),
-      },
-      privateKey
+    const header = { alg: "RS256", typ: "JWT" };
+    const payload = {
+      iss: serviceAccount.client_email,
+      scope: "https://www.googleapis.com/auth/cloud-platform",
+      aud: "https://oauth2.googleapis.com/token",
+      exp: exp,
+      iat: now,
+    };
+
+    const encodedHeader = base64url(new TextEncoder().encode(JSON.stringify(header)));
+    const encodedPayload = base64url(new TextEncoder().encode(JSON.stringify(payload)));
+    
+    const dataToSign = new TextEncoder().encode(`${encodedHeader}.${encodedPayload}`);
+    const signature = await crypto.subtle.sign(
+      { name: "RSASSA-PKCS1-v1_5" },
+      privateKey,
+      dataToSign
     );
+
+    const encodedSignature = base64url(signature);
+    const jwt = `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
 
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
