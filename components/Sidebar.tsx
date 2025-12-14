@@ -149,7 +149,7 @@ const categoriesData = [
     color: '#16A349',
     items: [
       { view: 'dream-buyer', icon: Users, label: 'Dream Buyer Avatars' },
-      { view: 'offer', icon: ShoppingBag, label: 'Offer', badge: '1' },
+      { view: 'offer', icon: ShoppingBag, label: 'Products & Offer', badge: '1' },
       { view: 'hero-mechanisms', icon: Rabbit, label: 'Hero Mechanisms' },
       { view: 'product-store', icon: Store, label: 'Product & Store' },
       { view: 'offer-asset-vault', icon: Vault, label: 'Asset Vault' },

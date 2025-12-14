@@ -31,19 +31,19 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel }
              <Home size={16} className="text-slate-400" />
           </button>
           <ChevronRight size={14} className="text-slate-300" />
-          <button onClick={onCancel} className="hover:text-slate-700">Offers</button>
+          <button onClick={onCancel} className="hover:text-slate-700">Tất cả Offer</button>
           <ChevronRight size={14} className="text-slate-300" />
           <span className="bg-[#F3E8FF] text-[#7C3AED] px-3 py-1 rounded text-xs font-bold">
-            Create
+            Tạo mới
           </span>
         </div>
         
         <h1 className="text-[26px] font-bold text-slate-900 mb-2 tracking-tight">
-          Create New Offer
+          Tạo Offer Mới
         </h1>
         
         <p className="text-slate-500 text-center text-[13px]">
-          Tell us a little bit about your offer/service.
+          Hãy cho chúng tôi biết một chút về offer/dịch vụ của bạn.
         </p>
       </div>
 
@@ -53,178 +53,178 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel }
         {/* Title */}
         <div>
             <label className="block text-[13px] font-bold text-slate-700 mb-1">
-                Offer/Product/Service Title*
+                Tiêu đề Offer/Sản phẩm/Dịch vụ*
             </label>
-            <div className="text-[12px] text-slate-500 mb-2">The name of the product/service/HVCO you are promoting.</div>
+            <div className="text-[12px] text-slate-500 mb-2">Tên của sản phẩm/dịch vụ/HVCO bạn đang quảng bá.</div>
             <input 
                 type="text" 
                 className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED]"
             />
-            <div className="text-[11px] text-slate-400 mt-1.5">100 chars left</div>
+            <div className="text-[11px] text-slate-400 mt-1.5">Còn lại 100 ký tự</div>
         </div>
 
         {/* Category */}
         <div>
             <label className="block text-[13px] font-bold text-slate-700 mb-1">
-                Category*
+                Danh mục*
             </label>
-            <div className="text-[12px] text-slate-500 mb-2">e.g. Dentures, Cosmetics, Property Investments, Digital Marketing</div>
+            <div className="text-[12px] text-slate-500 mb-2">Ví dụ: Nha khoa, Mỹ phẩm, Đầu tư Bất động sản, Digital Marketing</div>
             <input 
                 type="text" 
                 className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED]"
             />
-            <div className="text-[11px] text-slate-400 mt-1.5">100 chars left</div>
+            <div className="text-[11px] text-slate-400 mt-1.5">Còn lại 100 ký tự</div>
         </div>
 
         {/* Description */}
         <div>
             <label className="block text-[13px] font-bold text-slate-700 mb-1">
-                Description*
+                Mô tả*
             </label>
-            <div className="text-[12px] text-slate-500 mb-2">KP3 wants to understand the offer you are promoting.<br/>What is it? What does it do? How does it work?<br/>How do people typically use it?</div>
+            <div className="text-[12px] text-slate-500 mb-2">KP3 muốn hiểu rõ về offer bạn đang quảng bá.<br/>Nó là gì? Nó làm gì? Nó hoạt động như thế nào?<br/>Mọi người thường sử dụng nó như thế nào?</div>
             <textarea 
                 rows={6}
                 className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] resize-none leading-relaxed"
             />
-            <div className="text-[11px] text-slate-400 mt-1.5">1000 chars left</div>
+            <div className="text-[11px] text-slate-400 mt-1.5">Còn lại 1000 ký tự</div>
         </div>
 
         {/* Info Box */}
         <div className="bg-[#F3E8FF] rounded-lg p-5 border border-[#E9D5FF]">
             <p className="text-[13px] text-slate-700 leading-relaxed font-medium">
-                <span className="font-bold">The fields below are optional but recommended to complete</span> - you may store commonly used product information here so you don't need to re-enter it across the site. You will be prompted to review this information if it is used for a particular resource.
+                <span className="font-bold">Các trường dưới đây là tùy chọn nhưng được khuyến nghị hoàn thành</span> - bạn có thể lưu trữ thông tin sản phẩm thường dùng ở đây để không cần nhập lại trên toàn trang. Bạn sẽ được yêu cầu xem lại thông tin này nếu nó được sử dụng cho một tài nguyên cụ thể.
             </p>
         </div>
 
         {/* Target Market */}
         <div>
             <label className="block text-[13px] font-bold text-slate-700 mb-1">
-                Target Market
+                Thị trường mục tiêu
             </label>
-            <div className="text-[12px] text-slate-500 mb-2">e.g. Women over 45.</div>
+            <div className="text-[12px] text-slate-500 mb-2">Ví dụ: Phụ nữ trên 45 tuổi.</div>
             <input 
                 type="text" 
                 className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED]"
             />
-            <div className="text-[11px] text-slate-400 mt-1.5">100 chars left</div>
+            <div className="text-[11px] text-slate-400 mt-1.5">Còn lại 100 ký tự</div>
         </div>
 
         {/* Pressing Problem */}
         <div>
             <label className="block text-[13px] font-bold text-slate-700 mb-1">
-                Pressing Problem
+                Vấn đề cấp bách
             </label>
-            <div className="text-[12px] text-slate-500 mb-2">e.g. Weight gain/metabolism slowing down due to menopause.</div>
+            <div className="text-[12px] text-slate-500 mb-2">Ví dụ: Tăng cân/trao đổi chất chậm lại do mãn kinh.</div>
             <textarea 
                 rows={4}
                 className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] resize-none"
             />
-            <div className="text-[11px] text-slate-400 mt-1.5">200 chars left</div>
+            <div className="text-[11px] text-slate-400 mt-1.5">Còn lại 200 ký tự</div>
         </div>
 
         {/* Desired Outcome */}
         <div>
             <label className="block text-[13px] font-bold text-slate-700 mb-1">
-                Desired Outcome
+                Kết quả mong muốn
             </label>
-            <div className="text-[12px] text-slate-500 mb-2">e.g. Being slim, sexy, desirable, impressing their husband, looking like their younger slim self</div>
+            <div className="text-[12px] text-slate-500 mb-2">Ví dụ: Trở nên thon gọn, quyến rũ, được khao khát, gây ấn tượng với chồng, trông giống như phiên bản trẻ trung thon gọn của chính mình</div>
             <textarea 
                 rows={4}
                 className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] resize-none"
             />
-            <div className="text-[11px] text-slate-400 mt-1.5">200 chars left</div>
+            <div className="text-[11px] text-slate-400 mt-1.5">Còn lại 200 ký tự</div>
         </div>
 
         {/* Product Features/USPs */}
         <div>
             <label className="block text-[13px] font-bold text-slate-700 mb-1">
-                Features/USPs:
+                Tính năng/USP:
             </label>
-            <div className="text-[12px] text-slate-500 mb-2">e.g. 10g Protein Per Scoop, Made with Premium Coffee, Zero Sugar, All Natural, Organic</div>
+            <div className="text-[12px] text-slate-500 mb-2">Ví dụ: 10g Protein mỗi muỗng, Làm từ Cà phê Cao cấp, Không đường, Hoàn toàn tự nhiên, Hữu cơ</div>
             <textarea 
                 rows={4}
                 className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] resize-none"
             />
-            <div className="text-[11px] text-slate-400 mt-1.5">200 chars left</div>
+            <div className="text-[11px] text-slate-400 mt-1.5">Còn lại 200 ký tự</div>
         </div>
 
         {/* Specific technology... */}
         <div>
             <label className="block text-[13px] font-bold text-slate-700 mb-1">
-                Specific technology/ingredients/methodology:
+                Công nghệ/thành phần/phương pháp cụ thể:
             </label>
-            <div className="text-[12px] text-slate-500 mb-2">e.g. Breakthrough New AI, New 'FirmFit' Technology, Refinance Framework, Algorithm Loophole, JP Morgan Stock-Picking Strategy, Yield Farming Strategy, 1-Page Exercise, 3-Step Method etc.</div>
+            <div className="text-[12px] text-slate-500 mb-2">Ví dụ: AI đột phá mới, Công nghệ 'FirmFit' mới, Khung tái cấp vốn, Lỗ hổng thuật toán, Chiến lược chọn cổ phiếu của JP Morgan, Chiến lược Yield Farming, Bài tập 1 trang, Phương pháp 3 bước, v.v.</div>
             <textarea 
                 rows={4}
                 className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] resize-none"
             />
-            <div className="text-[11px] text-slate-400 mt-1.5">200 chars left</div>
+            <div className="text-[11px] text-slate-400 mt-1.5">Còn lại 200 ký tự</div>
         </div>
 
         {/* Scientific Studies... */}
         <div>
             <label className="block text-[13px] font-bold text-slate-700 mb-1">
-                Scientific Studies/Research/Stats:
+                Nghiên cứu khoa học/Thống kê:
             </label>
-            <div className="text-[12px] text-slate-500 mb-2">e.g. 9/10 dentists recommend</div>
+            <div className="text-[12px] text-slate-500 mb-2">Ví dụ: 9/10 nha sĩ khuyên dùng</div>
             <textarea 
                 rows={4}
                 className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] resize-none"
             />
-            <div className="text-[11px] text-slate-400 mt-1.5">200 chars left</div>
+            <div className="text-[11px] text-slate-400 mt-1.5">Còn lại 200 ký tự</div>
         </div>
 
         {/* Featured in... */}
         <div>
             <label className="block text-[13px] font-bold text-slate-700 mb-1">
-                Featured in (Social Proof):
+                Được giới thiệu trên (Bằng chứng xã hội):
             </label>
-            <div className="text-[12px] text-slate-500 mb-2">e.g. GQ, Elle, Vogue & Forbes</div>
+            <div className="text-[12px] text-slate-500 mb-2">Ví dụ: GQ, Elle, Vogue & Forbes</div>
             <textarea 
                 rows={4}
                 className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] resize-none"
             />
-            <div className="text-[11px] text-slate-400 mt-1.5">200 chars left</div>
+            <div className="text-[11px] text-slate-400 mt-1.5">Còn lại 200 ký tự</div>
         </div>
 
         {/* Credible Authority Figure */}
         <div>
             <label className="block text-[13px] font-bold text-slate-700 mb-1">
-                Credible Authority Figure:
+                Nhân vật có uy tín:
             </label>
             <button 
                 onClick={() => setShowAuthorityExamples(!showAuthorityExamples)}
                 className="w-full flex items-center justify-center gap-2 py-3 bg-[#F3E8FF] hover:bg-[#E9D5FF] text-[#7C3AED] text-[13px] font-bold rounded-lg transition-colors mb-3"
             >
                 <Sparkles size={16} />
-                Show Examples
+                Hiển thị ví dụ
                 {showAuthorityExamples ? <Plus className="rotate-45 transition-transform" size={16} /> : <Plus size={16} />}
             </button>
             <textarea 
                 rows={4}
                 className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] resize-none"
             />
-            <div className="text-[11px] text-slate-400 mt-1.5">200 chars left</div>
+            <div className="text-[11px] text-slate-400 mt-1.5">Còn lại 200 ký tự</div>
         </div>
 
         {/* Unique Mechanism */}
         <div>
             <label className="block text-[13px] font-bold text-slate-700 mb-1">
-                Unique Mechanism:
+                Cơ chế độc đáo:
             </label>
             <div className="text-[12px] text-slate-500 mb-3 leading-relaxed">
-                What makes this solution unique? Think in terms of special process, framework, ingredient, algorithm, 3-step system etc. that enables your target market to actually get their desired result.
+                Điều gì làm cho giải pháp này trở nên độc đáo? Hãy nghĩ về quy trình, khung, thành phần, thuật toán, hệ thống 3 bước đặc biệt, v.v. cho phép thị trường mục tiêu của bạn thực sự đạt được kết quả mong muốn.
             </div>
             
             {/* Mechanism Examples Box */}
             <div className="bg-[#FDFBFF] border border-[#E9D5FF] rounded-lg p-5 mb-3">
                 <div className="flex items-center gap-2 mb-3 text-[#7C3AED] font-bold text-[13px]">
                     <Sparkles size={16} />
-                    Examples
+                    Ví dụ
                 </div>
                 
                 <div className="text-center text-[12px] text-slate-500 mb-4">
-                    Click any to populate the text field then edit for your own business
+                    Nhấp vào bất kỳ ví dụ nào để điền vào ô văn bản, sau đó chỉnh sửa cho phù hợp với doanh nghiệp của bạn
                 </div>
 
                 <div className="flex items-center gap-4">
@@ -253,15 +253,15 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel }
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMechanismInput(e.target.value)}
                 className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] resize-none"
             />
-            <div className="text-[11px] text-slate-400 mt-1.5">200 chars left</div>
+            <div className="text-[11px] text-slate-400 mt-1.5">Còn lại 200 ký tự</div>
         </div>
 
         {/* Number of reviews */}
         <div>
             <label className="block text-[13px] font-bold text-slate-700 mb-1">
-                Number of reviews:
+                Số lượng đánh giá:
             </label>
-            <div className="text-[12px] text-slate-500 mb-2">e.g. 3144.</div>
+            <div className="text-[12px] text-slate-500 mb-2">Ví dụ: 3144.</div>
             <input 
                 type="text" 
                 className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED]"
@@ -271,9 +271,9 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel }
         {/* Average review rating */}
         <div>
             <label className="block text-[13px] font-bold text-slate-700 mb-1">
-                Average review rating:
+                Xếp hạng đánh giá trung bình:
             </label>
-            <div className="text-[12px] text-slate-500 mb-2">e.g. 4.75.</div>
+            <div className="text-[12px] text-slate-500 mb-2">Ví dụ: 4.75.</div>
             <input 
                 type="text" 
                 className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED]"
@@ -283,9 +283,9 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel }
         {/* Total number of customers ALL TIME */}
         <div>
             <label className="block text-[13px] font-bold text-slate-700 mb-1">
-                Total number of customers ALL TIME:
+                Tổng số khách hàng (từ trước đến nay):
             </label>
-            <div className="text-[12px] text-slate-500 mb-2">e.g. 475000.</div>
+            <div className="text-[12px] text-slate-500 mb-2">Ví dụ: 475000.</div>
             <input 
                 type="text" 
                 className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED]"
@@ -295,26 +295,26 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel }
         {/* Testimonials */}
         <div>
             <label className="block text-[13px] font-bold text-slate-700 mb-1">
-                Testimonials:
+                Phản hồi của khách hàng:
             </label>
-            <div className="text-[12px] text-slate-500 mb-2">e.g. actual testimonials from users, each on a new line.</div>
+            <div className="text-[12px] text-slate-500 mb-2">Ví dụ: các phản hồi thực tế từ người dùng, mỗi phản hồi trên một dòng.</div>
             <textarea 
                 rows={6}
                 className="w-full p-3 border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] resize-none"
             />
-            <div className="text-[11px] text-slate-400 mt-1.5">1000 chars left</div>
+            <div className="text-[11px] text-slate-400 mt-1.5">Còn lại 1000 ký tự</div>
         </div>
 
         {/* Buttons */}
         <div className="flex items-center gap-4 pt-4">
             <button className="px-6 py-3 bg-[#7C3AED] text-white text-[14px] font-bold rounded-lg hover:bg-[#6D28D9] transition-colors shadow-sm">
-                Create Offer
+                Tạo Offer
             </button>
             <button 
                 onClick={onCancel}
                 className="px-6 py-3 bg-white border border-slate-200 text-slate-700 text-[14px] font-bold rounded-lg hover:bg-slate-50 transition-colors"
             >
-                Cancel
+                Hủy
             </button>
         </div>
 
