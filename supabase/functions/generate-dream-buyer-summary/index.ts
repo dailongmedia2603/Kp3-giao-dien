@@ -3,7 +3,7 @@
 
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
-import { GoogleAuth } from "https://deno.land/x/google_auth@v0.4.0/mod.ts";
+import { GoogleAuth } from 'https://esm.sh/google-auth-library'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -63,15 +63,22 @@ serve(async (req) => {
     }
 
     const serviceAccount = JSON.parse(service_account_json);
-    const googleAuth = new GoogleAuth({
+    
+    const auth = new GoogleAuth({
       credentials: {
         client_email: serviceAccount.client_email,
         private_key: serviceAccount.private_key,
       },
-      scopes: ["https://www.googleapis.com/auth/cloud-platform"],
+      scopes: 'https://www.googleapis.com/auth/cloud-platform',
     });
 
-    const accessToken = await googleAuth.getAccessToken();
+    const client = await auth.getClient();
+    const accessTokenResponse = await client.getAccessToken();
+    const accessToken = accessTokenResponse.token;
+
+    if (!accessToken) {
+      throw new Error('Failed to get Google Auth access token.');
+    }
 
     const systemPrompt = dream_buyer_prompt || `You are a world-class marketing strategist and psychologist. Based on the following answers about a "Dream Buyer", create a concise, insightful summary of the avatar. The summary should be a narrative that brings the person to life, focusing on their core motivations, fears, and what would make them say "yes" to an offer. Synthesize the provided information into a compelling persona description.`;
 
