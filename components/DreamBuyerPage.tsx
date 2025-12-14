@@ -33,7 +33,6 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
-import { callApi } from '@/src/utils/api';
 import toast from 'react-hot-toast';
 
 // --- Types ---
@@ -158,30 +157,35 @@ export const DreamBuyerPage: React.FC = () => {
   };
 
   const handleGenerateSummary = async () => {
-    if (!avatarName) return;
+    if (!avatarName) {
+      toast.error('Vui lòng nhập tên avatar.');
+      return;
+    }
     setIsGenerating(true);
     setGeneratedSummary(null);
-    try {
-      // Đây là nơi bạn sẽ gọi API thực tế của mình
-      // Vì không có backend, tôi sẽ mô phỏng một cuộc gọi
-      const response = await callApi('/api/generate-summary', {
-        method: 'POST',
-        payload: {
-          name: avatarName,
-          q1, q2, q3, q4, q5, q6, q7, q8, q9
-        }
-      });
-      // Trong một ứng dụng thực tế, bạn sẽ sử dụng response.summary
-      // setGeneratedSummary(response.summary);
-      
-      // Mô phỏng phản hồi
-      const summaryText = `Đây là bản tóm tắt do AI tạo cho ${avatarName}, dựa trên các câu trả lời được cung cấp về nỗi đau, ước mơ và thói quen hàng ngày của họ.`;
-      setGeneratedSummary(summaryText);
 
-    } catch (error) {
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-dream-buyer-summary', {
+        body: { 
+          answers: {
+            name: avatarName,
+            q1, q2, q3, q4, q5, q6, q7, q8, q9
+          }
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      setGeneratedSummary(data.summary);
+      toast.success('Tóm tắt đã được tạo thành công!');
+
+    } catch (error: any) {
       console.error("Failed to generate summary:", error);
-      // Mô phỏng một tóm tắt lỗi
-      setGeneratedSummary("Không thể tạo tóm tắt vào lúc này. Vui lòng thử lại.");
+      const errorMessage = error.message || 'Lỗi khi tạo tóm tắt.';
+      setGeneratedSummary(`Không thể tạo tóm tắt: ${errorMessage}`);
+      toast.error(errorMessage);
     } finally {
       setIsGenerating(false);
     }
