@@ -89,6 +89,18 @@ const FormField: React.FC<{
   </div>
 );
 
+const researchQuestions = [
+    { key: 'q1_hangouts', label: '1. Họ tụ tập ở đâu?', icon: Globe },
+    { key: 'q2_info_sources', label: '2. Họ lấy thông tin từ đâu?', icon: BookOpen },
+    { key: 'q3_frustrations', label: '3. Nỗi thất vọng và thách thức lớn nhất là gì?', icon: Frown },
+    { key: 'q4_dreams', label: '4. Hy vọng, ước mơ và khao khát của họ là gì?', icon: Sparkles },
+    { key: 'q5_fears', label: '5. Nỗi sợ hãi lớn nhất của họ là gì?', icon: ShieldAlert },
+    { key: 'q6_communication_channel', label: '6. Họ thích giao tiếp qua kênh nào?', icon: MessageSquare },
+    { key: 'q7_language', label: '7. Họ sử dụng ngôn ngữ gì?', icon: Type },
+    { key: 'q8_daily_routine', label: '8. Một ngày của họ diễn ra như thế nào?', icon: Clock },
+    { key: 'q9_happiness_triggers', label: '9. Điều gì làm họ hạnh phúc?', icon: Smile }
+];
+
 export const DreamBuyerPage: React.FC = () => {
   const { user } = useSession();
   const [view, setView] = useState<'list' | 'create' | 'detail'>('list');
@@ -465,141 +477,51 @@ export const DreamBuyerPage: React.FC = () => {
                             </div>
                         </div>
                     </div>
-
-                    {selectedAvatar.summary && (
-                        <div className="bg-blue-50 border border-blue-100 rounded-xl p-5">
-                            <h4 className="text-blue-600 font-bold text-sm mb-2 flex items-center gap-2">
-                                <BrainCircuit size={16} /> AI Summary
-                            </h4>
-                             <p className="text-xs text-blue-800 leading-relaxed italic">
-                                "{selectedAvatar.summary}"
-                            </p>
-                        </div>
-                    )}
                 </div>
 
                 <div className="flex-1 overflow-y-auto pr-2 space-y-6">
                     
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div className="px-6 py-4 border-b border-slate-100 bg-red-50/50 flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-red-100 text-red-500 flex items-center justify-center">
-                                <Frown size={18} />
+                    {selectedAvatar.summary && (
+                        <div className="bg-amber-50 border border-amber-200 rounded-xl shadow-sm overflow-hidden">
+                            <div className="px-6 py-4 border-b border-amber-100 bg-amber-100/50 flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center">
+                                    <BrainCircuit size={18} />
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-900">Tóm tắt Avatar</h3>
                             </div>
-                            <h3 className="text-lg font-bold text-slate-900">Pain Points & Frustrations</h3>
-                        </div>
-                        <div className="p-6">
-                            <p className="text-sm text-slate-500 mb-4 italic">
-                                What keeps them awake at night? What specific inefficiencies are they desperate to solve?
-                            </p>
-                            <div className="space-y-3">
-                                {selectedAvatar.pain_points?.map((pain, idx) => (
-                                    <div key={idx} className="flex items-start gap-4 p-4 rounded-lg border border-red-100 bg-red-50/30">
-                                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-red-100 text-red-600 font-bold text-xs flex items-center justify-center mt-0.5">
-                                            {idx + 1}
-                                        </span>
-                                        <span className="text-[15px] text-slate-800 font-medium leading-relaxed">{pain}</span>
-                                    </div>
-                                ))}
+                            <div className="p-6">
+                                <p className="text-sm text-slate-700 leading-relaxed italic">
+                                    "{selectedAvatar.summary}"
+                                </p>
                             </div>
                         </div>
-                    </div>
-
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div className="px-6 py-4 border-b border-slate-100 bg-[#E8FCF3]/50 flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-[#E8FCF3] text-[#0EB869] flex items-center justify-center">
-                                <Target size={18} />
-                            </div>
-                            <h3 className="text-lg font-bold text-slate-900">Goals & Desires</h3>
-                        </div>
-                        <div className="p-6">
-                            <p className="text-sm text-slate-500 mb-4 italic">
-                                What specific results do they want? Revenue? Time savings? Status?
-                            </p>
-                            <div className="grid grid-cols-1 gap-3">
-                                {selectedAvatar.goals?.map((goal, idx) => (
-                                    <div key={idx} className="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:border-[#86EFAC] transition-colors bg-slate-50 hover:bg-white">
-                                        <CheckCircle2 size={18} className="text-[#0EB869] flex-shrink-0" />
-                                        <span className="text-[14px] text-slate-700 font-medium">{goal}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div className="px-6 py-4 border-b border-slate-100 bg-amber-50/50 flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center">
-                                <Zap size={18} />
-                            </div>
-                            <h3 className="text-lg font-bold text-slate-900">Current Solutions & Gaps</h3>
-                        </div>
-                        <div className="p-6">
-                            <p className="text-sm text-slate-500 mb-4 italic">
-                                How are they trying to solve this now? Why is it failing?
-                            </p>
-                            <div className="space-y-4">
-                                {selectedAvatar.current_solutions?.map((item, idx) => (
-                                    <div key={idx} className="border border-slate-200 rounded-lg p-4">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <span className="text-[11px] font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded uppercase">Current Fix</span>
-                                            <span className="text-sm font-bold text-slate-900">{item.solution}</span>
-                                        </div>
-                                        <div className="flex items-start gap-2 text-sm text-slate-600 bg-amber-50 p-3 rounded border border-amber-100">
-                                            <span className="font-bold text-amber-700 shrink-0">The Gap:</span>
-                                            {item.gap}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
+                    )}
 
                     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                         <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 flex items-center justify-center">
-                                <ShieldAlert size={18} />
+                            <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center">
+                                <BrainCircuit size={18} />
                             </div>
-                            <h3 className="text-lg font-bold text-slate-900">Objections & Hesitations</h3>
+                            <h3 className="text-lg font-bold text-slate-900">Avatar Research Lab</h3>
                         </div>
-                        <div className="p-6">
-                            <p className="text-sm text-slate-500 mb-4 italic">
-                                Why might they doubt your offer? Too expensive? Past failures?
-                            </p>
-                            <ul className="space-y-3">
-                                {selectedAvatar.objections?.map((obj, idx) => (
-                                    <li key={idx} className="flex items-start gap-3 text-[14px] text-slate-700">
-                                        <XCircle size={18} className="text-slate-400 mt-0.5 shrink-0" />
-                                        <span>"{obj}"</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div className="px-6 py-4 border-b border-slate-100 bg-orange-50/50 flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center">
-                                <MessageSquare size={18} />
-                            </div>
-                            <h3 className="text-lg font-bold text-slate-900">Negative Discussions & Rants</h3>
-                        </div>
-                        <div className="p-6">
-                            <p className="text-sm text-slate-500 mb-4 italic">
-                                What are they complaining about in forums, social media comments, and reviews?
-                            </p>
-                            <div className="space-y-3">
-                                {selectedAvatar.negative_discussions?.map((disc, idx) => (
-                                    <div key={idx} className="flex items-start gap-4 p-4 rounded-lg border border-orange-100 bg-orange-50/30">
-                                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-200 text-orange-700 font-bold text-xs flex items-center justify-center mt-0.5">
-                                            !
-                                        </span>
-                                        <span className="text-[14px] text-slate-800 font-medium leading-relaxed italic">"{disc}"</span>
+                        <div className="p-6 space-y-6">
+                            {researchQuestions.map(q => {
+                                const answer = selectedAvatar[q.key as keyof AvatarProfile] as string | undefined;
+                                if (!answer) return null;
+                                return (
+                                    <div key={q.key}>
+                                        <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2">
+                                            <q.icon size={16} className="text-slate-400" />
+                                            {q.label}
+                                        </h4>
+                                        <p className="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100 whitespace-pre-wrap">
+                                            {answer}
+                                        </p>
                                     </div>
-                                ))}
-                            </div>
+                                );
+                            })}
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
