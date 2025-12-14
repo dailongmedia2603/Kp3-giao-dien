@@ -20,6 +20,7 @@ serve(async (req) => {
   let responseBody: any;
   let errorMsg: string | undefined;
   let userId: string | undefined;
+  let requestBody: any;
 
   const serviceClient = createClient(
     Deno.env.get('SUPABASE_URL') ?? '',
@@ -39,7 +40,8 @@ serve(async (req) => {
     }
     userId = user.id;
 
-    const { answers } = await req.json()
+    requestBody = await req.json();
+    const { answers } = requestBody;
     if (!answers) {
       throw new Error('Bad Request: Missing answers payload.');
     }
@@ -137,7 +139,7 @@ serve(async (req) => {
         user_id: userId,
         method: 'POST',
         endpoint: 'supabase/functions/generate-dream-buyer-summary',
-        request_payload: req.body ? await req.json() : null,
+        request_payload: requestBody,
         response_status: responseStatus,
         response_body: responseBody,
         duration_ms: durationMs,
