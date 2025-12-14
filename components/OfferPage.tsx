@@ -11,7 +11,8 @@ import {
   BookOpen,
   Loader2,
   Trash2,
-  LayoutGrid
+  LayoutGrid,
+  Gift
 } from 'lucide-react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
@@ -23,6 +24,13 @@ interface Offer {
   category: string;
   description: string;
   [key: string]: any; // Allow other properties
+}
+
+interface Bonus {
+  id: string;
+  title: string;
+  description: string;
+  value: number;
 }
 
 interface OfferPageProps {
@@ -92,9 +100,61 @@ const ProductCard: React.FC<ProductCardProps> = ({ title, category, description,
     )
 }
 
+const BonusCard: React.FC<{ bonus: Bonus }> = ({ bonus }) => {
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 group hover:shadow-md transition-shadow flex flex-col h-full">
+      <div className="flex items-start gap-4 mb-4">
+        <div className="w-12 h-12 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 bg-white shrink-0 group-hover:border-[#A5D6A7] group-hover:text-[#16A349] transition-colors">
+          <Gift size={24} />
+        </div>
+        <div>
+          <h3 className="text-[15px] font-bold text-slate-900 leading-tight mb-1 group-hover:text-[#16A349] transition-colors">{bonus.title}</h3>
+          <p className="text-[13px] text-slate-500 font-bold">${bonus.value} Value</p>
+        </div>
+      </div>
+      <p className="text-[13px] text-slate-500 leading-relaxed mb-8 flex-1">
+        {bonus.description}
+      </p>
+      <div className="flex items-center justify-end pt-4 border-t border-slate-100 mt-auto">
+        <button className="text-[13px] font-bold text-[#16A349] hover:text-[#149641] transition-colors">
+          Edit Bonus
+        </button>
+      </div>
+    </div>
+  );
+}
+
+const BonusView: React.FC = () => {
+  const [bonuses, setBonuses] = useState<Bonus[]>([
+    { id: '1', title: 'Bonus #1: The Ultimate Swipe File', description: 'My private collection of winning ad copy and headlines.', value: 497 },
+    { id: '2', title: 'Bonus #2: Community Access', description: 'Lifetime access to our private community of agency owners.', value: 997 },
+  ]);
+
+  return (
+    <div className="animate-in fade-in duration-300">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-bold text-slate-900">
+          Bonus / Quà tặng
+        </h2>
+        <button 
+          className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#16A349] text-white text-[14px] font-bold hover:bg-[#149641] transition-colors shadow-sm"
+        >
+          <Plus size={18} strokeWidth={3} />
+          Thêm Bonus
+        </button>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {bonuses.map(bonus => (
+          <BonusCard key={bonus.id} bonus={bonus} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
   const { user } = useSession();
-  const [mainTab, setMainTab] = useState<'products' | 'offer'>('products');
+  const [mainTab, setMainTab] = useState<'products' | 'offer' | 'bonus'>('products');
   const [activeCategory, setActiveCategory] = useState<'all' | 'service' | 'physical' | 'software' | 'digital' | 'e-learning' | 'affiliate'>('all');
   const [offers, setOffers] = useState<Offer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -193,9 +253,10 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
         </p>
       </div>
 
-      <div className="bg-slate-100/50 rounded-xl border border-slate-200 p-1.5 flex mb-8 gap-1 max-w-sm mx-auto">
+      <div className="bg-slate-100/50 rounded-xl border border-slate-200 p-1.5 flex mb-8 gap-1 max-w-lg mx-auto">
         <MainTabButton active={mainTab === 'products'} onClick={() => setMainTab('products')} label="Products" />
         <MainTabButton active={mainTab === 'offer'} onClick={() => setMainTab('offer')} label="Offer" />
+        <MainTabButton active={mainTab === 'bonus'} onClick={() => setMainTab('bonus')} label="Bonus / Quà tặng" />
       </div>
 
       {mainTab === 'products' && (
@@ -267,6 +328,10 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
           <h2 className="text-xl font-bold text-slate-700">Offer View</h2>
           <p className="text-slate-500">This section is under construction.</p>
         </div>
+      )}
+
+      {mainTab === 'bonus' && (
+        <BonusView />
       )}
 
       <div className="h-10"></div>
