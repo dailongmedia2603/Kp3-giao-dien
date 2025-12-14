@@ -60,142 +60,192 @@ interface AvatarProfile {
   summary?: string;
 }
 
-const researchQuestions = [
-  { id: 'q1_hangouts', label: '1. Họ tụ tập ở đâu?', placeholder: 'Website, diễn đàn, nhóm cụ thể nào?...' },
-  { id: 'q2_info_sources', label: '2. Họ lấy thông tin từ đâu?', placeholder: 'Họ tin tưởng ai? Đọc sách báo gì?...' },
-  { id: 'q3_frustrations', label: '3. Nỗi thất vọng và thách thức lớn nhất là gì?', placeholder: 'Điều gì khiến họ đau khổ?...' },
-  { id: 'q4_dreams', label: '4. Hy vọng, ước mơ và khao khát của họ là gì?', placeholder: 'Họ muốn đạt được điều gì?...' },
-  { id: 'q5_fears', label: '5. Nỗi sợ hãi lớn nhất của họ là gì?', placeholder: 'Điều gì khiến họ mất ngủ?...' },
-  { id: 'q6_communication_channel', label: '6. Họ thích giao tiếp qua kênh nào?', placeholder: 'Email, chat, hay điện thoại?...' },
-  { id: 'q7_language', label: '7. Họ sử dụng ngôn ngữ gì?', placeholder: 'Các từ ngữ cụ thể bạn đã ghi chép lại...' },
-  { id: 'q8_daily_routine', label: '8. Một ngày của họ diễn ra như thế nào?', placeholder: 'Hình dung chi tiết từ lúc thức dậy đến khi đi ngủ: 7:00 sáng làm gì? 9:00 sáng làm gì?...' },
-  { id: 'q9_happiness_triggers', label: '9. Điều gì làm họ hạnh phúc?', placeholder: 'Điều gì mang lại niềm vui cho họ?...' },
+// --- Mock Data Offers ---
+const MOCK_OFFERS = [
+  { id: 'offer_s1', category: 'Service', title: 'Real Estate Appointment Setting', description: 'Done-for-you appointment setting service for high-end real estate agents.' },
+  { id: 'offer_s2', category: 'Service', title: '1-on-1 Business Coaching', description: 'Personalized coaching sessions to help entrepreneurs breakthrough revenue plateaus.' },
+  { id: 'offer_p1', category: 'Physical', title: 'KETO Supplement Pack', description: 'A 30-day supply of premium keto-friendly supplements.' },
+  { id: 'offer_sw1', category: 'Software', title: 'Pilates Lead Machine SaaS', description: 'Automated lead generation software specifically built for Pilates studio owners.' },
+  { id: 'offer_d1', category: 'Digital', title: 'Weight Loss Course', description: 'A comprehensive 12-week video course teaching sustainable weight loss.' },
 ];
 
-const ResearchInput: React.FC<{ label: string; placeholder: string; value: string; onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void; }> = ({ label, placeholder, value, onChange }) => (
-  <div>
-    <label className="block text-sm font-bold text-slate-700 mb-2">{label}</label>
-    <textarea
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      className="w-full p-3 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869] resize-y min-h-[100px] leading-relaxed"
-    />
-  </div>
-);
+const OFFER_CATEGORIES = ['Service', 'Physical', 'Software', 'Digital', 'E-learning', 'Affiliate'];
 
 const CreateAvatarView: React.FC<{ onBack: () => void; onSaveSuccess: (newAvatar: AvatarProfile) => void; }> = ({ onBack, onSaveSuccess }) => {
   const { user } = useSession();
-  const [formData, setFormData] = useState<Partial<AvatarProfile>>({ name: '' });
-  const [summary, setSummary] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
+  const [selectedOfferId, setSelectedOfferId] = useState('');
+  const [marketNegativityInput, setMarketNegativityInput] = useState('');
+  const [pastFeedbackInput, setPastFeedbackInput] = useState('');
+  const [personaNameInput, setPersonaNameInput] = useState('');
+  const [ageInput, setAgeInput] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const handleInputChange = (field: keyof AvatarProfile, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
+  const selectedOffer = MOCK_OFFERS.find(o => o.id === selectedOfferId);
 
-  const handleGenerateSummary = () => {
+  const handleCreate = async () => {
+    if (!user || isGenerating) return;
     setIsGenerating(true);
-    const summaryText = researchQuestions
-      .map(q => {
-        const answer = formData[q.id as keyof AvatarProfile] as string;
-        return answer ? `**${q.label.substring(3)}**\n${answer}\n` : '';
-      })
-      .filter(Boolean)
-      .join('\n');
-    
-    setTimeout(() => {
-      setSummary(summaryText || 'Không có đủ thông tin để tạo tóm tắt.');
-      setIsGenerating(false);
-    }, 1000);
-  };
 
-  const handleSave = async () => {
-    if (!user || !formData.name) return;
-    setIsSaving(true);
+    // Simulate AI Generation based on inputs
+    const newAvatarData = {
+        user_id: user.id,
+        name: `${personaNameInput || 'New'} - ${selectedOffer?.title || 'Custom Research'}`,
+        persona_name: personaNameInput || "Generated Persona",
+        age: ageInput || "30-40",
+        role: "Decision Maker",
+        industry: selectedOffer ? selectedOffer.category : "General",
+        company_size: "10-50 Employees",
+        location: "Online",
+        negative_discussions: marketNegativityInput ? [marketNegativityInput] : [],
+        past_client_feedback: pastFeedbackInput ? [pastFeedbackInput] : [],
+        offer_context: selectedOffer ? selectedOffer.title : "Custom Research",
+        pain_points: ["High CPA on Facebook Ads", "Creative fatigue", "Tracking attribution issues"],
+        goals: ["Scale to $50k/mo ad spend", "Stabilize ROAS at 3.0x", "Automate creative testing"],
+        summary: `A summary based on the inputs.`
+    };
+
     const { data, error } = await supabase
       .from('dream_buyer_avatars')
-      .insert({ ...formData, user_id: user.id, summary })
+      .insert(newAvatarData)
       .select()
       .single();
 
     if (error) {
-      console.error('Error saving avatar:', error);
-      alert('Lỗi: Không thể lưu Avatar. Vui lòng thử lại.');
+        console.error("Error creating avatar:", error);
     } else if (data) {
-      onSaveSuccess(data);
+        onSaveSuccess(data);
     }
-    setIsSaving(false);
+    
+    setIsGenerating(false);
   };
 
   return (
-    <div className="animate-in fade-in duration-300">
-      <div className="flex items-center gap-4 mb-8">
-        <button onClick={onBack} className="p-2 hover:bg-slate-100 rounded-lg text-slate-500"><ArrowLeft size={20} /></button>
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900">Avatar Research Lab</h2>
-          <p className="text-slate-500 text-sm">Điền vào các trường để xây dựng hồ sơ khách hàng của bạn.</p>
-        </div>
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Left Panel: Inputs */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-6 h-fit">
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">Tên Avatar*</label>
-            <input
-              type="text"
-              value={formData.name || ''}
-              onChange={(e) => handleInputChange('name', e.target.value)}
-              placeholder="e.g., Agency Owner Adam"
-              className="w-full p-3 border border-slate-200 rounded-lg text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869]"
-            />
-          </div>
-          {researchQuestions.map(q => (
-            <ResearchInput
-              key={q.id}
-              label={q.label}
-              placeholder={q.placeholder}
-              value={formData[q.id as keyof AvatarProfile] as string || ''}
-              onChange={(e) => handleInputChange(q.id as keyof AvatarProfile, e.target.value)}
-            />
-          ))}
-          <div className="flex gap-4 pt-4 border-t border-slate-100">
-            <button onClick={handleSave} disabled={isSaving} className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#0EB869] text-white font-bold rounded-lg shadow-sm hover:bg-[#0B9655] disabled:bg-slate-300">
-              {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-              Lưu
-            </button>
-            <button onClick={handleGenerateSummary} disabled={isGenerating} className="flex-1 flex items-center justify-center gap-2 py-3 bg-slate-800 text-white font-bold rounded-lg hover:bg-slate-700 disabled:bg-slate-400">
-              {isGenerating ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
-              Tạo tóm tắt
-            </button>
-          </div>
-        </div>
-        {/* Right Panel: Summary */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6 sticky top-8 h-[calc(100vh-120px)] overflow-y-auto">
-          <h3 className="font-bold text-lg mb-4 text-slate-900">Tóm tắt Avatar</h3>
-          <div className="prose prose-sm max-w-none text-slate-700 whitespace-pre-wrap">
-            {isGenerating ? (
-              <div className="flex items-center justify-center h-40 text-slate-400">
-                <Loader2 size={24} className="animate-spin" />
-              </div>
-            ) : summary ? (
-              summary.split('\n\n').map((section, i) => (
-                <div key={i} className="mb-4">
-                  {section.split('\n').map((line, j) => {
-                    if (line.startsWith('**')) {
-                      return <h4 key={j} className="font-bold text-slate-800 text-sm mb-1">{line.replace(/\*\*/g, '')}</h4>
-                    }
-                    return <p key={j} className="text-slate-600 text-sm leading-relaxed">{line}</p>
-                  })}
+    <div className="max-w-3xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8">
+            <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-[#E8FCF3] rounded-full flex items-center justify-center mx-auto mb-4 text-[#0EB869]">
+                    <BrainCircuit size={32} />
                 </div>
-              ))
-            ) : (
-              <p className="italic text-slate-400">Nội dung tóm tắt sẽ được tạo ở đây sau khi bạn điền thông tin và nhấn "Tạo tóm tắt".</p>
-            )}
-          </div>
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">Avatar Research Lab</h2>
+                <p className="text-slate-500 text-[15px]">
+                    Select an existing offer or define a new one to generate a psychological profile.
+                </p>
+            </div>
+
+            <div className="space-y-6">
+                
+                <div>
+                    <label className="block text-[14px] font-bold text-slate-900 mb-2 flex items-center gap-2">
+                        <ShoppingBag size={16} className="text-[#0EB869]" /> Select Offer
+                    </label>
+                    <select 
+                        value={selectedOfferId}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedOfferId(e.target.value)}
+                        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-[15px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869]"
+                    >
+                        <option value="">-- Choose an existing offer --</option>
+                        
+                        {OFFER_CATEGORIES.map(category => {
+                            const categoryOffers = MOCK_OFFERS.filter(offer => offer.category === category);
+                            if (categoryOffers.length === 0) return null;
+                            return (
+                                <optgroup label={category} key={category} className="font-bold text-slate-900">
+                                    {categoryOffers.map(offer => (
+                                        <option key={offer.id} value={offer.id} className="text-slate-700">
+                                            {offer.title}
+                                        </option>
+                                    ))}
+                                </optgroup>
+                            );
+                        })}
+
+                        <option value="custom" className="font-bold text-[#0EB869]">+ Create Custom/New Offer</option>
+                    </select>
+                </div>
+
+                <div className="h-px bg-slate-100 my-4"></div>
+
+                <div>
+                    <label className="block text-[13px] font-bold text-slate-900 mb-2 flex items-center gap-2">
+                        <MessageCircleWarning size={16} className="text-orange-500" /> 
+                        Bình luận tiêu cực trên thị trường (Negative Market Discussions)
+                    </label>
+                    <p className="text-xs text-slate-500 mb-2">
+                        What are people complaining about regarding similar products/competitors?
+                    </p>
+                    <textarea 
+                        className="w-full p-4 border border-slate-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869] min-h-[100px] resize-none"
+                        placeholder="e.g. 'The course was too theoretical', 'Support took days to reply', 'The software is buggy'..."
+                        value={marketNegativityInput}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMarketNegativityInput(e.target.value)}
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-[13px] font-bold text-slate-900 mb-2 flex items-center gap-2">
+                        <ThumbsUp size={16} className="text-blue-500" /> 
+                        Feedback khách hàng cũ (Past Client Feedback)
+                    </label>
+                    <p className="text-xs text-slate-500 mb-2">
+                        What have your actual previous clients said? (Good or Bad)
+                    </p>
+                    <textarea 
+                        className="w-full p-4 border border-slate-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869] min-h-[100px] resize-none"
+                        placeholder="e.g. 'I loved the coaching but wished the videos were shorter', 'Best investment I made this year'..."
+                        value={pastFeedbackInput}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setPastFeedbackInput(e.target.value)}
+                    />
+                </div>
+
+                <div className="h-px bg-slate-100 my-4"></div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-[14px] font-bold text-slate-900 mb-2 flex items-center gap-2">
+                            <User size={16} className="text-slate-400" /> Name (Optional)
+                        </label>
+                        <input 
+                            type="text"
+                            placeholder="e.g. Sarah"
+                            value={personaNameInput}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPersonaNameInput(e.target.value)}
+                            className="w-full p-3 border border-slate-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869]"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-[14px] font-bold text-slate-900 mb-2 flex items-center gap-2">
+                            <Clock size={16} className="text-slate-400" /> Age Range (Optional)
+                        </label>
+                        <input 
+                            type="text"
+                            placeholder="e.g. 35-45"
+                            value={ageInput}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAgeInput(e.target.value)}
+                            className="w-full p-3 border border-slate-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869]"
+                        />
+                    </div>
+                </div>
+
+                <button 
+                    onClick={handleCreate}
+                    disabled={isGenerating}
+                    className={`w-full py-4 rounded-xl text-white font-bold text-[15px] shadow-sm flex items-center justify-center gap-2 transition-all mt-4
+                        ${isGenerating ? 'bg-slate-300 cursor-not-allowed' : 'bg-[#0EB869] hover:bg-[#0B9655]'}`}
+                >
+                    {isGenerating ? (
+                        <>
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                            Researching Market Data...
+                        </>
+                    ) : (
+                        <>
+                            <BrainCircuit size={20} />
+                            Generate Dream Buyer Avatar
+                        </>
+                    )}
+                </button>
+            </div>
         </div>
-      </div>
     </div>
   );
 };
@@ -261,20 +311,22 @@ export const DreamBuyerPage: React.FC = () => {
       default:
         return (
           <div className="animate-in fade-in duration-300">
-            <div className="flex flex-col items-center mb-8 text-center">
-              <h1 className="text-[26px] font-bold text-slate-900 mb-3 tracking-tight">
-                Dream Buyer Avatars
-              </h1>
-              <p className="text-slate-500 text-[13px] leading-relaxed mb-8 max-w-2xl mx-auto">
-                Research, define, and store your Dream Buyer Avatars. Use these deep profiles to write high-converting copy and train your closers.
-              </p>
-              <button 
-                onClick={() => setView('create')}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#0EB869] text-white text-[14px] font-bold hover:bg-[#0B9655] transition-colors shadow-sm"
-              >
-                <Plus size={18} strokeWidth={3} />
-                New Research
-              </button>
+            <div className="flex justify-between items-center mb-8">
+                <div>
+                    <h1 className="text-[26px] font-bold text-slate-900 mb-1 tracking-tight">
+                      Dream Buyer Avatars
+                    </h1>
+                    <p className="text-slate-500 text-[13px] leading-relaxed">
+                      Research, define, and store your Dream Buyer Avatars.
+                    </p>
+                </div>
+                <button 
+                    onClick={() => setView('create')}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#0EB869] text-white text-[14px] font-bold hover:bg-[#0B9655] transition-colors shadow-sm"
+                >
+                    <Plus size={18} strokeWidth={3} />
+                    New Research
+                </button>
             </div>
             {isLoading ? (
               <div className="flex justify-center items-center h-64"><Loader2 size={32} className="animate-spin text-slate-400" /></div>
