@@ -17,6 +17,16 @@ Offer Details:
 - Target Market: {{target_market}}
 - Pressing Problem it Solves: {{pressing_problem}}
 - Desired Outcome it Delivers: {{desired_outcome}}
+- Features/USPs: {{features}}
+- Specific Technology/Method: {{technology}}
+- Scientific Studies/Statistics: {{studies}}
+- Social Proof (Featured in): {{social_proof}}
+- Credible Authority Figure: {{authority_figure}}
+- Unique Mechanism: {{unique_mechanism}}
+- Number of Reviews: {{review_count}}
+- Average Review Rating: {{avg_review_rating}}
+- Total Customers: {{total_customers}}
+- Testimonials: {{testimonials}}
 
 Your task is to synthesize this information into a powerful description that can be used on a landing page or in an ad. The tone should be persuasive and clearly articulate the value proposition. The output should be in Vietnamese.`;
 

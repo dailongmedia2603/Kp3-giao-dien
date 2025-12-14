@@ -12,7 +12,15 @@ import {
   FileText,
   Users,
   Frown,
-  CheckCircle2
+  CheckCircle2,
+  Award,
+  Cpu,
+  BarChart,
+  Globe,
+  UserCheck,
+  Wrench,
+  Star,
+  Heart
 } from 'lucide-react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
@@ -32,7 +40,8 @@ const FormField: React.FC<{
   placeholder: string;
   isTextarea?: boolean;
   rows?: number;
-}> = ({ icon: Icon, label, description, value, onChange, placeholder, isTextarea, rows }) => (
+  type?: string;
+}> = ({ icon: Icon, label, description, value, onChange, placeholder, isTextarea, rows, type = 'text' }) => (
   <div>
     <label className="block text-[13px] font-bold text-slate-900 mb-2 flex items-center gap-2">
       <Icon size={16} className="text-[#0EB869]" /> 
@@ -51,7 +60,7 @@ const FormField: React.FC<{
       />
     ) : (
       <input 
-        type="text"
+        type={type}
         className="w-full p-3 border border-slate-200 rounded-xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#0EB869]/20 focus:border-[#0EB869]"
         placeholder={placeholder}
         value={value}
@@ -72,6 +81,16 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
   const [targetMarket, setTargetMarket] = useState('');
   const [pressingProblem, setPressingProblem] = useState('');
   const [desiredOutcome, setDesiredOutcome] = useState('');
+  const [features, setFeatures] = useState('');
+  const [technology, setTechnology] = useState('');
+  const [studies, setStudies] = useState('');
+  const [socialProof, setSocialProof] = useState('');
+  const [authorityFigure, setAuthorityFigure] = useState('');
+  const [uniqueMechanism, setUniqueMechanism] = useState('');
+  const [reviewCount, setReviewCount] = useState('');
+  const [avgReviewRating, setAvgReviewRating] = useState('');
+  const [totalCustomers, setTotalCustomers] = useState('');
+  const [testimonials, setTestimonials] = useState('');
 
   const handleGenerateDescription = async () => {
     if (!title) {
@@ -85,11 +104,18 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
       const { data, error } = await supabase.functions.invoke('generate-offer-summary', {
         body: { 
           offerDetails: {
-            title,
-            category,
-            target_market: targetMarket,
-            pressing_problem: pressingProblem,
+            title, category, 
+            target_market: targetMarket, 
+            pressing_problem: pressingProblem, 
             desired_outcome: desiredOutcome,
+            features, technology, studies,
+            social_proof: socialProof,
+            authority_figure: authorityFigure,
+            unique_mechanism: uniqueMechanism,
+            review_count: reviewCount,
+            avg_review_rating: avgReviewRating,
+            total_customers: totalCustomers,
+            testimonials
           }
         },
       });
@@ -128,6 +154,16 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
       target_market: targetMarket,
       pressing_problem: pressingProblem,
       desired_outcome: desiredOutcome,
+      features,
+      technology,
+      studies,
+      social_proof: socialProof,
+      authority_figure: authorityFigure,
+      unique_mechanism: uniqueMechanism,
+      review_count: reviewCount ? parseInt(reviewCount) : null,
+      avg_review_rating: avgReviewRating ? parseFloat(avgReviewRating) : null,
+      total_customers: totalCustomers ? parseInt(totalCustomers) : null,
+      testimonials,
     });
 
     setIsSaving(false);
@@ -164,9 +200,26 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
             <div className="space-y-6">
               <FormField icon={Type} label="Tiêu đề Offer/Sản phẩm/Dịch vụ*" description="Tên của sản phẩm/dịch vụ/HVCO bạn đang quảng bá." placeholder="e.g., Khóa học Marketing Tinh gọn" value={title} onChange={(e) => setTitle(e.target.value)} />
               <FormField icon={Tag} label="Danh mục*" description="Ví dụ: Nha khoa, Mỹ phẩm, Đầu tư Bất động sản, Digital Marketing" placeholder="e.g., Digital Marketing" value={category} onChange={(e) => setCategory(e.target.value)} />
+              
+              <div className="bg-blue-50 rounded-lg p-5 border border-blue-100">
+                  <p className="text-[13px] text-slate-700 leading-relaxed font-medium">
+                      <span className="font-bold">Các trường dưới đây là tùy chọn nhưng được khuyến nghị hoàn thành</span> - bạn có thể lưu trữ thông tin sản phẩm thường dùng ở đây để không cần nhập lại trên toàn trang.
+                  </p>
+              </div>
+
               <FormField icon={Users} label="Thị trường mục tiêu" description="Ví dụ: Phụ nữ trên 45 tuổi." placeholder="e.g., Chủ doanh nghiệp nhỏ, solo-preneurs" value={targetMarket} onChange={(e) => setTargetMarket(e.target.value)} />
               <FormField icon={Frown} label="Vấn đề cấp bách" description="Ví dụ: Tăng cân/trao đổi chất chậm lại do mãn kinh." placeholder="e.g., Mệt mỏi vì phải 'săn' khách hàng, không có đủ khách hàng tiềm năng chất lượng." value={pressingProblem} onChange={(e) => setPressingProblem(e.target.value)} isTextarea />
               <FormField icon={CheckCircle2} label="Kết quả mong muốn" description="Ví dụ: Trở nên thon gọn, quyến rũ, được khao khát..." placeholder="e.g., Có một dòng khách hàng ổn định, tự động hóa việc kinh doanh." value={desiredOutcome} onChange={(e) => setDesiredOutcome(e.target.value)} isTextarea />
+              <FormField icon={Award} label="Tính năng/USP" description="Ví dụ: 10g Protein mỗi muỗng, Làm từ Cà phê Cao cấp, Không đường, Hữu cơ." placeholder="Liệt kê các tính năng chính, mỗi tính năng trên một dòng." value={features} onChange={(e) => setFeatures(e.target.value)} isTextarea />
+              <FormField icon={Cpu} label="Công nghệ/Phương pháp cụ thể" description="Ví dụ: AI đột phá mới, Công nghệ 'FirmFit' mới, Khung tái cấp vốn..." placeholder="Công nghệ độc quyền của bạn là gì?" value={technology} onChange={(e) => setTechnology(e.target.value)} />
+              <FormField icon={BarChart} label="Nghiên cứu khoa học/Thống kê" description="Ví dụ: 9/10 nha sĩ khuyên dùng." placeholder="Trích dẫn các số liệu hoặc nghiên cứu hỗ trợ." value={studies} onChange={(e) => setStudies(e.target.value)} />
+              <FormField icon={Globe} label="Được giới thiệu trên (Bằng chứng xã hội)" description="Ví dụ: GQ, Elle, Vogue & Forbes." placeholder="Liệt kê các kênh truyền thông uy tín đã nói về bạn." value={socialProof} onChange={(e) => setSocialProof(e.target.value)} />
+              <FormField icon={UserCheck} label="Nhân vật có uy tín" description="Ví dụ: Được phát triển bởi Tiến sĩ John Doe, một nhà khoa học từng đoạt giải Nobel." placeholder="Ai là người đứng sau sản phẩm này?" value={authorityFigure} onChange={(e) => setAuthorityFigure(e.target.value)} />
+              <FormField icon={Wrench} label="Cơ chế độc đáo" description="Điều gì làm cho giải pháp này trở nên độc đáo? (Hệ thống 3 bước, thuật toán...)" placeholder="Mô tả quy trình độc đáo của bạn." value={uniqueMechanism} onChange={(e) => setUniqueMechanism(e.target.value)} isTextarea />
+              <FormField icon={Star} label="Số lượng đánh giá" description="Ví dụ: 3144" placeholder="0" value={reviewCount} onChange={(e) => setReviewCount(e.target.value)} type="number" />
+              <FormField icon={Star} label="Xếp hạng đánh giá trung bình" description="Ví dụ: 4.75" placeholder="0.0" value={avgReviewRating} onChange={(e) => setAvgReviewRating(e.target.value)} type="number" />
+              <FormField icon={Users} label="Tổng số khách hàng (từ trước đến nay)" description="Ví dụ: 475000" placeholder="0" value={totalCustomers} onChange={(e) => setTotalCustomers(e.target.value)} type="number" />
+              <FormField icon={Heart} label="Phản hồi của khách hàng" description="Ví dụ: các phản hồi thực tế từ người dùng, mỗi phản hồi trên một dòng." placeholder="Dán các phản hồi tốt nhất vào đây." value={testimonials} onChange={(e) => setTestimonials(e.target.value)} isTextarea />
             </div>
           </div>
         </div>
