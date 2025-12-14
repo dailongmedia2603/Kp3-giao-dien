@@ -16,7 +16,9 @@ import {
   Mail,
   Phone,
   MessageSquare,
-  Zap
+  Zap,
+  ArrowRight,
+  ArrowDownRight
 } from 'lucide-react';
 
 // --- TYPES & MOCK DATA ---
