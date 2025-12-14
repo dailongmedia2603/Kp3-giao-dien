@@ -11,13 +11,14 @@ import {
   RotateCcw,
   Bot,
   Palette,
-  Key // Import new icon
+  Key
 } from 'lucide-react';
 import DesignSettingsTab from './DesignSettingsTab';
-import ApiSettingsTab from './ApiSettingsTab'; // Import the new component
+import ApiSettingsTab from './ApiSettingsTab';
+import PromptConfigTab from './PromptConfigTab'; // Import new component
 
 export const SettingsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'prompts' | 'general' | 'billing' | 'notifications' | 'design' | 'api'>('design');
+  const [activeTab, setActiveTab] = useState<'design' | 'prompts' | 'api' | 'general' | 'billing' | 'notifications'>('design');
 
   return (
     <div className="p-8 max-w-[1200px] mx-auto font-sans">
@@ -93,83 +94,9 @@ export const SettingsPage: React.FC = () => {
         {/* Right Content */}
         <div className="flex-1 w-full">
             
-            {/* Design Tab */}
             {activeTab === 'design' && <DesignSettingsTab />}
-
-            {/* API Tab */}
             {activeTab === 'api' && <ApiSettingsTab />}
-
-            {/* Prompt Configuration Tab */}
-            {activeTab === 'prompts' && (
-                <div className="animate-in fade-in duration-300">
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8 mb-6">
-                        <div className="flex items-center justify-between mb-6">
-                             <div>
-                                <h2 className="text-lg font-bold text-slate-900">Global Prompt Settings</h2>
-                                <p className="text-sm text-slate-500 mt-1">Configure the base instructions for your AI generators.</p>
-                             </div>
-                             <Bot className="text-[#16A349] h-8 w-8 opacity-20" />
-                        </div>
-
-                        <div className="space-y-6">
-                            
-                            {/* Facebook Ads Prompt */}
-                            <div className="border border-slate-200 rounded-xl p-5 hover:border-[#A5D6A7] transition-colors">
-                                <div className="flex items-center justify-between mb-3">
-                                    <label className="text-[14px] font-bold text-slate-900">Facebook Ad Generator System Prompt</label>
-                                    <span className="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">gpt-4o</span>
-                                </div>
-                                <textarea 
-                                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-[13px] font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349] leading-relaxed resize-y min-h-[120px]"
-                                    defaultValue="You are a world-class direct response copywriter specialized in Facebook Ads. Your tone is persuasive, empathetic, and action-oriented. Always focus on the 'Dream Buyer' persona provided."
-                                />
-                                <div className="flex items-center gap-3 mt-3">
-                                    <button className="text-[12px] font-bold text-[#16A349] hover:underline">Reset to Default</button>
-                                </div>
-                            </div>
-
-                            {/* Direct Response Prompt */}
-                            <div className="border border-slate-200 rounded-xl p-5 hover:border-[#A5D6A7] transition-colors">
-                                <div className="flex items-center justify-between mb-3">
-                                    <label className="text-[14px] font-bold text-slate-900">Headlines Generator System Prompt</label>
-                                    <span className="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">gpt-4o</span>
-                                </div>
-                                <textarea 
-                                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-[13px] font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349] leading-relaxed resize-y min-h-[120px]"
-                                    defaultValue="You are an expert in writing high-converting headlines using the '4 U's' formula (Urgent, Unique, Ultra-specific, Useful). Generate catchy, curiosity-inducing headlines."
-                                />
-                                <div className="flex items-center gap-3 mt-3">
-                                    <button className="text-[12px] font-bold text-[#16A349] hover:underline">Reset to Default</button>
-                                </div>
-                            </div>
-
-                            {/* Creativity Slider */}
-                            <div className="bg-[#E8F5E9] border border-[#A5D6A7] rounded-xl p-5">
-                                <label className="text-[14px] font-bold text-slate-900 mb-1 block">Global Creativity Level (Temperature)</label>
-                                <p className="text-xs text-slate-500 mb-4">Controls the randomness of the output. Lower is more deterministic, higher is more creative.</p>
-                                
-                                <div className="flex items-center gap-4">
-                                    <span className="text-xs font-bold text-slate-500">Precise</span>
-                                    <input type="range" className="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#16A349]" />
-                                    <span className="text-xs font-bold text-slate-500">Creative</span>
-                                </div>
-                            </div>
-
-                        </div>
-                        
-                        <div className="flex justify-end pt-6 border-t border-slate-100 mt-6 gap-3">
-                             <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 text-slate-700 text-[13px] font-bold hover:bg-slate-50 transition-colors">
-                                <RotateCcw size={16} />
-                                Discard Changes
-                            </button>
-                            <button className="flex items-center gap-2 px-6 py-2 rounded-lg bg-[#16A349] text-white text-[13px] font-bold hover:bg-[#149641] transition-colors shadow-sm">
-                                <Save size={16} />
-                                Save Configuration
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {activeTab === 'prompts' && <PromptConfigTab />}
 
             {/* General Settings Tab */}
             {activeTab === 'general' && (
