@@ -11,7 +11,7 @@ const ApiSettingsTab: React.FC = () => {
   const [projectId, setProjectId] = useState('');
   const [serviceAccountJson, setServiceAccountJson] = useState('');
   const [location, setLocation] = useState('us-central1');
-  const [model, setModel] = useState('gemini-2.5-pro');
+  const [model, setModel] = useState('gemini-1.5-pro-001');
   const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const ApiSettingsTab: React.FC = () => {
         setProjectId(data.project_id || '');
         setServiceAccountJson(data.service_account_json || '');
         setLocation(data.location || 'us-central1');
-        setModel(data.model || 'gemini-2.5-pro');
+        setModel(data.model || 'gemini-1.5-pro-001');
       } else if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
         console.error('Error fetching API settings:', error);
         toast.error('Không thể tải cài đặt API.');
@@ -40,19 +40,30 @@ const ApiSettingsTab: React.FC = () => {
     fetchSettings();
   }, [user]);
 
-  const handleTestConnection = () => {
+  const handleTestConnection = async () => {
     setTestStatus('testing');
-    // Mô phỏng cuộc gọi API
-    setTimeout(() => {
-      if (projectId && serviceAccountJson && location) {
-        setTestStatus('success');
-        toast.success('Kết nối thành công!');
-      } else {
-        setTestStatus('error');
-        toast.error('Kết nối thất bại. Vui lòng kiểm tra lại thông tin.');
+    try {
+      const { error } = await supabase.functions.invoke('test-vertex-connection', {
+        body: {
+          projectId,
+          location,
+          serviceAccountJson,
+        },
+      });
+
+      if (error) {
+        throw error;
       }
+
+      setTestStatus('success');
+      toast.success('Kết nối thành công!');
+    } catch (error: any) {
+      setTestStatus('error');
+      toast.error(`Kết nối thất bại: ${error.message || 'Vui lòng kiểm tra lại thông tin.'}`);
+      console.error('Connection test failed:', error);
+    } finally {
       setTimeout(() => setTestStatus('idle'), 3000);
-    }, 1500);
+    }
   };
 
   const handleSave = async () => {
@@ -146,8 +157,7 @@ const ApiSettingsTab: React.FC = () => {
                   onChange={(e) => setModel(e.target.value)}
                   className="w-full p-3 bg-white border border-slate-200 rounded-lg text-[14px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349]"
                 >
-                  <option value="gemini-2.5-pro">Gemini 2.5 Pro (Recommended)</option>
-                  <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                  <option value="gemini-1.5-pro-001">Gemini 1.5 Pro (Recommended)</option>
                   <option value="gemini-1.0-pro">Gemini 1.0 Pro</option>
                 </select>
               </div>
