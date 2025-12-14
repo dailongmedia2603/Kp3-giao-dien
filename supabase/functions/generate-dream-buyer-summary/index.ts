@@ -209,7 +209,16 @@ serve(async (req) => {
     errorMsg = error.message;
     responseStatus = responseStatus || 500;
     responseBody = { error: error.message };
-    console.error("An error occurred in `generate-dream-buyer-summary`:", error);
+    
+    console.error("--- ERROR in `generate-dream-buyer-summary` ---");
+    console.error("Error Message:", error.message);
+    if (error instanceof Error && error.stack) {
+      console.error("Stack Trace:", error.stack);
+    } else {
+      console.error("Full Error Object:", JSON.stringify(error, null, 2));
+    }
+    console.error("--- END ERROR ---");
+
     return new Response(JSON.stringify(responseBody), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: responseStatus,

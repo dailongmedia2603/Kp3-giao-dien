@@ -43,7 +43,7 @@ const ApiSettingsTab: React.FC = () => {
   const handleTestConnection = async () => {
     setTestStatus('testing');
     try {
-      const { error } = await supabase.functions.invoke('test-vertex-connection', {
+      const { data, error } = await supabase.functions.invoke('test-vertex-connection', {
         body: {
           projectId,
           location,
@@ -59,10 +59,13 @@ const ApiSettingsTab: React.FC = () => {
       toast.success('Kết nối thành công!');
     } catch (error: any) {
       setTestStatus('error');
-      toast.error(`Kết nối thất bại: ${error.message || 'Vui lòng kiểm tra lại thông tin.'}`);
+      // Cố gắng lấy thông báo lỗi cụ thể từ phản hồi của hàm
+      const functionError = error.context?.json?.error;
+      const displayMessage = functionError || error.message || 'Vui lòng kiểm tra lại thông tin.';
+      toast.error(`Kết nối thất bại: ${displayMessage}`);
       console.error('Connection test failed:', error);
     } finally {
-      setTimeout(() => setTestStatus('idle'), 3000);
+      setTimeout(() => setTestStatus('idle'), 4000);
     }
   };
 

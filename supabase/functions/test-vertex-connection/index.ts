@@ -147,7 +147,15 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error("An error occurred in `test-vertex-connection` function:", error);
+    console.error("--- ERROR in `test-vertex-connection` ---");
+    console.error("Error Message:", error.message);
+    if (error instanceof Error && error.stack) {
+      console.error("Stack Trace:", error.stack);
+    } else {
+      console.error("Full Error Object:", JSON.stringify(error, null, 2));
+    }
+    console.error("--- END ERROR ---");
+
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
