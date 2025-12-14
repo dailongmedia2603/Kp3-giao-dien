@@ -448,6 +448,7 @@ export const DreamBuyerPage: React.FC = () => {
         </div>
       )}
 
+      {/* VIEW: DETAIL (THE DOSSIER) */}
       {view === 'detail' && selectedAvatar && (
         <div className="h-full flex flex-col animate-in fade-in duration-300">
             <div className="flex items-center justify-between mb-6">
@@ -524,9 +525,9 @@ export const DreamBuyerPage: React.FC = () => {
                         </div>
                     )}
 
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center">
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl shadow-sm overflow-hidden">
+                        <div className="px-6 py-4 border-b border-blue-100 bg-blue-100/50 flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
                                 <BrainCircuit size={18} />
                             </div>
                             <h3 className="text-lg font-bold text-slate-900">Avatar Research Lab</h3>
@@ -541,7 +542,7 @@ export const DreamBuyerPage: React.FC = () => {
                                             <q.icon size={16} className="text-slate-400" />
                                             {q.label}
                                         </h4>
-                                        <p className="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100 whitespace-pre-wrap">
+                                        <p className="text-sm text-slate-600 bg-white p-3 rounded-lg border border-blue-100 whitespace-pre-wrap">
                                             {answer}
                                         </p>
                                     </div>
