@@ -9,11 +9,13 @@ import {
   Bell, 
   Save,
   RotateCcw,
-  Bot
+  Bot,
+  Palette // Import new icon
 } from 'lucide-react';
+import DesignSettingsTab from './DesignSettingsTab'; // Import the new component
 
 export const SettingsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'prompts' | 'general' | 'billing' | 'notifications'>('prompts');
+  const [activeTab, setActiveTab] = useState<'prompts' | 'general' | 'billing' | 'notifications' | 'design'>('design');
 
   return (
     <div className="p-8 max-w-[1200px] mx-auto font-sans">
@@ -30,8 +32,8 @@ export const SettingsPage: React.FC = () => {
       </div>
 
       <div className="flex flex-col items-start mb-8">
-         <h1 className="text-[26px] font-bold text-slate-900 mb-2 tracking-tight">Settings</h1>
-         <p className="text-slate-500 text-[13px]">Manage your workspace preferences and AI configurations.</p>
+         <h1 className="text-[26px] font-bold text-slate-900 mb-2 tracking-tight" style={{ fontSize: 'var(--font-size-page-title)' }}>Settings</h1>
+         <p className="text-slate-500 text-[13px]" style={{ fontSize: 'var(--font-size-page-description)' }}>Manage your workspace preferences and AI configurations.</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8 items-start">
@@ -40,6 +42,13 @@ export const SettingsPage: React.FC = () => {
         <div className="w-full lg:w-[260px] shrink-0">
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden sticky top-6">
                 <div className="p-2 space-y-1">
+                    <button 
+                        onClick={() => setActiveTab('design')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 text-[14px] font-medium rounded-lg transition-colors ${activeTab === 'design' ? 'bg-[#E8F5E9] text-[#16A349]' : 'text-slate-600 hover:bg-slate-50'}`}
+                    >
+                        <Palette size={18} />
+                        Design
+                    </button>
                     <button 
                         onClick={() => setActiveTab('prompts')}
                         className={`w-full flex items-center gap-3 px-4 py-3 text-[14px] font-medium rounded-lg transition-colors ${activeTab === 'prompts' ? 'bg-[#E8F5E9] text-[#16A349]' : 'text-slate-600 hover:bg-slate-50'}`}
@@ -75,6 +84,9 @@ export const SettingsPage: React.FC = () => {
         {/* Right Content */}
         <div className="flex-1 w-full">
             
+            {/* Design Tab */}
+            {activeTab === 'design' && <DesignSettingsTab />}
+
             {/* Prompt Configuration Tab */}
             {activeTab === 'prompts' && (
                 <div className="animate-in fade-in duration-300">

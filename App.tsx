@@ -1,5 +1,6 @@
 import React, { useState, forwardRef } from 'react';
 import { SessionProvider, useSession } from './src/contexts/SessionContext';
+import { ThemeProvider } from './src/contexts/ThemeContext'; // Import ThemeProvider
 import LoginPage from './src/pages/LoginPage';
 import { Sidebar } from './components/Sidebar';
 import { WelcomeBanner } from './components/WelcomeBanner';
@@ -318,7 +319,9 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <SessionProvider>
-      <AppContent />
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
     </SessionProvider>
   );
 };

@@ -67,7 +67,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ label, icon: Icon, isActive, 
       className={`
         group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'justify-between px-3'} py-2 rounded-lg cursor-pointer transition-all duration-200
         ${isActive 
-          ? 'bg-white text-[#16A349] shadow-sm ring-1 ring-slate-100' 
+          ? 'bg-white text-[color:var(--color-primary)] shadow-sm ring-1 ring-slate-100' 
           : 'text-slate-600 hover:bg-gray-100 hover:text-slate-900'}
       `}
       title={isCollapsed ? label : undefined}
@@ -76,10 +76,10 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ label, icon: Icon, isActive, 
         <Icon 
           size={18} 
           strokeWidth={2} 
-          className={`shrink-0 ${isActive ? 'text-[#16A349]' : 'text-slate-500 group-hover:text-slate-900'}`} 
+          className={`shrink-0 ${isActive ? 'text-[color:var(--color-primary)]' : 'text-slate-500 group-hover:text-slate-900'}`} 
         />
         {!isCollapsed && (
-          <span className="text-[13px] font-medium whitespace-nowrap overflow-hidden transition-all duration-200">
+          <span className="font-medium whitespace-nowrap overflow-hidden transition-all duration-200" style={{ fontSize: 'var(--font-size-sidebar-item)' }}>
             {label}
           </span>
         )}
@@ -93,8 +93,8 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ label, icon: Icon, isActive, 
 
       {isCollapsed && badge && (
         <span className="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#16A349] opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#16A349]"></span>
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[color:var(--color-primary)] opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[color:var(--color-primary)]"></span>
         </span>
       )}
     </div>
@@ -115,8 +115,8 @@ const SidebarCategory: React.FC<{
         className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors"
       >
         <div className="flex items-center gap-3">
-          <Icon size={18} style={{ color }} />
-          <span className="text-[13px] font-bold uppercase tracking-wider" style={{ color }}>
+          <Icon size={18} style={{ color: 'var(--color-primary)' }} />
+          <span className="font-bold uppercase tracking-wider" style={{ color: 'var(--color-primary)', fontSize: 'var(--font-size-sidebar-category)' }}>
             {label}
           </span>
         </div>
@@ -267,7 +267,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
     <div 
       className={`
         ${isCollapsed ? 'w-[80px] min-w-[80px] px-3' : 'w-[280px] min-w-[280px] px-5'} 
-        h-screen bg-[#F8F9FB] flex flex-col border-r border-gray-200/50 
+        h-screen bg-[color:var(--color-background)] flex flex-col border-r border-gray-200/50 
         ${isCollapsed ? 'overflow-visible' : 'overflow-y-auto'} 
         sticky top-0 transition-all duration-300 ease-in-out z-50
       `}
@@ -303,13 +303,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
                   className="w-10 h-10 mx-auto flex items-center justify-center rounded-xl cursor-pointer hover:bg-white hover:shadow-md transition-all duration-200 group-hover:scale-110"
                   title={category.label}
                 >
-                  <category.icon size={20} style={{ color: category.color }} />
+                  <category.icon size={20} style={{ color: 'var(--color-primary)' }} />
                 </div>
 
                 {/* Hover Flyout Menu */}
                 <div className="absolute left-full top-0 ml-4 w-60 bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-2xl rounded-xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-x-[-10px] group-hover:translate-x-0 z-[100]">
                    <div className="px-3 py-2 border-b border-slate-100 mb-2 bg-slate-50/50 rounded-t-lg -mx-2 -mt-2">
-                      <h4 className="text-[11px] font-black uppercase tracking-widest" style={{ color: category.color }}>{category.label}</h4>
+                      <h4 className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--color-primary)' }}>{category.label}</h4>
                    </div>
                    <div className="space-y-0.5">
                       {category.items.map(item => (
