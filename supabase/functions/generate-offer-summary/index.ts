@@ -86,15 +86,15 @@ serve(async (req) => {
 
     const { data: apiConfig, error: configError } = await serviceClient
       .from('api_configurations')
-      .select('project_id, location, model, service_account_json')
+      .select('project_id, location, model, service_account_json, offer_summary_prompt')
       .eq('user_id', user.id)
       .single();
 
-    if (configError || !apiConfig) {
+    if (configError && configError.code !== 'PGRST116') {
       throw new Error('API configuration not found. Please save your settings first.');
     }
 
-    const { project_id, location, model, service_account_json } = apiConfig;
+    const { project_id, location, model, service_account_json, offer_summary_prompt } = apiConfig || {};
 
     if (!project_id || !location || !model || !service_account_json) {
       throw new Error('Incomplete API configuration. Please check your settings.');
@@ -144,7 +144,8 @@ serve(async (req) => {
       throw new Error('Access token not found in Google Auth response.');
     }
 
-    let processedPrompt = DEFAULT_OFFER_PROMPT;
+    const systemPrompt = offer_summary_prompt || DEFAULT_OFFER_PROMPT;
+    let processedPrompt = systemPrompt;
     for (const [key, value] of Object.entries(offerDetails)) {
       processedPrompt = processedPrompt.replace(new RegExp(`{{${key}}}`, 'g'), value as string || '');
     }

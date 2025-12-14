@@ -127,9 +127,9 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
 
     } catch (error: any) {
       console.error("Failed to generate description:", error);
-      const errorMessage = error.message || 'Lỗi khi tạo mô tả.';
+      const errorMessage = error.context?.json?.error || error.message || 'Lỗi khi tạo mô tả.';
       setDescription(`Không thể tạo mô tả: ${errorMessage}`);
-      toast.error(errorMessage);
+      toast.error(errorMessage, { duration: 5000 });
     } finally {
       setIsGenerating(false);
     }
@@ -222,24 +222,6 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
               <FormField icon={Heart} label="Phản hồi của khách hàng" description="Ví dụ: các phản hồi thực tế từ người dùng, mỗi phản hồi trên một dòng." placeholder="Dán các phản hồi tốt nhất vào đây." value={testimonials} onChange={(e) => setTestimonials(e.target.value)} isTextarea />
             </div>
           </div>
-          <div className="mt-8 flex flex-col gap-4">
-            <button 
-              onClick={handleGenerateDescription}
-              disabled={isGenerating || isSaving || !title}
-              className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#0EB869] text-white text-[14px] font-bold hover:bg-[#0B9655] transition-colors shadow-sm disabled:opacity-50"
-            >
-              {isGenerating ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
-              Tạo mô tả
-            </button>
-            <button 
-              onClick={handleSave}
-              disabled={isSaving || isGenerating || !title || !description}
-              className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-slate-200 text-slate-700 text-[14px] font-bold hover:bg-slate-50 transition-colors disabled:opacity-50"
-            >
-              {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-              Lưu Offer
-            </button>
-          </div>
         </div>
 
         <div className="w-full lg:w-[450px] shrink-0">
@@ -262,6 +244,24 @@ export const CreateProductPage: React.FC<CreateProductPageProps> = ({ onCancel, 
                   onChange={(e) => setDescription(e.target.value)}
                 />
               )}
+            </div>
+            <div className="flex flex-col gap-3">
+              <button 
+                onClick={handleGenerateDescription}
+                disabled={isGenerating || isSaving || !title}
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#0EB869] text-white text-[14px] font-bold hover:bg-[#0B9655] transition-colors shadow-sm disabled:opacity-50"
+              >
+                {isGenerating ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
+                Tạo mô tả
+              </button>
+              <button 
+                onClick={handleSave}
+                disabled={isSaving || isGenerating || !title || !description}
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-slate-200 text-slate-700 text-[14px] font-bold hover:bg-slate-50 transition-colors disabled:opacity-50"
+              >
+                {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
+                Lưu Offer
+              </button>
             </div>
           </div>
         </div>

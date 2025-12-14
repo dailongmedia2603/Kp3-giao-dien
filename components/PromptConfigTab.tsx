@@ -19,7 +19,28 @@ Here are the details:
 
 Synthesize this information into a compelling persona description in Vietnamese. The summary should be a narrative that brings the person to life, focusing on their core motivations, fears, and what would make them say "yes" to an offer.`;
 
-const promptVariables = [
+const DEFAULT_OFFER_PROMPT = `You are a world-class direct response copywriter. Based on the following details for a new offer, write a compelling and persuasive description in Vietnamese.
+
+Offer Details:
+- Title: {{title}}
+- Category: {{category}}
+- Target Market: {{target_market}}
+- Pressing Problem it Solves: {{pressing_problem}}
+- Desired Outcome it Delivers: {{desired_outcome}}
+- Features/USPs: {{features}}
+- Specific Technology/Method: {{technology}}
+- Scientific Studies/Statistics: {{studies}}
+- Social Proof (Featured in): {{social_proof}}
+- Credible Authority Figure: {{authority_figure}}
+- Unique Mechanism: {{unique_mechanism}}
+- Number of Reviews: {{review_count}}
+- Average Review Rating: {{avg_review_rating}}
+- Total Customers: {{total_customers}}
+- Testimonials: {{testimonials}}
+
+Your task is to synthesize this information into a powerful description that can be used on a landing page or in an ad. The tone should be persuasive and clearly articulate the value proposition. The output should be in Vietnamese.`;
+
+const dreamBuyerVariables = [
   { name: 'Tên Avatar', value: '{{name}}' },
   { name: 'Họ tụ tập ở đâu?', value: '{{q1_hangouts}}' },
   { name: 'Nguồn thông tin', value: '{{q2_info_sources}}' },
@@ -32,12 +53,85 @@ const promptVariables = [
   { name: 'Điều làm họ hạnh phúc', value: '{{q9_happiness_triggers}}' },
 ];
 
+const offerVariables = [
+    { name: 'Tiêu đề', value: '{{title}}' },
+    { name: 'Danh mục', value: '{{category}}' },
+    { name: 'Thị trường mục tiêu', value: '{{target_market}}' },
+    { name: 'Vấn đề cấp bách', value: '{{pressing_problem}}' },
+    { name: 'Kết quả mong muốn', value: '{{desired_outcome}}' },
+    { name: 'Tính năng/USP', value: '{{features}}' },
+    { name: 'Công nghệ/Phương pháp', value: '{{technology}}' },
+    { name: 'Nghiên cứu/Thống kê', value: '{{studies}}' },
+    { name: 'Bằng chứng xã hội', value: '{{social_proof}}' },
+    { name: 'Nhân vật có uy tín', value: '{{authority_figure}}' },
+    { name: 'Cơ chế độc đáo', value: '{{unique_mechanism}}' },
+    { name: 'Số lượng đánh giá', value: '{{review_count}}' },
+    { name: 'Xếp hạng trung bình', value: '{{avg_review_rating}}' },
+    { name: 'Tổng số khách hàng', value: '{{total_customers}}' },
+    { name: 'Phản hồi', value: '{{testimonials}}' },
+];
+
+const PromptEditor: React.FC<{
+    title: string;
+    prompt: string;
+    setPrompt: (value: string) => void;
+    variables: { name: string; value: string }[];
+    defaultPrompt: string;
+}> = ({ title, prompt, setPrompt, variables, defaultPrompt }) => {
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    const handleInsertVariable = (variableValue: string) => {
+        if (!textareaRef.current) return;
+        const { selectionStart, selectionEnd, value } = textareaRef.current;
+        const newText = value.substring(0, selectionStart) + variableValue + value.substring(selectionEnd);
+        setPrompt(newText);
+        setTimeout(() => {
+            if (textareaRef.current) {
+                const newCursorPosition = selectionStart + variableValue.length;
+                textareaRef.current.focus();
+                textareaRef.current.selectionStart = newCursorPosition;
+                textareaRef.current.selectionEnd = newCursorPosition;
+            }
+        }, 0);
+    };
+
+    return (
+        <div className="border border-slate-200 rounded-xl p-5 hover:border-[#A5D6A7] transition-colors">
+            <h3 className="text-[14px] font-bold text-slate-900 mb-3">{title}</h3>
+            <textarea 
+                ref={textareaRef}
+                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-[13px] font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349] leading-relaxed resize-y min-h-[240px]"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+            />
+            <div className="flex items-center gap-3 mt-3">
+                <button onClick={() => setPrompt(defaultPrompt)} className="text-[12px] font-bold text-[#16A349] hover:underline">Reset to Default</button>
+            </div>
+            <div className="mt-4 pt-4 border-t border-slate-100">
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Biến dữ liệu động</h4>
+                <div className="flex flex-wrap gap-2">
+                    {variables.map(variable => (
+                        <button
+                            key={variable.value}
+                            onClick={() => handleInsertVariable(variable.value)}
+                            className="bg-slate-100 text-slate-700 text-xs font-mono px-3 py-1.5 rounded-lg hover:bg-slate-200 transition-colors"
+                            title={variable.name}
+                        >
+                            {variable.value}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const PromptConfigTab: React.FC = () => {
   const { user } = useSession();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [dreamBuyerPrompt, setDreamBuyerPrompt] = useState(DEFAULT_DREAM_BUYER_PROMPT);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [offerSummaryPrompt, setOfferSummaryPrompt] = useState(DEFAULT_OFFER_PROMPT);
 
   useEffect(() => {
     if (!user) return;
@@ -46,13 +140,14 @@ const PromptConfigTab: React.FC = () => {
       setIsLoading(true);
       const { data, error } = await supabase
         .from('api_configurations')
-        .select('dream_buyer_prompt')
+        .select('dream_buyer_prompt, offer_summary_prompt')
         .eq('user_id', user.id)
         .single();
 
-      if (data && data.dream_buyer_prompt) {
-        setDreamBuyerPrompt(data.dream_buyer_prompt);
-      } else if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+      if (data) {
+        setDreamBuyerPrompt(data.dream_buyer_prompt || DEFAULT_DREAM_BUYER_PROMPT);
+        setOfferSummaryPrompt(data.offer_summary_prompt || DEFAULT_OFFER_PROMPT);
+      } else if (error && error.code !== 'PGRST116') {
         console.error('Error fetching prompt settings:', error);
         toast.error('Không thể tải cài đặt prompt.');
       }
@@ -61,27 +156,6 @@ const PromptConfigTab: React.FC = () => {
 
     fetchSettings();
   }, [user]);
-
-  const handleInsertVariable = (variableValue: string) => {
-    if (!textareaRef.current) return;
-
-    const start = textareaRef.current.selectionStart;
-    const end = textareaRef.current.selectionEnd;
-    const text = textareaRef.current.value;
-
-    const newText = text.substring(0, start) + variableValue + text.substring(end);
-    setDreamBuyerPrompt(newText);
-
-    // Use a timeout to allow React to re-render before we set the selection
-    setTimeout(() => {
-      if (textareaRef.current) {
-        const newCursorPosition = start + variableValue.length;
-        textareaRef.current.focus();
-        textareaRef.current.selectionStart = newCursorPosition;
-        textareaRef.current.selectionEnd = newCursorPosition;
-      }
-    }, 0);
-  };
 
   const handleSave = async () => {
     if (!user) {
@@ -95,6 +169,7 @@ const PromptConfigTab: React.FC = () => {
       .upsert({
         user_id: user.id,
         dream_buyer_prompt: dreamBuyerPrompt,
+        offer_summary_prompt: offerSummaryPrompt,
         updated_at: new Date().toISOString(),
       }, { onConflict: 'user_id' });
 
@@ -105,10 +180,6 @@ const PromptConfigTab: React.FC = () => {
       toast.success('Đã lưu cấu hình prompt thành công!');
     }
     setIsSaving(false);
-  };
-
-  const handleReset = () => {
-    setDreamBuyerPrompt(DEFAULT_DREAM_BUYER_PROMPT);
   };
 
   if (isLoading) {
@@ -131,43 +202,26 @@ const PromptConfigTab: React.FC = () => {
         </div>
 
         <div className="space-y-6">
-          <div className="border border-slate-200 rounded-xl p-5 hover:border-[#A5D6A7] transition-colors">
-            <div className="flex items-center justify-between mb-3">
-              <label className="text-[14px] font-bold text-slate-900">Dream Buyer Avatar System Prompt</label>
-            </div>
-            <textarea 
-              ref={textareaRef}
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-[13px] font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#16A349]/20 focus:border-[#16A349] leading-relaxed resize-y min-h-[240px]"
-              value={dreamBuyerPrompt}
-              onChange={(e) => setDreamBuyerPrompt(e.target.value)}
-            />
-            <div className="flex items-center gap-3 mt-3">
-              <button onClick={handleReset} className="text-[12px] font-bold text-[#16A349] hover:underline">Reset to Default</button>
-            </div>
-
-            <div className="mt-4 pt-4 border-t border-slate-100">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Biến dữ liệu động</h4>
-              <p className="text-xs text-slate-500 mb-3">Nhấp vào để chèn vào prompt của bạn. Các biến này sẽ được tự động thay thế bằng dữ liệu từ form "Dream Buyer".</p>
-              <div className="flex flex-wrap gap-2">
-                {promptVariables.map(variable => (
-                  <button
-                    key={variable.value}
-                    onClick={() => handleInsertVariable(variable.value)}
-                    className="bg-slate-100 text-slate-700 text-xs font-mono px-3 py-1.5 rounded-lg hover:bg-slate-200 transition-colors flex items-center gap-1.5"
-                    title={variable.name}
-                  >
-                    {variable.value}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+          <PromptEditor 
+            title="Dream Buyer Avatar System Prompt"
+            prompt={dreamBuyerPrompt}
+            setPrompt={setDreamBuyerPrompt}
+            variables={dreamBuyerVariables}
+            defaultPrompt={DEFAULT_DREAM_BUYER_PROMPT}
+          />
+          <PromptEditor 
+            title="Offer Summary System Prompt"
+            prompt={offerSummaryPrompt}
+            setPrompt={setOfferSummaryPrompt}
+            variables={offerVariables}
+            defaultPrompt={DEFAULT_OFFER_PROMPT}
+          />
         </div>
         
         <div className="flex justify-end pt-6 border-t border-slate-100 mt-6 gap-3">
           <button onClick={handleSave} disabled={isSaving} className="flex items-center gap-2 px-6 py-2 rounded-lg bg-[#16A349] text-white text-[13px] font-bold hover:bg-[#149641] transition-colors shadow-sm disabled:opacity-50">
             {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-            Save Configuration
+            Save All Prompts
           </button>
         </div>
       </div>
