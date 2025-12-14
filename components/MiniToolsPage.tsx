@@ -21,9 +21,11 @@ import {
   Film,
   CreditCard,
   User,
-  Monitor
+  Monitor,
+  BookOpen
 } from 'lucide-react';
 import { WebinarPage } from './WebinarPage';
+import { CourseOutlineTool } from './CourseOutlineTool';
 
 // --- ROI Calculator Component ---
 const ROICalculatorTool: React.FC<{ onBack: () => void }> = ({ onBack }) => {
@@ -363,6 +365,14 @@ export const MiniToolsPage: React.FC = () => {
   // Mock data for tools
   const tools = [
     {
+      id: 2, // Matches ROI Calc ID
+      title: "ROI Calculator",
+      description: "Advanced projection for Service Based Business funnels. Calculate CPA, ROAS and Profit.",
+      category: "Finance",
+      icon: Calculator,
+      color: "#16A349" // Emerald
+    },
+    {
       id: 8,
       title: "Video Production Plan",
       description: "Streamline your video creation process from pre-production to publishing.",
@@ -411,14 +421,14 @@ export const MiniToolsPage: React.FC = () => {
       color: "#8B5CF6" // Violet
     },
     {
-      id: 2, // Matches ROI Calc ID
-      title: "ROI Calculator",
-      description: "Advanced projection for Service Based Business funnels. Calculate CPA, ROAS and Profit.",
-      category: "Finance",
-      icon: Calculator,
-      color: "#16A349" // Emerald
+      id: 14,
+      title: "Outline Khoá học",
+      description: "Structure your online course, from modules to individual lessons.",
+      category: "Content",
+      icon: BookOpen,
+      color: "#A755F7"
     }
-  ];
+  ].sort((a, b) => a.id - b.id);
 
   const filteredTools = tools.filter(tool => 
     tool.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -435,11 +445,19 @@ export const MiniToolsPage: React.FC = () => {
     );
   }
 
-  // Render Webinar Page
   if (activeToolId === 13) {
     return (
       <div className="p-8 max-w-[1400px] mx-auto font-sans">
         <WebinarPage onBack={() => setActiveToolId(null)} />
+        <div className="h-10"></div>
+      </div>
+    );
+  }
+
+  if (activeToolId === 14) {
+    return (
+      <div className="p-8 max-w-[1400px] mx-auto font-sans">
+        <CourseOutlineTool onBack={() => setActiveToolId(null)} />
         <div className="h-10"></div>
       </div>
     );
