@@ -98,8 +98,8 @@ const ProductCard: React.FC<{ product: Product; icon: any; onClick: () => void; 
     )
 }
 
-const OfferCard: React.FC<{ offer: Offer }> = ({ offer }) => (
-  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 group hover:shadow-md transition-shadow flex flex-col h-full">
+const OfferCard: React.FC<{ offer: Offer; onClick: () => void; }> = ({ offer, onClick }) => (
+  <div onClick={onClick} className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 group hover:shadow-md transition-shadow flex flex-col h-full cursor-pointer">
     <div className="flex items-start gap-4 mb-4">
       <div className="w-12 h-12 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 bg-white shrink-0 group-hover:border-[#A5D6A7] group-hover:text-[#16A349] transition-colors">
         <ShoppingBag size={24} />
@@ -109,11 +109,11 @@ const OfferCard: React.FC<{ offer: Offer }> = ({ offer }) => (
       </div>
     </div>
     <p className="text-[13px] text-slate-500 leading-relaxed mb-8 flex-1">
-      {offer.description}
+      {offer.description || 'Chưa có mô tả. Nhấp để xem chi tiết.'}
     </p>
     <div className="flex items-center justify-end pt-4 border-t border-slate-100 mt-auto">
       <button className="text-[13px] font-bold text-[#16A349] hover:text-[#149641] transition-colors">
-        Edit Offer
+        View Details
       </button>
     </div>
   </div>
@@ -141,7 +141,7 @@ const BonusCard: React.FC<{ bonus: Bonus }> = ({ bonus }) => (
   </div>
 );
 
-const OfferView: React.FC<{ offers: Offer[]; onNavigate?: (view: string) => void; }> = ({ offers, onNavigate }) => (
+const OfferView: React.FC<{ offers: Offer[]; onNavigate?: (view: string, data?: any) => void; }> = ({ offers, onNavigate }) => (
   <div className="animate-in fade-in duration-300">
     <div className="flex justify-between items-center mb-6">
       <h2 className="text-xl font-bold text-slate-900">Offer Stack</h2>
@@ -152,7 +152,7 @@ const OfferView: React.FC<{ offers: Offer[]; onNavigate?: (view: string) => void
     </div>
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       {offers.map(offer => (
-        <OfferCard key={offer.id} offer={offer} />
+        <OfferCard key={offer.id} offer={offer} onClick={() => onNavigate && onNavigate('godfather-offer-detail', offer)} />
       ))}
     </div>
   </div>

@@ -13,6 +13,7 @@ import { OfferPage } from './components/OfferPage';
 import { CreateProductPage } from './components/CreateProductPage';
 import { CreateOfferPage } from './components/CreateOfferPage';
 import { OfferDetailPage } from './components/OfferDetailPage';
+import { GodfatherOfferDetailPage } from './components/GodfatherOfferDetailPage';
 import { GoalPage } from './components/GoalPage';
 import { SettingsPage } from './components/SettingsPage';
 import { FunnelBuilderPage } from './components/FunnelBuilderPage';
@@ -74,6 +75,7 @@ const AppContent: React.FC = () => {
   const [initialCategory, setInitialCategory] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
   const [productToEdit, setProductToEdit] = useState<any | null>(null);
+  const [selectedOffer, setSelectedOffer] = useState<any | null>(null);
   const [isSOPOpen, setIsSOPOpen] = useState(false);
 
   const handleNavigate = (view: string, data?: any) => {
@@ -87,6 +89,12 @@ const AppContent: React.FC = () => {
       setSelectedProduct(data);
     } else {
       setSelectedProduct(null);
+    }
+
+    if (view === 'godfather-offer-detail' && data) {
+      setSelectedOffer(data);
+    } else {
+      setSelectedOffer(null);
     }
 
     if (view === 'edit-product' && data) {
@@ -133,6 +141,8 @@ const AppContent: React.FC = () => {
         return <CreateOfferPage onCancel={() => handleNavigate('offer')} onNavigate={handleNavigate} />;
       case 'offer-detail':
         return selectedProduct ? <OfferDetailPage product={selectedProduct} onBack={() => handleNavigate('offer')} onDelete={() => {}} onEdit={(product) => handleNavigate('edit-product', product)} /> : <div>Product not found</div>;
+      case 'godfather-offer-detail':
+        return selectedOffer ? <GodfatherOfferDetailPage offer={selectedOffer} onBack={() => handleNavigate('offer')} onDelete={() => {}} onEdit={(offer) => {}} /> : <div>Offer not found</div>;
       case 'goal':
         return <GoalPage />;
       case 'settings':
