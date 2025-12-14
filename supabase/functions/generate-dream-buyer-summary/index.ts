@@ -3,7 +3,7 @@
 
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
-import { GoogleAuth } from 'https://esm.sh/google-auth-library'
+import { GoogleAuth } from "https://deno.land/x/google_auth@v0.4.0/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -63,18 +63,12 @@ serve(async (req) => {
     }
 
     const serviceAccount = JSON.parse(service_account_json);
-    
-    const auth = new GoogleAuth({
-      credentials: {
-        client_email: serviceAccount.client_email,
-        private_key: serviceAccount.private_key,
-      },
-      scopes: 'https://www.googleapis.com/auth/cloud-platform',
+    const googleAuth = new GoogleAuth({
+      creds: serviceAccount,
+      scope: ["https://www.googleapis.com/auth/cloud-platform"],
     });
 
-    const client = await auth.getClient();
-    const accessTokenResponse = await client.getAccessToken();
-    const accessToken = accessTokenResponse.token;
+    const accessToken = await googleAuth.getAccessToken();
 
     if (!accessToken) {
       throw new Error('Failed to get Google Auth access token.');
@@ -135,7 +129,7 @@ serve(async (req) => {
     errorMsg = error.message;
     responseStatus = responseStatus || 500;
     responseBody = { error: error.message };
-    return new Response(JSON.stringify(responseBody), {
+    return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: responseStatus,
     })
