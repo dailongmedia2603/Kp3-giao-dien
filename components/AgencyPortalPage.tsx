@@ -1,24 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { 
   Home, 
   ChevronRight, 
-  Building2, 
-  LayoutGrid, 
   FileText, 
-  Settings, 
-  Plus, 
   MoreHorizontal, 
-  CheckCircle2, 
-  AlertTriangle, 
   Clock, 
-  DollarSign, 
-  ArrowRight, 
   Download, 
-  MessageSquare, 
-  User,
   ArrowLeft,
-  Eye,
-  Copy,
   X
 } from 'lucide-react';
 

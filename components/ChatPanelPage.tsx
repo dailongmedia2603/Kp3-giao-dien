@@ -1,15 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  Home, 
-  ChevronRight, 
-  MessageSquare, 
   Search, 
-  Filter, 
-  User, 
   Send, 
   Paperclip, 
   Smile, 
-  ChevronDown,
   MoreHorizontal,
   Inbox,
   Star

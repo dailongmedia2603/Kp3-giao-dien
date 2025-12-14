@@ -2,22 +2,10 @@ import React, { useState } from 'react';
 import { 
   Home, 
   ChevronRight, 
-  Calendar, 
-  Users, 
   MessageSquare, 
   LayoutGrid, 
-  List, 
-  Clock, 
-  Check, 
-  X, 
-  MoreVertical, 
   ArrowLeft, 
-  Camera, 
-  FileText,
-  Save,
-  User as UserIcon,
-  Heart,
-  Stethoscope
+  Camera
 } from 'lucide-react';
 
 // --- MOCK DATA ---

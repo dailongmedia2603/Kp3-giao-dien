@@ -164,13 +164,13 @@ export const ClockworkEnginePage: React.FC = () => {
         </div>
       </div>
 
-      {showMobilePreview && <MobilePreviewModal link={qrLink} onClose={() => setShowMobilePreview(false)} />}
+      {showMobilePreview && <MobilePreviewModal onClose={() => setShowMobilePreview(false)} />}
     </div>
   );
 };
 
 // --- Mobile Preview Modal ---
-const MobilePreviewModal: React.FC<{ link: string, onClose: () => void }> = ({ link, onClose }) => (
+const MobilePreviewModal: React.FC<{ onClose: () => void }> = ({ onClose }) => (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
     <div className="relative w-[340px] h-[700px] bg-slate-800 rounded-[2.5rem] p-2 shadow-2xl border-4 border-slate-600 animate-in fade-in zoom-in-95">
       <div className="absolute top-4 left-1/2 -translate-x-1/2 w-20 h-1 bg-slate-900 rounded-full"></div>

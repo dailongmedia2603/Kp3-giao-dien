@@ -6,9 +6,7 @@ import {
   Users,
   Lock,
   Activity,
-  AlertTriangle,
   Clock,
-  Facebook,
   QrCode,
   BrainCircuit
 } from 'lucide-react';

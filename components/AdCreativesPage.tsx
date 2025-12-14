@@ -4,18 +4,15 @@ import {
   ChevronRight, 
   Image as ImageIcon, 
   Type, 
-  MousePointer2, 
   RefreshCw, 
   Download, 
-  Maximize2,
   MoreHorizontal,
   ThumbsUp,
   MessageSquare,
   Share2,
   Globe,
   Smartphone,
-  Monitor,
-  X
+  Monitor
 } from 'lucide-react';
 
 export const AdCreativesPage: React.FC = () => {

@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Home, 
   ChevronRight, 
-  Shield, 
   ShieldCheck, 
   Lock, 
   Unlock, 
@@ -17,7 +16,6 @@ import {
   Search, 
   RefreshCw,
   TrendingUp,
-  DollarSign,
   AlertOctagon,
   Check,
   Copy

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Home, 
   ChevronRight, 
@@ -8,13 +8,8 @@ import {
   Lock, 
   ArrowUp, 
   UploadCloud, 
-  FileText, 
-  User, 
   Users,
-  TrendingUp, 
-  Flame,
-  Award,
-  ArrowLeft
+  Flame
 } from 'lucide-react';
 
 // --- TYPES & MOCK DATA ---
@@ -119,7 +114,7 @@ const ProgressMapView: React.FC<{ roadmap: RoadmapStep[], onStartLesson: (step: 
       </svg>
       
       {/* The Steps */}
-      {roadmap.map((step, index) => {
+      {roadmap.map((step) => {
         const position = {
           1: { bottom: '20px', left: '50px' },
           2: { bottom: '120px', left: '200px' },

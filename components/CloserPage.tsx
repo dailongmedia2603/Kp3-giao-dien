@@ -5,7 +5,6 @@ import {
   Layout, 
   BookOpen, 
   Calendar, 
-  Phone,
   MoreHorizontal,
   Plus,
   Search,
@@ -13,8 +12,6 @@ import {
   XCircle,
   Clock,
   DollarSign,
-  User,
-  MessageSquare,
   ShieldAlert,
   ChevronDown
 } from 'lucide-react';

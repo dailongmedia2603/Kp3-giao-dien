@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { 
   Home, 
   ChevronRight, 
-  Users, 
   DollarSign, 
   MoreHorizontal, 
-  Award, 
   AlertTriangle, 
   Bot, 
   ArrowLeft,
