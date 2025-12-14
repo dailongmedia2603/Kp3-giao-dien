@@ -1,12 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Save, RotateCcw, CheckCircle, AlertTriangle, Loader2, Key } from 'lucide-react';
+import { supabase } from '@/src/integrations/supabase/client';
+import { useSession } from '@/src/contexts/SessionContext';
+import toast from 'react-hot-toast';
 
 const ApiSettingsTab: React.FC = () => {
+  const { user } = useSession();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [projectId, setProjectId] = useState('');
   const [serviceAccountJson, setServiceAccountJson] = useState('');
   const [location, setLocation] = useState('us-central1');
   const [model, setModel] = useState('gemini-2.5-pro');
   const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchSettings = async () => {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('api_configurations')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (data) {
+        setProjectId(data.project_id || '');
+        setServiceAccountJson(data.service_account_json || '');
+        setLocation(data.location || 'us-central1');
+        setModel(data.model || 'gemini-2.5-pro');
+      } else if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+        console.error('Error fetching API settings:', error);
+        toast.error('Không thể tải cài đặt API.');
+      }
+      setIsLoading(false);
+    };
+
+    fetchSettings();
+  }, [user]);
 
   const handleTestConnection = () => {
     setTestStatus('testing');
@@ -14,18 +46,49 @@ const ApiSettingsTab: React.FC = () => {
     setTimeout(() => {
       if (projectId && serviceAccountJson && location) {
         setTestStatus('success');
+        toast.success('Kết nối thành công!');
       } else {
         setTestStatus('error');
+        toast.error('Kết nối thất bại. Vui lòng kiểm tra lại thông tin.');
       }
       setTimeout(() => setTestStatus('idle'), 3000);
     }, 1500);
   };
 
-  const handleSave = () => {
-    // Trong ứng dụng thực tế, điều này sẽ lưu vào backend hoặc context an toàn
-    console.log('Saving API settings:', { projectId, serviceAccountJson, location, model });
-    alert('Settings saved! (Simulated)');
+  const handleSave = async () => {
+    if (!user) {
+      toast.error('Bạn phải đăng nhập để lưu cài đặt.');
+      return;
+    }
+
+    setIsSaving(true);
+    const { error } = await supabase
+      .from('api_configurations')
+      .upsert({
+        user_id: user.id,
+        project_id: projectId,
+        service_account_json: serviceAccountJson,
+        location: location,
+        model: model,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'user_id' });
+
+    if (error) {
+      console.error('Error saving API settings:', error);
+      toast.error(`Lưu thất bại: ${error.message}`);
+    } else {
+      toast.success('Đã lưu cấu hình thành công!');
+    }
+    setIsSaving(false);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 size={24} className="animate-spin text-slate-400" />
+      </div>
+    );
+  }
 
   return (
     <div className="animate-in fade-in duration-300">
@@ -114,9 +177,10 @@ const ApiSettingsTab: React.FC = () => {
             </button>
             <button 
               onClick={handleSave}
-              className="flex items-center gap-2 px-6 py-2 rounded-lg bg-[#16A349] text-white text-[13px] font-bold hover:bg-[#149641] transition-colors shadow-sm"
+              disabled={isSaving}
+              className="flex items-center gap-2 px-6 py-2 rounded-lg bg-[#16A349] text-white text-[13px] font-bold hover:bg-[#149641] transition-colors shadow-sm disabled:opacity-50"
             >
-              <Save size={16} />
+              {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
               Lưu cấu hình
             </button>
           </div>

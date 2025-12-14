@@ -52,6 +52,7 @@ import { MerchantAffiliatePage } from './components/MerchantAffiliatePage';
 import { CopywriterAIPage } from './components/CopywriterAIPage';
 import { CloserCRMPage } from './components/CloserCRMPage';
 import { OfferAssetVaultPage } from './components/OfferAssetVaultPage';
+import ToastProvider from './src/components/ToastProvider';
 import { 
   Users, 
   Facebook, 
@@ -320,6 +321,7 @@ const App: React.FC = () => {
   return (
     <SessionProvider>
       <ThemeProvider>
+        <ToastProvider />
         <AppContent />
       </ThemeProvider>
     </SessionProvider>
