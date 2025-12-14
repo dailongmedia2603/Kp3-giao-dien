@@ -11,6 +11,7 @@ import { FacebookAdGeneratorPage } from './components/FacebookAdGeneratorPage';
 import { NewHeadlineSetPage } from './components/NewHeadlineSetPage';
 import { OfferPage } from './components/OfferPage';
 import { CreateProductPage } from './components/CreateProductPage';
+import { CreateOfferPage } from './components/CreateOfferPage';
 import { OfferDetailPage } from './components/OfferDetailPage';
 import { GoalPage } from './components/GoalPage';
 import { SettingsPage } from './components/SettingsPage';
@@ -128,6 +129,8 @@ const AppContent: React.FC = () => {
         return <CreateProductPage onCancel={() => handleNavigate('offer')} onNavigate={handleNavigate} initialCategory={initialCategory} />;
       case 'edit-product':
         return <CreateProductPage onCancel={() => handleNavigate('offer')} onNavigate={handleNavigate} productToEdit={productToEdit} />;
+      case 'create-offer':
+        return <CreateOfferPage onCancel={() => handleNavigate('offer')} onNavigate={handleNavigate} />;
       case 'offer-detail':
         return selectedProduct ? <OfferDetailPage product={selectedProduct} onBack={() => handleNavigate('offer')} onDelete={() => {}} onEdit={(product) => handleNavigate('edit-product', product)} /> : <div>Product not found</div>;
       case 'goal':

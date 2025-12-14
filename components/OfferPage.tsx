@@ -141,11 +141,11 @@ const BonusCard: React.FC<{ bonus: Bonus }> = ({ bonus }) => (
   </div>
 );
 
-const OfferView: React.FC<{ offers: Offer[] }> = ({ offers }) => (
+const OfferView: React.FC<{ offers: Offer[]; onNavigate?: (view: string) => void; }> = ({ offers, onNavigate }) => (
   <div className="animate-in fade-in duration-300">
     <div className="flex justify-between items-center mb-6">
       <h2 className="text-xl font-bold text-slate-900">Offer Stack</h2>
-      <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#16A349] text-white text-[14px] font-bold hover:bg-[#149641] transition-colors shadow-sm">
+      <button onClick={() => onNavigate && onNavigate('create-offer')} className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#16A349] text-white text-[14px] font-bold hover:bg-[#149641] transition-colors shadow-sm">
         <Plus size={18} strokeWidth={3} />
         Thêm Offer
       </button>
@@ -309,7 +309,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ onNavigate }) => {
         </div>
       )}
 
-      {mainTab === 'offer' && <OfferView offers={offers} />}
+      {mainTab === 'offer' && <OfferView offers={offers} onNavigate={onNavigate} />}
       {mainTab === 'bonus' && <BonusView bonuses={bonuses} />}
 
       <div className="h-10"></div>
