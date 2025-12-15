@@ -144,7 +144,7 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <Loader2 size={32} className="animate-spin text-slate-400" />
@@ -152,61 +152,61 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
         ) : (
           chapters.map((chapter, chapterIndex) => (
             <div key={chapter.id} className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-              <div className="flex items-center justify-between p-4 bg-slate-50 border-b border-slate-200">
-                <div className="flex items-center gap-3 flex-1">
-                  <span className="font-bold text-slate-500">{`Chương ${chapterIndex + 1}`}</span>
+              <div className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50/50" onClick={() => toggleChapter(chapter.id)}>
+                <div className="flex items-center gap-4">
+                  <div className="flex flex-col items-center">
+                    <span className="text-xs text-slate-400 font-bold">Chương</span>
+                    <span className="text-2xl font-bold text-slate-800">{chapterIndex + 1}</span>
+                  </div>
                   <input
                     type="text"
                     value={chapter.title}
-                    onChange={(e) => handleChapterChange(chapter.id, e.target.value)}
-                    className="w-full bg-transparent p-1 font-bold text-slate-900 focus:outline-none focus:bg-white rounded"
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      handleChapterChange(chapter.id, e.target.value);
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-lg font-bold text-slate-900 bg-transparent focus:outline-none focus:bg-blue-50 p-1 rounded"
                   />
                 </div>
-                <button onClick={() => toggleChapter(chapter.id)} className="p-2 rounded-full hover:bg-slate-200">
-                  <ChevronDown size={20} className={`transition-transform ${openChapters.includes(chapter.id) ? 'rotate-180' : ''}`} />
-                </button>
+                <ChevronDown size={20} className={`text-slate-400 transition-transform ${openChapters.includes(chapter.id) ? 'rotate-180' : ''}`} />
               </div>
 
               {openChapters.includes(chapter.id) && (
                 <div className="overflow-x-auto">
-                  <table className="w-full min-w-[1800px] text-sm">
-                    <thead>
-                      <tr className="bg-slate-50 text-xs font-bold text-slate-600 uppercase tracking-wider">
-                        <th className="p-3 text-left w-[250px]">Bài học</th>
-                        <th className="p-3 text-center w-[100px]">Thời lượng</th>
-                        <th className="p-3 text-center w-[120px]">Định dạng</th>
-                        <th className="p-3 text-center w-[100px]">Free/Pro</th>
-                        <th className="p-3 text-left w-[200px]">Nút bấm/Vấn đề</th>
-                        <th className="p-3 text-left w-[200px]">Link Source</th>
-                        <th className="p-3 text-left w-[200px]">Video Demo</th>
-                        <th className="p-3 text-center w-[120px]">Deadline</th>
-                        <th className="p-3 text-center w-[120px]">Deadline Final</th>
-                        <th className="p-3 text-left w-[200px]">Thumbnail</th>
-                        <th className="p-3 text-left w-[250px]">Note</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
+                  <div className="min-w-[1200px]">
+                    <div className="grid grid-cols-[2fr_1fr_1fr_1fr_2fr_2fr_2fr] gap-4 px-5 py-3 bg-slate-50 border-y border-slate-200 text-xs font-bold text-slate-500 uppercase">
+                      <div className="col-span-1">Bài học</div>
+                      <div className="col-span-1 text-center">Thời lượng</div>
+                      <div className="col-span-1 text-center">Định dạng</div>
+                      <div className="col-span-1 text-center">Free/Pro</div>
+                      <div className="col-span-1">Nút bấm/Vấn đề</div>
+                      <div className="col-span-1">Link Source</div>
+                      <div className="col-span-1">Video Demo</div>
+                    </div>
+                    <div className="divide-y divide-slate-100">
                       {chapter.lessons.map(lesson => (
-                        <tr key={lesson.id}>
-                          <td><EditableCell value={lesson.title} onChange={v => handleLessonChange(chapter.id, lesson.id, 'title', v)} /></td>
-                          <td><EditableCell value={lesson.duration} onChange={v => handleLessonChange(chapter.id, lesson.id, 'duration', v)} className="text-center" /></td>
-                          <td><EditableCell value={lesson.format} onChange={v => handleLessonChange(chapter.id, lesson.id, 'format', v)} className="text-center" /></td>
-                          <td className="p-3 text-center">
-                            <button onClick={() => handleLessonChange(chapter.id, lesson.id, 'is_pro', !lesson.is_pro)} className={`px-2 py-0.5 rounded-full text-xs font-bold ${lesson.is_pro ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                        <div key={lesson.id} className="grid grid-cols-[2fr_1fr_1fr_1fr_2fr_2fr_2fr] gap-4 px-2 items-center hover:bg-slate-50/50">
+                          <div className="col-span-1"><EditableCell value={lesson.title} onChange={v => handleLessonChange(chapter.id, lesson.id, 'title', v)} /></div>
+                          <div className="col-span-1"><EditableCell value={lesson.duration} onChange={v => handleLessonChange(chapter.id, lesson.id, 'duration', v)} className="text-center" /></div>
+                          <div className="col-span-1"><EditableCell value={lesson.format} onChange={v => handleLessonChange(chapter.id, lesson.id, 'format', v)} className="text-center" /></div>
+                          <div className="col-span-1 p-3 text-center">
+                            <button onClick={() => handleLessonChange(chapter.id, lesson.id, 'is_pro', !lesson.is_pro)} className={`px-3 py-1 rounded-full text-xs font-bold ${lesson.is_pro ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
                               {lesson.is_pro ? 'PRO' : 'FREE'}
                             </button>
-                          </td>
-                          <td><EditableCell value={lesson.cta_problem} onChange={v => handleLessonChange(chapter.id, lesson.id, 'cta_problem', v)} /></td>
-                          <td><EditableCell value={lesson.source_link} onChange={v => handleLessonChange(chapter.id, lesson.id, 'source_link', v)} /></td>
-                          <td><EditableCell value={lesson.demo_link} onChange={v => handleLessonChange(chapter.id, lesson.id, 'demo_link', v)} /></td>
-                          <td><EditableCell value={lesson.deadline} onChange={v => handleLessonChange(chapter.id, lesson.id, 'deadline', v)} className="text-center" /></td>
-                          <td><EditableCell value={lesson.video_final_deadline} onChange={v => handleLessonChange(chapter.id, lesson.id, 'video_final_deadline', v)} className="text-center" /></td>
-                          <td><EditableCell value={lesson.thumbnail_url} onChange={v => handleLessonChange(chapter.id, lesson.id, 'thumbnail_url', v)} /></td>
-                          <td><EditableCell value={lesson.notes} onChange={v => handleLessonChange(chapter.id, lesson.id, 'notes', v)} /></td>
-                        </tr>
+                          </div>
+                          <div className="col-span-1"><EditableCell value={lesson.cta_problem} onChange={v => handleLessonChange(chapter.id, lesson.id, 'cta_problem', v)} /></div>
+                          <div className="col-span-1"><EditableCell value={lesson.source_link} onChange={v => handleLessonChange(chapter.id, lesson.id, 'source_link', v)} /></div>
+                          <div className="col-span-1"><EditableCell value={lesson.demo_link} onChange={v => handleLessonChange(chapter.id, lesson.id, 'demo_link', v)} /></div>
+                        </div>
                       ))}
-                    </tbody>
-                  </table>
+                    </div>
+                    <div className="p-5">
+                        <div className="w-full bg-slate-200 rounded-full h-2">
+                            <div className="bg-green-500 h-2 rounded-full" style={{width: '30%'}}></div>
+                        </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
