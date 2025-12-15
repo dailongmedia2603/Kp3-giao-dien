@@ -197,7 +197,7 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
         ) : (
           chapters.map((chapter, chapterIndex) => (
             <div key={chapter.id} className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-              <div className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-100/50 bg-slate-50" onClick={() => toggleChapter(chapter.id)}>
+              <div className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-100/50 bg-slate-100" onClick={() => toggleChapter(chapter.id)}>
                 <div className="flex items-center gap-4 flex-1">
                   <div className="flex flex-col items-center">
                     <span className="text-xs text-slate-400 font-bold">Chương</span>
@@ -214,16 +214,19 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
 
               {openChapters.includes(chapter.id) && (
                 <div className="overflow-x-auto">
-                  <table className="w-full min-w-[1800px] text-sm">
+                  <table className="w-full min-w-[2000px] text-sm">
                     <thead>
                       <tr className="bg-slate-50 text-xs font-bold text-slate-600 uppercase tracking-wider">
                         <th className="p-3 text-left w-[250px]">Bài học</th>
                         <th className="p-3 text-center w-[100px]">Thời lượng</th>
                         <th className="p-3 text-center w-[120px]">Định dạng</th>
                         <th className="p-3 text-center w-[100px]">Free/Pro</th>
-                        <th className="p-3 text-left w-[200px]">Nút bấm/Vấn đề</th>
                         <th className="p-3 text-left w-[200px]">Link Source</th>
                         <th className="p-3 text-left w-[200px]">Video Demo</th>
+                        <th className="p-3 text-center w-[120px]">Deadline</th>
+                        <th className="p-3 text-center w-[120px]">Deadline Final</th>
+                        <th className="p-3 text-left w-[200px]">Thumbnail</th>
+                        <th className="p-3 text-left w-[250px]">Note</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -237,9 +240,12 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
                               {lesson.is_pro ? 'PRO' : 'FREE'}
                             </button>
                           </td>
-                          <td><EditableCell value={lesson.cta_problem} onSave={v => handleSaveLesson(lesson.id, 'cta_problem', v)} /></td>
                           <td><EditableCell value={lesson.source_link} onSave={v => handleSaveLesson(lesson.id, 'source_link', v)} /></td>
                           <td><EditableCell value={lesson.demo_link} onSave={v => handleSaveLesson(lesson.id, 'demo_link', v)} /></td>
+                          <td><EditableCell value={lesson.deadline} onSave={v => handleSaveLesson(lesson.id, 'deadline', v)} className="text-center" /></td>
+                          <td><EditableCell value={lesson.video_final_deadline} onSave={v => handleSaveLesson(lesson.id, 'video_final_deadline', v)} className="text-center" /></td>
+                          <td><EditableCell value={lesson.thumbnail_url} onSave={v => handleSaveLesson(lesson.id, 'thumbnail_url', v)} /></td>
+                          <td><EditableCell value={lesson.notes} onSave={v => handleSaveLesson(lesson.id, 'notes', v)} /></td>
                         </tr>
                       ))}
                     </tbody>
