@@ -131,13 +131,19 @@ export const CourseOutlineBuilder: React.FC<{ course: any; onBack: () => void; }
 
     try {
         // Step 1: Prepare and upsert chapters
-        const chapterUpserts = chapters.map((chapter, index) => ({
-            id: chapter.id.startsWith('ch-') ? undefined : chapter.id,
-            course_id: course.id,
-            user_id: user.id,
-            title: chapter.title,
-            chapter_order: index,
-        }));
+        const chapterUpserts = chapters.map((chapter, index) => {
+            const isNew = chapter.id.startsWith('ch-');
+            const record: any = {
+                course_id: course.id,
+                user_id: user.id,
+                title: chapter.title,
+                chapter_order: index,
+            };
+            if (!isNew) {
+                record.id = chapter.id;
+            }
+            return record;
+        });
 
         const { data: savedChapters, error: chapterError } = await supabase
             .from('course_chapters')
@@ -147,19 +153,23 @@ export const CourseOutlineBuilder: React.FC<{ course: any; onBack: () => void; }
         if (chapterError) throw chapterError;
 
         // Step 2: Prepare lessons with correct chapter IDs
-        const allLessonsToUpsert = [];
+        const allLessonsToUpsert: any[] = [];
         for (const [index, originalChapter] of chapters.entries()) {
-            const savedChapter = savedChapters[index]; // Rely on the order returned by upsert
+            const savedChapter = savedChapters[index]; 
 
             if (savedChapter && originalChapter.lessons.length > 0) {
                 for (const [lessonIndex, lesson] of originalChapter.lessons.entries()) {
-                    allLessonsToUpsert.push({
-                        id: lesson.id.startsWith('l-') ? undefined : lesson.id,
+                    const isNew = lesson.id.startsWith('l-');
+                    const lessonRecord: any = {
                         chapter_id: savedChapter.id,
                         user_id: user.id,
                         title: lesson.title,
                         lesson_order: lessonIndex,
-                    });
+                    };
+                    if (!isNew) {
+                        lessonRecord.id = lesson.id;
+                    }
+                    allLessonsToUpsert.push(lessonRecord);
                 }
             }
         }
