@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ChevronDown, Users, Layers, List, Save, Sparkles, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, ChevronDown, Users, Layers, List, Save, Sparkles, Plus, Trash2, BrainCircuit, BookOpen, Loader2 } from 'lucide-react';
+import { supabase } from '@/src/integrations/supabase/client';
+import toast from 'react-hot-toast';
 
 interface Lesson {
   id: string;
@@ -44,6 +46,7 @@ export const CourseOutlineBuilder: React.FC<{ course: any; onBack: () => void; }
   const [majorSteps, setMajorSteps] = useState('');
   const [minorSteps, setMinorSteps] = useState('');
   const [chapters, setChapters] = useState<Chapter[]>([]);
+  const [generatingChapterId, setGeneratingChapterId] = useState<string | null>(null);
 
   const addChapter = () => {
     const newChapter: Chapter = {
@@ -87,17 +90,33 @@ export const CourseOutlineBuilder: React.FC<{ course: any; onBack: () => void; }
       }));
   };
 
-  const suggestLessons = (chapterId: string) => {
-      setChapters(chapters.map(ch => {
-          if (ch.id === chapterId) {
-              return { ...ch, lessons: [
-                  { id: `l-${Date.now()}-1`, title: 'Bài học đề xuất 1 từ AI' },
-                  { id: `l-${Date.now()}-2`, title: 'Bài học đề xuất 2 từ AI' },
-                  { id: `l-${Date.now()}-3`, title: 'Bài học đề xuất 3 từ AI' },
-              ]};
-          }
-          return ch;
-      }));
+  const suggestLessons = async (chapterId: string) => {
+    const chapter = chapters.find(c => c.id === chapterId);
+    if (!chapter) return;
+
+    setGeneratingChapterId(chapterId);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-course-lessons', {
+        body: {
+          customerProfile,
+          majorSteps,
+          minorSteps,
+          chapterTitle: chapter.title,
+        },
+      });
+
+      if (error) throw error;
+
+      const newLessons = data.lessons.map((title: string) => ({ id: `l-${Date.now()}-${Math.random()}`, title }));
+      setChapters(prev => prev.map(ch => ch.id === chapterId ? { ...ch, lessons: newLessons } : ch));
+      toast.success(`Đã tạo bài học cho "${chapter.title}"!`);
+
+    } catch (error: any) {
+      console.error("Failed to generate lessons:", error);
+      toast.error(error.message || "Lỗi khi tạo bài học.");
+    } finally {
+      setGeneratingChapterId(null);
+    }
   };
 
   return (
@@ -114,7 +133,10 @@ export const CourseOutlineBuilder: React.FC<{ course: any; onBack: () => void; }
 
       <div className="bg-white border border-slate-200 rounded-xl shadow-sm mb-8">
         <button onClick={() => setIsInputCollapsed(!isInputCollapsed)} className="w-full flex justify-between items-center p-5">
-          <h3 className="font-bold text-lg text-slate-800">Thông tin đầu vào cho AI</h3>
+          <h3 className="font-bold text-lg text-slate-800 flex items-center gap-3">
+            <BrainCircuit size={20} className="text-blue-500" />
+            Thông tin đầu vào cho AI
+          </h3>
           <ChevronDown size={20} className={`text-slate-400 transition-transform ${!isInputCollapsed && 'rotate-180'}`} />
         </button>
         {!isInputCollapsed && (
@@ -135,7 +157,10 @@ export const CourseOutlineBuilder: React.FC<{ course: any; onBack: () => void; }
 
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-            <h3 className="font-bold text-lg text-slate-800">Đề cương khóa học</h3>
+            <h3 className="font-bold text-lg text-slate-800 flex items-center gap-3">
+                <BookOpen size={20} className="text-green-500" />
+                Đề cương khóa học
+            </h3>
             <button onClick={addChapter} className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-50 shadow-sm">
                 <Plus size={14} /> Thêm chương
             </button>
@@ -149,8 +174,13 @@ export const CourseOutlineBuilder: React.FC<{ course: any; onBack: () => void; }
                 onChange={(e) => updateChapterTitle(chapter.id, e.target.value)}
                 className="font-bold text-slate-900 bg-transparent focus:outline-none w-full"
               />
-              <button onClick={() => suggestLessons(chapter.id)} className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg hover:bg-blue-100 whitespace-nowrap">
-                <Sparkles size={14} /> AI Đề xuất
+              <button 
+                onClick={() => suggestLessons(chapter.id)} 
+                disabled={generatingChapterId === chapter.id}
+                className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg hover:bg-blue-100 whitespace-nowrap disabled:opacity-50"
+              >
+                {generatingChapterId === chapter.id ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                {generatingChapterId === chapter.id ? 'Đang tạo...' : 'AI Đề xuất'}
               </button>
             </div>
             <div className="p-4 space-y-3">

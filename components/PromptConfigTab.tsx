@@ -31,6 +31,21 @@ const DEFAULT_OFFER_SUMMARY_PROMPT = `You are a master copywriter specializing i
 
 Combine these elements into a cohesive and irresistible offer description. The output should be in Vietnamese.`;
 
+const DEFAULT_COURSE_OUTLINE_PROMPT = `You are an expert instructional designer. Your task is to generate a list of 3-5 specific, actionable lesson titles for a single chapter of an online course.
+
+**Course Context:**
+- **Target Audience & Outcome:** {{customer_profile}}
+- **Major Steps (Overall Course):** {{major_steps}}
+- **Minor Steps (Detailed Actions):** {{minor_steps}}
+
+**Your Task:**
+Based on the context above, generate lesson titles for the following chapter:
+- **Chapter Title:** {{chapter_title}}
+
+**Output Format:**
+Return ONLY a valid JSON array of strings. Each string is a lesson title.
+Example: ["Lesson Title 1", "Lesson Title 2", "Lesson Title 3"]`;
+
 const dreamBuyerVariables = [
   { name: 'Tên Avatar', value: '{{name}}' },
   { name: 'Họ tụ tập ở đâu?', value: '{{q1_hangouts}}' },
@@ -53,6 +68,13 @@ const offerVariables = [
     { name: 'Quà tặng kèm', value: '{{premiums}}' },
     { name: 'Cam kết', value: '{{power_guarantee}}' },
     { name: 'Sự khan hiếm', value: '{{scarcity}}' },
+];
+
+const courseOutlineVariables = [
+    { name: 'Chân dung khách hàng', value: '{{customer_profile}}' },
+    { name: 'Các bước lớn', value: '{{major_steps}}' },
+    { name: 'Các bước nhỏ', value: '{{minor_steps}}' },
+    { name: 'Tiêu đề chương', value: '{{chapter_title}}' },
 ];
 
 const CollapsiblePromptEditor: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
@@ -140,6 +162,7 @@ const PromptConfigTab: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [dreamBuyerPrompt, setDreamBuyerPrompt] = useState(DEFAULT_DREAM_BUYER_PROMPT);
   const [offerSummaryPrompt, setOfferSummaryPrompt] = useState(DEFAULT_OFFER_SUMMARY_PROMPT);
+  const [courseOutlinePrompt, setCourseOutlinePrompt] = useState(DEFAULT_COURSE_OUTLINE_PROMPT);
 
   useEffect(() => {
     if (!user) return;
@@ -148,13 +171,14 @@ const PromptConfigTab: React.FC = () => {
       setIsLoading(true);
       const { data, error } = await supabase
         .from('api_configurations')
-        .select('dream_buyer_prompt, offer_summary_prompt')
+        .select('dream_buyer_prompt, offer_summary_prompt, course_outline_prompt')
         .eq('user_id', user.id)
         .single();
 
       if (data) {
         setDreamBuyerPrompt(data.dream_buyer_prompt || DEFAULT_DREAM_BUYER_PROMPT);
         setOfferSummaryPrompt(data.offer_summary_prompt || DEFAULT_OFFER_SUMMARY_PROMPT);
+        setCourseOutlinePrompt(data.course_outline_prompt || DEFAULT_COURSE_OUTLINE_PROMPT);
       } else if (error && error.code !== 'PGRST116') {
         console.error('Error fetching prompt settings:', error);
         toast.error('Không thể tải cài đặt prompt.');
@@ -178,6 +202,7 @@ const PromptConfigTab: React.FC = () => {
         user_id: user.id,
         dream_buyer_prompt: dreamBuyerPrompt,
         offer_summary_prompt: offerSummaryPrompt,
+        course_outline_prompt: courseOutlinePrompt,
         updated_at: new Date().toISOString(),
       }, { onConflict: 'user_id' });
 
@@ -224,6 +249,14 @@ const PromptConfigTab: React.FC = () => {
               setPrompt={setOfferSummaryPrompt}
               variables={offerVariables}
               defaultPrompt={DEFAULT_OFFER_SUMMARY_PROMPT}
+            />
+          </CollapsiblePromptEditor>
+          <CollapsiblePromptEditor title="Course Outline System Prompt">
+            <PromptEditor 
+              prompt={courseOutlinePrompt}
+              setPrompt={setCourseOutlinePrompt}
+              variables={courseOutlineVariables}
+              defaultPrompt={DEFAULT_COURSE_OUTLINE_PROMPT}
             />
           </CollapsiblePromptEditor>
         </div>
