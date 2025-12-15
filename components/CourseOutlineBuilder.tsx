@@ -103,6 +103,47 @@ export const CourseOutlineBuilder: React.FC<CourseOutlineBuilderProps> = ({ cour
       }));
   };
 
+  const deleteChapter = async (chapterId: string) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa chương này và tất cả các bài học trong đó không? Hành động này không thể hoàn tác.')) return;
+
+    const isNewChapter = chapterId.startsWith('ch-');
+
+    if (isNewChapter) {
+      setChapters(prev => prev.filter(ch => ch.id !== chapterId));
+      toast.success('Đã xóa chương.');
+      return;
+    }
+
+    if (!user) {
+      toast.error('Bạn phải đăng nhập để xóa chương.');
+      return;
+    }
+
+    // Delete lessons first, then the chapter
+    const { error: lessonError } = await supabase
+      .from('course_lessons')
+      .delete()
+      .eq('chapter_id', chapterId);
+
+    if (lessonError) {
+      toast.error(`Lỗi khi xóa bài học: ${lessonError.message}`);
+      return;
+    }
+
+    const { error: chapterError } = await supabase
+      .from('course_chapters')
+      .delete()
+      .eq('id', chapterId);
+
+    if (chapterError) {
+      toast.error(`Lỗi khi xóa chương: ${chapterError.message}`);
+      return;
+    }
+
+    setChapters(prev => prev.filter(ch => ch.id !== chapterId));
+    toast.success('Đã xóa chương và các bài học thành công.');
+  };
+
   const suggestLessons = async (chapterId: string) => {
     const chapter = chapters.find(c => c.id === chapterId);
     if (!chapter) return;
@@ -140,57 +181,52 @@ export const CourseOutlineBuilder: React.FC<CourseOutlineBuilderProps> = ({ cour
     setIsSaving(true);
 
     try {
-        // Step 1: Prepare and upsert chapters
-        const chapterUpserts = chapters.map((chapter, index) => {
-            const isNew = chapter.id.startsWith('ch-');
-            const record: any = {
+        for (const [chapterIndex, chapter] of chapters.entries()) {
+            let chapterId = chapter.id;
+            const isNewChapter = chapter.id.startsWith('ch-');
+
+            const chapterPayload = {
                 course_id: course.id,
                 user_id: user.id,
                 title: chapter.title,
-                chapter_order: index,
+                chapter_order: chapterIndex,
             };
-            if (!isNew) {
-                record.id = chapter.id;
+
+            if (isNewChapter) {
+                const { data: newChapter, error } = await supabase
+                    .from('course_chapters')
+                    .insert(chapterPayload)
+                    .select('id')
+                    .single();
+                if (error) throw error;
+                chapterId = newChapter.id;
+            } else {
+                const { error } = await supabase
+                    .from('course_chapters')
+                    .update({ title: chapter.title, chapter_order: chapterIndex })
+                    .eq('id', chapter.id);
+                if (error) throw error;
             }
-            return record;
-        });
 
-        const { data: savedChapters, error: chapterError } = await supabase
-            .from('course_chapters')
-            .upsert(chapterUpserts, { defaultToNull: false })
-            .select();
-
-        if (chapterError) throw chapterError;
-
-        // Step 2: Prepare lessons with correct chapter IDs
-        const allLessonsToUpsert: any[] = [];
-        for (const [index, originalChapter] of chapters.entries()) {
-            const savedChapter = savedChapters.find(sc => sc.chapter_order === index);
-
-            if (savedChapter && originalChapter.lessons.length > 0) {
-                for (const [lessonIndex, lesson] of originalChapter.lessons.entries()) {
-                    const isNew = lesson.id.startsWith('l-');
+            if (chapter.lessons.length > 0) {
+                const lessonUpserts = chapter.lessons.map((lesson, lessonIndex) => {
                     const lessonRecord: any = {
-                        chapter_id: savedChapter.id,
+                        chapter_id: chapterId,
                         user_id: user.id,
                         title: lesson.title,
                         lesson_order: lessonIndex,
                     };
-                    if (!isNew) {
+                    if (!lesson.id.startsWith('l-')) {
                         lessonRecord.id = lesson.id;
                     }
-                    allLessonsToUpsert.push(lessonRecord);
-                }
+                    return lessonRecord;
+                });
+
+                const { error: lessonError } = await supabase
+                    .from('course_lessons')
+                    .upsert(lessonUpserts, { onConflict: 'id' });
+                if (lessonError) throw lessonError;
             }
-        }
-
-        // Step 3: Upsert all lessons
-        if (allLessonsToUpsert.length > 0) {
-            const { error: lessonError } = await supabase
-                .from('course_lessons')
-                .upsert(allLessonsToUpsert, { defaultToNull: false });
-
-            if (lessonError) throw lessonError;
         }
 
         toast.success("Đã lưu đề cương khóa học thành công!");
@@ -269,14 +305,23 @@ export const CourseOutlineBuilder: React.FC<CourseOutlineBuilderProps> = ({ cour
                 onChange={(e) => updateChapterTitle(chapter.id, e.target.value)}
                 className="font-bold text-slate-900 bg-transparent focus:outline-none w-full"
               />
-              <button 
-                onClick={() => suggestLessons(chapter.id)} 
-                disabled={generatingChapterId === chapter.id}
-                className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg hover:bg-blue-100 whitespace-nowrap disabled:opacity-50"
-              >
-                {generatingChapterId === chapter.id ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
-                {generatingChapterId === chapter.id ? 'Đang tạo...' : 'AI Đề xuất'}
-              </button>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => suggestLessons(chapter.id)} 
+                  disabled={generatingChapterId === chapter.id}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg hover:bg-blue-100 whitespace-nowrap disabled:opacity-50"
+                >
+                  {generatingChapterId === chapter.id ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                  {generatingChapterId === chapter.id ? 'Đang tạo...' : 'AI Đề xuất'}
+                </button>
+                <button 
+                  onClick={() => deleteChapter(chapter.id)}
+                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg"
+                  title="Xóa chương"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
             <div className="p-4 space-y-3">
               {chapter.lessons.map((lesson, lessonIndex) => (
