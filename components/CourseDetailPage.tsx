@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { Loader2, Edit, Plus, ArrowLeft, ChevronDown } from 'lucide-react';
 import { CourseOutlineBuilder } from './CourseOutlineBuilder';
+import toast from 'react-hot-toast';
 
 interface Lesson {
   id: string;
@@ -31,16 +32,47 @@ interface CourseDetailPageProps {
 
 const EditableCell: React.FC<{
   value: string | null | undefined;
-  onChange: (value: string) => void;
+  onSave: (value: string) => Promise<void>;
   className?: string;
   placeholder?: string;
-}> = ({ value, onChange, className = '', placeholder = '' }) => {
+}> = ({ value, onSave, className = '', placeholder = '' }) => {
+  const [currentValue, setCurrentValue] = useState(value);
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    setCurrentValue(value);
+  }, [value]);
+
+  const handleSave = async () => {
+    if (currentValue !== value) {
+      setIsSaving(true);
+      try {
+        await onSave(currentValue || '');
+        toast.success('Đã lưu thay đổi!');
+      } catch (error) {
+        toast.error('Lưu thất bại.');
+        console.error(error);
+      } finally {
+        setIsSaving(false);
+      }
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.currentTarget.blur();
+    }
+  };
+
   return (
     <input
       type="text"
-      value={value || ''}
-      onChange={(e) => onChange(e.target.value)}
-      className={`w-full h-full bg-transparent px-3 py-3 focus:outline-none focus:bg-blue-50 focus:ring-1 focus:ring-blue-300 rounded-sm ${className}`}
+      value={currentValue || ''}
+      onChange={(e) => setCurrentValue(e.target.value)}
+      onBlur={handleSave}
+      onKeyDown={handleKeyDown}
+      disabled={isSaving}
+      className={`w-full h-full bg-transparent px-3 py-3 focus:outline-none focus:bg-blue-50 focus:ring-1 focus:ring-blue-300 rounded-sm disabled:opacity-50 ${className}`}
       placeholder={placeholder}
     />
   );
@@ -84,7 +116,7 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
       );
 
       setChapters(chaptersWithLessons);
-      setOpenChapters(chaptersWithLessons.map(c => c.id)); // Open all chapters by default
+      setOpenChapters(chaptersWithLessons.map(c => c.id));
       setIsLoading(false);
     };
     fetchDetails();
@@ -98,24 +130,37 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
     );
   };
 
-  const handleChapterChange = (chapterId: string, newTitle: string) => {
-    setChapters(prevChapters =>
-      prevChapters.map(ch => (ch.id === chapterId ? { ...ch, title: newTitle } : ch))
-    );
+  const handleSaveChapter = async (chapterId: string, newTitle: string) => {
+    setChapters(prev => prev.map(ch => ch.id === chapterId ? { ...ch, title: newTitle } : ch));
+    const { error } = await supabase.from('course_chapters').update({ title: newTitle }).eq('id', chapterId);
+    if (error) throw error;
   };
 
-  const handleLessonChange = (chapterId: string, lessonId: string, field: keyof Lesson, value: any) => {
-    setChapters(prevChapters =>
-      prevChapters.map(ch => {
-        if (ch.id === chapterId) {
-          return {
-            ...ch,
-            lessons: ch.lessons.map(l => (l.id === lessonId ? { ...l, [field]: value } : l)),
-          };
-        }
-        return ch;
-      })
-    );
+  const handleSaveLesson = async (lessonId: string, field: keyof Lesson, value: any) => {
+    setChapters(prev => prev.map(ch => ({
+      ...ch,
+      lessons: ch.lessons.map(l => l.id === lessonId ? { ...l, [field]: value } : l)
+    })));
+    const { error } = await supabase.from('course_lessons').update({ [field]: value }).eq('id', lessonId);
+    if (error) throw error;
+  };
+
+  const handleTogglePro = async (lessonId: string, currentIsPro: boolean) => {
+    const newValue = !currentIsPro;
+    setChapters(prev => prev.map(ch => ({
+      ...ch,
+      lessons: ch.lessons.map(l => l.id === lessonId ? { ...l, is_pro: newValue } : l)
+    })));
+    const { error } = await supabase.from('course_lessons').update({ is_pro: newValue }).eq('id', lessonId);
+    if (error) {
+      toast.error('Cập nhật trạng thái thất bại.');
+      setChapters(prev => prev.map(ch => ({
+        ...ch,
+        lessons: ch.lessons.map(l => l.id === lessonId ? { ...l, is_pro: currentIsPro } : l)
+      })));
+    } else {
+      toast.success('Đã cập nhật trạng thái!');
+    }
   };
 
   if (view === 'builder') {
@@ -144,7 +189,7 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
         </div>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <Loader2 size={32} className="animate-spin text-slate-400" />
@@ -152,21 +197,16 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
         ) : (
           chapters.map((chapter, chapterIndex) => (
             <div key={chapter.id} className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-              <div className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50/50" onClick={() => toggleChapter(chapter.id)}>
-                <div className="flex items-center gap-4">
+              <div className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50/50 bg-slate-50" onClick={() => toggleChapter(chapter.id)}>
+                <div className="flex items-center gap-4 flex-1">
                   <div className="flex flex-col items-center">
                     <span className="text-xs text-slate-400 font-bold">Chương</span>
                     <span className="text-2xl font-bold text-slate-800">{chapterIndex + 1}</span>
                   </div>
-                  <input
-                    type="text"
-                    value={chapter.title}
-                    onChange={(e) => {
-                      e.stopPropagation();
-                      handleChapterChange(chapter.id, e.target.value);
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                    className="text-lg font-bold text-slate-900 bg-transparent focus:outline-none focus:bg-blue-50 p-1 rounded"
+                  <EditableCell 
+                    value={chapter.title} 
+                    onSave={(v) => handleSaveChapter(chapter.id, v)}
+                    className="font-bold text-lg text-slate-900 !p-1"
                   />
                 </div>
                 <ChevronDown size={20} className={`text-slate-400 transition-transform ${openChapters.includes(chapter.id) ? 'rotate-180' : ''}`} />
@@ -174,38 +214,40 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
 
               {openChapters.includes(chapter.id) && (
                 <div className="overflow-x-auto">
-                  <div className="min-w-[1200px]">
-                    <div className="grid grid-cols-[2fr_1fr_1fr_1fr_2fr_2fr_2fr] gap-4 px-5 py-3 bg-slate-50 border-y border-slate-200 text-xs font-bold text-slate-500 uppercase">
-                      <div className="col-span-1">Bài học</div>
-                      <div className="col-span-1 text-center">Thời lượng</div>
-                      <div className="col-span-1 text-center">Định dạng</div>
-                      <div className="col-span-1 text-center">Free/Pro</div>
-                      <div className="col-span-1">Nút bấm/Vấn đề</div>
-                      <div className="col-span-1">Link Source</div>
-                      <div className="col-span-1">Video Demo</div>
-                    </div>
-                    <div className="divide-y divide-slate-100">
+                  <table className="w-full min-w-[1800px] text-sm">
+                    <thead>
+                      <tr className="bg-slate-50 text-xs font-bold text-slate-600 uppercase tracking-wider">
+                        <th className="p-3 text-left w-[250px]">Bài học</th>
+                        <th className="p-3 text-center w-[100px]">Thời lượng</th>
+                        <th className="p-3 text-center w-[120px]">Định dạng</th>
+                        <th className="p-3 text-center w-[100px]">Free/Pro</th>
+                        <th className="p-3 text-left w-[200px]">Nút bấm/Vấn đề</th>
+                        <th className="p-3 text-left w-[200px]">Link Source</th>
+                        <th className="p-3 text-left w-[200px]">Video Demo</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
                       {chapter.lessons.map(lesson => (
-                        <div key={lesson.id} className="grid grid-cols-[2fr_1fr_1fr_1fr_2fr_2fr_2fr] gap-4 px-2 items-center hover:bg-slate-50/50">
-                          <div className="col-span-1"><EditableCell value={lesson.title} onChange={v => handleLessonChange(chapter.id, lesson.id, 'title', v)} /></div>
-                          <div className="col-span-1"><EditableCell value={lesson.duration} onChange={v => handleLessonChange(chapter.id, lesson.id, 'duration', v)} className="text-center" /></div>
-                          <div className="col-span-1"><EditableCell value={lesson.format} onChange={v => handleLessonChange(chapter.id, lesson.id, 'format', v)} className="text-center" /></div>
-                          <div className="col-span-1 p-3 text-center">
-                            <button onClick={() => handleLessonChange(chapter.id, lesson.id, 'is_pro', !lesson.is_pro)} className={`px-3 py-1 rounded-full text-xs font-bold ${lesson.is_pro ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                        <tr key={lesson.id}>
+                          <td><EditableCell value={lesson.title} onSave={v => handleSaveLesson(lesson.id, 'title', v)} /></td>
+                          <td><EditableCell value={lesson.duration} onSave={v => handleSaveLesson(lesson.id, 'duration', v)} className="text-center" /></td>
+                          <td><EditableCell value={lesson.format} onSave={v => handleSaveLesson(lesson.id, 'format', v)} className="text-center" /></td>
+                          <td className="p-3 text-center">
+                            <button onClick={() => handleTogglePro(lesson.id, lesson.is_pro)} className={`px-2 py-0.5 rounded-full text-xs font-bold ${lesson.is_pro ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
                               {lesson.is_pro ? 'PRO' : 'FREE'}
                             </button>
-                          </div>
-                          <div className="col-span-1"><EditableCell value={lesson.cta_problem} onChange={v => handleLessonChange(chapter.id, lesson.id, 'cta_problem', v)} /></div>
-                          <div className="col-span-1"><EditableCell value={lesson.source_link} onChange={v => handleLessonChange(chapter.id, lesson.id, 'source_link', v)} /></div>
-                          <div className="col-span-1"><EditableCell value={lesson.demo_link} onChange={v => handleLessonChange(chapter.id, lesson.id, 'demo_link', v)} /></div>
-                        </div>
+                          </td>
+                          <td><EditableCell value={lesson.cta_problem} onSave={v => handleSaveLesson(lesson.id, 'cta_problem', v)} /></td>
+                          <td><EditableCell value={lesson.source_link} onSave={v => handleSaveLesson(lesson.id, 'source_link', v)} /></td>
+                          <td><EditableCell value={lesson.demo_link} onSave={v => handleSaveLesson(lesson.id, 'demo_link', v)} /></td>
+                        </tr>
                       ))}
-                    </div>
-                    <div className="p-5">
-                        <div className="w-full bg-slate-200 rounded-full h-2">
-                            <div className="bg-green-500 h-2 rounded-full" style={{width: '30%'}}></div>
-                        </div>
-                    </div>
+                    </tbody>
+                  </table>
+                  <div className="p-5">
+                      <div className="w-full bg-slate-200 rounded-full h-2">
+                          <div className="bg-green-500 h-2 rounded-full" style={{width: '30%'}}></div>
+                      </div>
                   </div>
                 </div>
               )}
