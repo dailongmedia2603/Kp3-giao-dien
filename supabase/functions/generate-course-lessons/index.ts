@@ -21,7 +21,7 @@ Based on the context above, generate lesson titles for the following chapter:
 - **Chapter Title:** {{chapter_title}}
 
 **Output Format:**
-Return ONLY a valid JSON array of strings. Do not output any markdown code blocks or additional text. Just the raw JSON array.
+Return ONLY a valid JSON array of strings. Do not output any markdown code blocks (like \`\`\`json) or additional text. Just the raw JSON array.
 Example: ["Lesson Title 1", "Lesson Title 2", "Lesson Title 3"]`;
 
 serve(async (req) => {
@@ -42,6 +42,7 @@ serve(async (req) => {
   );
 
   try {
+    console.log("Function `generate-course-lessons` invoked (Provider: TrollLLM).");
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -49,39 +50,50 @@ serve(async (req) => {
     )
 
     const { data: { user } } = await supabaseClient.auth.getUser()
-    if (!user) throw new Error('Unauthorized: User not found.');
+    if (!user) {
+      throw new Error('Unauthorized: User not found.');
+    }
     userId = user.id;
 
     requestBody = await req.json();
     const { customerProfile, majorSteps, minorSteps, chapterTitle } = requestBody;
-    if (!customerProfile || !majorSteps || !minorSteps || !chapterTitle) {
-      throw new Error('Bad Request: Missing required context for generation.');
+    
+    // Validate inputs
+    if (!chapterTitle) {
+      throw new Error('Bad Request: Missing chapterTitle.');
     }
 
+    // Lấy cấu hình API Troll từ database
     const { data: apiConfig, error: configError } = await serviceClient
       .from('api_configurations')
       .select('troll_api_key, course_outline_prompt')
       .eq('user_id', user.id)
       .single();
 
-    if (configError || !apiConfig) {
-      throw new Error('API configuration not found. Please save your settings first.');
+    if (configError && configError.code !== 'PGRST116') {
+      console.error("API config error:", configError?.message);
+      throw new Error('API configuration not found.');
     }
 
-    const { troll_api_key, course_outline_prompt } = apiConfig;
+    const { troll_api_key, course_outline_prompt } = apiConfig || {};
+
     if (!troll_api_key) {
       throw new Error('Troll API Key not found. Please configure it in Settings > API > TrollLLM.');
     }
 
+    // Xử lý Prompt
     const systemPromptTemplate = course_outline_prompt || DEFAULT_COURSE_OUTLINE_PROMPT;
     const processedPrompt = systemPromptTemplate
-      .replace('{{customer_profile}}', customerProfile)
-      .replace('{{major_steps}}', majorSteps)
-      .replace('{{minor_steps}}', minorSteps)
-      .replace('{{chapter_title}}', chapterTitle);
+      .replace('{{customer_profile}}', customerProfile || '')
+      .replace('{{major_steps}}', majorSteps || '')
+      .replace('{{minor_steps}}', minorSteps || '')
+      .replace('{{chapter_title}}', chapterTitle || '');
 
+    // Cấu hình gọi TrollLLM API
     const trollBaseUrl = 'https://chat.trollllm.xyz/v1';
     const trollModel = 'gemini-3-pro-preview';
+    
+    console.log(`Calling TrollLLM API: ${trollBaseUrl}/chat/completions`);
 
     const aiResponse = await fetch(`${trollBaseUrl}/chat/completions`, {
       method: 'POST',
@@ -97,7 +109,7 @@ serve(async (req) => {
         temperature: 0.7
       }),
     });
-
+    
     responseStatus = aiResponse.status;
 
     if (!aiResponse.ok) {
@@ -105,31 +117,61 @@ serve(async (req) => {
       console.error("TrollLLM API error:", errorText);
       throw new Error(`TrollLLM API error: ${aiResponse.status} ${errorText}`);
     }
-    
+
     const aiData = await aiResponse.json();
-    const rawText = aiData.choices?.[0]?.message?.content || "";
+    const rawContent = aiData.choices?.[0]?.message?.content || "";
     
-    // Clean and parse the JSON array from the raw text
-    const jsonMatch = rawText.match(/\[.*\]/s);
-    if (!jsonMatch) throw new Error("AI did not return a valid JSON array.");
+    console.log("Raw AI Content:", rawContent);
+
+    if (!rawContent) {
+        throw new Error("No content received from AI.");
+    }
+
+    // Xử lý JSON từ phản hồi (Loại bỏ markdown code blocks nếu có)
+    let jsonString = rawContent.trim();
     
-    const lessons = JSON.parse(jsonMatch[0]);
+    // Regex để tìm mảng JSON [...]
+    const jsonArrayMatch = jsonString.match(/\[[\s\S]*\]/);
+    
+    if (jsonArrayMatch) {
+        jsonString = jsonArrayMatch[0];
+    } else {
+        console.error("Could not find JSON array in response");
+        // Fallback: nếu AI trả về text thuần (danh sách có gạch đầu dòng), cố gắng parse thủ công hoặc báo lỗi
+        throw new Error("AI did not return a valid JSON array format.");
+    }
+
+    let lessons;
+    try {
+        lessons = JSON.parse(jsonString);
+    } catch (e) {
+        console.error("JSON parse failed:", e);
+        throw new Error("Failed to parse lessons from AI response.");
+    }
+
+    if (!Array.isArray(lessons)) {
+        throw new Error("AI response is not an array of lessons.");
+    }
+
     responseBody = { lessons };
+    console.log("Lessons parsed successfully.");
 
     return new Response(JSON.stringify(responseBody), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
-    });
+    })
 
   } catch (error) {
     errorMsg = error.message;
     responseStatus = responseStatus || 500;
     responseBody = { error: error.message };
+    console.error("An error occurred:", error);
     return new Response(JSON.stringify(responseBody), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: responseStatus,
-    });
+    })
   } finally {
+    // Log vào DB
     const durationMs = Date.now() - startTime;
     if (userId) {
       await serviceClient.from('api_logs').insert({
@@ -144,4 +186,4 @@ serve(async (req) => {
       });
     }
   }
-});
+})
