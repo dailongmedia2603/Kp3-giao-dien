@@ -197,7 +197,7 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
         ) : (
           chapters.map((chapter, chapterIndex) => (
             <div key={chapter.id} className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-              <div className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-100/50 bg-slate-100" onClick={() => toggleChapter(chapter.id)}>
+              <div className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-100/50 bg-slate-50" onClick={() => toggleChapter(chapter.id)}>
                 <div className="flex items-center gap-4 flex-1">
                   <div className="flex flex-col items-center">
                     <span className="text-xs text-slate-400 font-bold">Chương</span>
@@ -244,11 +244,6 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
                       ))}
                     </tbody>
                   </table>
-                  <div className="p-5">
-                      <div className="w-full bg-slate-200 rounded-full h-2">
-                          <div className="bg-green-500 h-2 rounded-full" style={{width: '30%'}}></div>
-                      </div>
-                  </div>
                 </div>
               )}
             </div>
