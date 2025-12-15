@@ -109,7 +109,7 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
   };
 
   if (view === 'builder') {
-    return <CourseOutlineBuilder course={course} onBack={() => setView('table')} />;
+    return <CourseOutlineBuilder course={course} onBack={() => setView('table')} initialChapters={chapters} />;
   }
 
   let lessonCounter = 0;
@@ -132,7 +132,7 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
           </div>
         </div>
         <div className="flex gap-2">
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-50 shadow-sm">
+          <button onClick={() => setView('builder')} className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-50 shadow-sm">
             <Edit size={14} /> Edit
           </button>
           <button onClick={() => setView('builder')} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 shadow-sm">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ChevronDown, Users, Layers, List, Save, Sparkles, Plus, Trash2, BrainCircuit, BookOpen, Loader2 } from 'lucide-react';
 import { supabase } from '@/src/integrations/supabase/client';
 import { useSession } from '@/src/contexts/SessionContext';
@@ -13,6 +13,12 @@ interface Chapter {
   id: string;
   title: string;
   lessons: Lesson[];
+}
+
+interface CourseOutlineBuilderProps {
+  course: any;
+  onBack: () => void;
+  initialChapters?: Chapter[];
 }
 
 const InputField: React.FC<{
@@ -41,15 +47,19 @@ const InputField: React.FC<{
   </div>
 );
 
-export const CourseOutlineBuilder: React.FC<{ course: any; onBack: () => void; }> = ({ course, onBack }) => {
+export const CourseOutlineBuilder: React.FC<CourseOutlineBuilderProps> = ({ course, onBack, initialChapters = [] }) => {
   const { user } = useSession();
   const [isInputCollapsed, setIsInputCollapsed] = useState(true);
   const [customerProfile, setCustomerProfile] = useState('');
   const [majorSteps, setMajorSteps] = useState('');
   const [minorSteps, setMinorSteps] = useState('');
-  const [chapters, setChapters] = useState<Chapter[]>([]);
+  const [chapters, setChapters] = useState<Chapter[]>(initialChapters);
   const [generatingChapterId, setGeneratingChapterId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    setChapters(initialChapters);
+  }, [initialChapters]);
 
   const addChapter = () => {
     const newChapter: Chapter = {
