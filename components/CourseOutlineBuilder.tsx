@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, ChevronDown, Users, Layers, List, Save, Sparkles, Plus, Trash2, BrainCircuit, BookOpen, Loader2 } from 'lucide-react';
 import { supabase } from '@/src/integrations/supabase/client';
+import { useSession } from '@/src/contexts/SessionContext';
 import toast from 'react-hot-toast';
 
 interface Lesson {
@@ -41,12 +42,14 @@ const InputField: React.FC<{
 );
 
 export const CourseOutlineBuilder: React.FC<{ course: any; onBack: () => void; }> = ({ course, onBack }) => {
+  const { user } = useSession();
   const [isInputCollapsed, setIsInputCollapsed] = useState(true);
   const [customerProfile, setCustomerProfile] = useState('');
   const [majorSteps, setMajorSteps] = useState('');
   const [minorSteps, setMinorSteps] = useState('');
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [generatingChapterId, setGeneratingChapterId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const addChapter = () => {
     const newChapter: Chapter = {
@@ -119,16 +122,88 @@ export const CourseOutlineBuilder: React.FC<{ course: any; onBack: () => void; }
     }
   };
 
+  const handleSaveCourse = async () => {
+    if (!user) {
+        toast.error("Bạn cần đăng nhập để lưu.");
+        return;
+    }
+    setIsSaving(true);
+
+    try {
+        // Step 1: Prepare and upsert chapters
+        const chapterUpserts = chapters.map((chapter, index) => ({
+            id: chapter.id.startsWith('ch-') ? undefined : chapter.id,
+            course_id: course.id,
+            user_id: user.id,
+            title: chapter.title,
+            chapter_order: index,
+        }));
+
+        const { data: savedChapters, error: chapterError } = await supabase
+            .from('course_chapters')
+            .upsert(chapterUpserts)
+            .select();
+
+        if (chapterError) throw chapterError;
+
+        // Step 2: Prepare lessons with correct chapter IDs
+        const allLessonsToUpsert = [];
+        for (const [index, originalChapter] of chapters.entries()) {
+            const savedChapter = savedChapters[index]; // Rely on the order returned by upsert
+
+            if (savedChapter && originalChapter.lessons.length > 0) {
+                for (const [lessonIndex, lesson] of originalChapter.lessons.entries()) {
+                    allLessonsToUpsert.push({
+                        id: lesson.id.startsWith('l-') ? undefined : lesson.id,
+                        chapter_id: savedChapter.id,
+                        user_id: user.id,
+                        title: lesson.title,
+                        lesson_order: lessonIndex,
+                    });
+                }
+            }
+        }
+
+        // Step 3: Upsert all lessons
+        if (allLessonsToUpsert.length > 0) {
+            const { error: lessonError } = await supabase
+                .from('course_lessons')
+                .upsert(allLessonsToUpsert);
+
+            if (lessonError) throw lessonError;
+        }
+
+        toast.success("Đã lưu đề cương khóa học thành công!");
+        onBack();
+
+    } catch (error: any) {
+        console.error("Error saving course outline:", error);
+        toast.error(`Lỗi khi lưu: ${error.message}`);
+    } finally {
+        setIsSaving(false);
+    }
+  };
+
   return (
     <div className="animate-in fade-in duration-300">
-      <div className="flex items-center gap-4 mb-8">
-        <button onClick={onBack} className="p-2 hover:bg-slate-100 rounded-lg text-slate-500">
-          <ArrowLeft size={20} />
-        </button>
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900">Tạo kế hoạch: {course.title}</h2>
-          <p className="text-slate-500 text-sm">Sử dụng AI để xây dựng đề cương khóa học của bạn.</p>
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-4">
+            <button onClick={onBack} className="p-2 hover:bg-slate-100 rounded-lg text-slate-500">
+              <ArrowLeft size={20} />
+            </button>
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900">Tạo kế hoạch: {course.title}</h2>
+              <p className="text-slate-500 text-sm">Sử dụng AI để xây dựng đề cương khóa học của bạn.</p>
+            </div>
         </div>
+        <button 
+            onClick={handleSaveCourse}
+            disabled={isSaving}
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-xs font-bold rounded-lg hover:bg-green-700 shadow-sm disabled:opacity-50"
+        >
+            {isSaving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+            {isSaving ? 'Đang lưu...' : 'Lưu khóa học'}
+        </button>
       </div>
 
       <div className="bg-white border border-slate-200 rounded-xl shadow-sm mb-8">
