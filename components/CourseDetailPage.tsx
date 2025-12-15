@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/src/integrations/supabase/client';
-import { Loader2, Edit, Plus, BookOpen, ArrowLeft } from 'lucide-react';
+import { Loader2, Edit, Plus, ArrowLeft } from 'lucide-react';
+import { CourseOutlineBuilder } from './CourseOutlineBuilder';
 
 interface Lesson {
   id: string;
@@ -76,6 +77,7 @@ const ChapterRow: React.FC<{ title: string }> = ({ title }) => (
 );
 
 export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBack }) => {
+  const [view, setView] = useState('table');
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -116,6 +118,10 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
     fetchDetails();
   }, [course.id]);
 
+  if (view === 'builder') {
+    return <CourseOutlineBuilder course={course} onBack={() => setView('table')} />;
+  }
+
   let lessonCounter = 0;
 
   return (
@@ -134,7 +140,7 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
           <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-50 shadow-sm">
             <Edit size={14} /> Edit
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 shadow-sm">
+          <button onClick={() => setView('builder')} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 shadow-sm">
             <Plus size={14} /> Tạo kế hoạch
           </button>
         </div>
