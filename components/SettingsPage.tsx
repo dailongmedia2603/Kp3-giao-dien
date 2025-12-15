@@ -15,10 +15,11 @@ import {
 } from 'lucide-react';
 import DesignSettingsTab from './DesignSettingsTab';
 import ApiSettingsTab from './ApiSettingsTab';
-import PromptConfigTab from './PromptConfigTab'; // Import new component
+import PromptConfigTab from './PromptConfigTab';
+import ApiTrollSettingsTab from './ApiTrollSettingsTab';
 
 export const SettingsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'design' | 'prompts' | 'api' | 'general' | 'billing' | 'notifications'>('design');
+  const [activeTab, setActiveTab] = useState<'design' | 'prompts' | 'api' | 'api-troll' | 'general' | 'billing' | 'notifications'>('design');
 
   return (
     <div className="p-8 max-w-[1200px] mx-auto font-sans">
@@ -67,6 +68,13 @@ export const SettingsPage: React.FC = () => {
                         API
                     </button>
                     <button 
+                        onClick={() => setActiveTab('api-troll')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 text-[14px] font-medium rounded-lg transition-colors ${activeTab === 'api-troll' ? 'bg-[#E8F5E9] text-[#16A349]' : 'text-slate-600 hover:bg-slate-50'}`}
+                    >
+                        <Bot size={18} />
+                        API Troll
+                    </button>
+                    <button 
                         onClick={() => setActiveTab('general')}
                         className={`w-full flex items-center gap-3 px-4 py-3 text-[14px] font-medium rounded-lg transition-colors ${activeTab === 'general' ? 'bg-[#E8F5E9] text-[#16A349]' : 'text-slate-600 hover:bg-slate-50'}`}
                     >
@@ -97,6 +105,7 @@ export const SettingsPage: React.FC = () => {
             {activeTab === 'design' && <DesignSettingsTab />}
             {activeTab === 'api' && <ApiSettingsTab />}
             {activeTab === 'prompts' && <PromptConfigTab />}
+            {activeTab === 'api-troll' && <ApiTrollSettingsTab />}
 
             {/* General Settings Tab */}
             {activeTab === 'general' && (
