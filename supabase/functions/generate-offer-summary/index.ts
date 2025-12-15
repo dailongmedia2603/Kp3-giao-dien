@@ -21,33 +21,6 @@ const DEFAULT_OFFER_SUMMARY_PROMPT = `You are a master copywriter specializing i
 
 Combine these elements into a cohesive and irresistible offer description. The output should be in Vietnamese.`;
 
-// Helper to Base64URL encode
-function base64url(source: ArrayBuffer): string {
-  return btoa(String.fromCharCode(...new Uint8Array(source)))
-    .replace(/=/g, "")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_");
-}
-
-// Helper to import a PEM-formatted key
-async function importKey(pem: string) {
-  const pemHeader = "-----BEGIN PRIVATE KEY-----";
-  const pemFooter = "-----END PRIVATE KEY-----";
-  const pemContents = pem.replace(pemHeader, "").replace(pemFooter, "").replace(/\s/g, "");
-  const binaryDer = atob(pemContents);
-  const keyData = new Uint8Array(binaryDer.length);
-  for (let i = 0; i < binaryDer.length; i++) {
-    keyData[i] = binaryDer.charCodeAt(i);
-  }
-  return await crypto.subtle.importKey(
-    "pkcs8",
-    keyData,
-    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
-    true,
-    ["sign"]
-  );
-}
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
@@ -66,7 +39,7 @@ serve(async (req) => {
   );
 
   try {
-    console.log("Function `generate-offer-summary` invoked.");
+    console.log("Function `generate-offer-summary` invoked (Provider: TrollLLM).");
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -78,128 +51,87 @@ serve(async (req) => {
       throw new Error('Unauthorized: User not found.');
     }
     userId = user.id;
-    console.log(`Authenticated user: ${userId}`);
 
     requestBody = await req.json();
     const { offerDetails } = requestBody;
     if (!offerDetails) {
       throw new Error('Bad Request: Missing offerDetails payload.');
     }
-    console.log("Request body parsed successfully.");
 
+    // Lấy cấu hình API Troll từ database
     const { data: apiConfig, error: configError } = await serviceClient
       .from('api_configurations')
-      .select('project_id, location, model, service_account_json, offer_summary_prompt')
+      .select('troll_api_key, offer_summary_prompt')
       .eq('user_id', user.id)
       .single();
 
     if (configError && configError.code !== 'PGRST116') {
       console.error("API config error:", configError?.message);
-      throw new Error('API configuration not found. Please save your settings first.');
-    }
-    console.log("API configuration loaded.");
-
-    const { project_id, location, model, service_account_json, offer_summary_prompt } = apiConfig || {};
-
-    if (!project_id || !location || !model || !service_account_json) {
-      throw new Error('Incomplete API configuration. Please check your settings for Project ID, Location, Model, and Service Account JSON.');
+      throw new Error('API configuration not found.');
     }
 
-    const serviceAccount = JSON.parse(service_account_json);
-    if (!serviceAccount.private_key || !serviceAccount.client_email) {
-        throw new Error("Service Account JSON must contain 'private_key' and 'client_email'.");
-    }
-    console.log("Service account parsed.");
+    const { troll_api_key, offer_summary_prompt } = apiConfig || {};
 
-    const privateKey = await importKey(serviceAccount.private_key);
-    console.log("Private key imported.");
-
-    const now = Math.floor(Date.now() / 1000);
-    const exp = now + 3600;
-
-    const header = { alg: "RS256", typ: "JWT" };
-    const payload = {
-      iss: serviceAccount.client_email,
-      scope: "https://www.googleapis.com/auth/cloud-platform",
-      aud: "https://oauth2.googleapis.com/token",
-      exp: exp,
-      iat: now,
-    };
-
-    const encodedHeader = base64url(new TextEncoder().encode(JSON.stringify(header)));
-    const encodedPayload = base64url(new TextEncoder().encode(JSON.stringify(payload)));
-    
-    const dataToSign = new TextEncoder().encode(`${encodedHeader}.${encodedPayload}`);
-    const signature = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", privateKey, dataToSign);
-    const encodedSignature = base64url(signature);
-    const jwt = `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
-    console.log("JWT created.");
-
-    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-        assertion: jwt,
-      }),
-    });
-
-    if (!tokenResponse.ok) {
-      const errorBody = await tokenResponse.text();
-      console.error("Failed to get access token:", errorBody);
-      throw new Error(`Failed to get access token: ${tokenResponse.status} ${errorBody}`);
+    if (!troll_api_key) {
+      throw new Error('Troll API Key not found. Please configure it in Settings > API > TrollLLM.');
     }
 
-    const tokenData = await tokenResponse.json();
-    const accessToken = tokenData.access_token;
-
-    if (!accessToken) {
-      throw new Error('Access token not found in Google Auth response.');
-    }
-    console.log("Access token fetched.");
-
-    const systemPrompt = offer_summary_prompt || DEFAULT_OFFER_SUMMARY_PROMPT;
-    let processedPrompt = systemPrompt;
+    // Xử lý Prompt
+    const systemPromptTemplate = offer_summary_prompt || DEFAULT_OFFER_SUMMARY_PROMPT;
+    let processedPrompt = systemPromptTemplate;
     for (const [key, value] of Object.entries(offerDetails)) {
       processedPrompt = processedPrompt.replace(new RegExp(`{{${key}}}`, 'g'), value as string || '');
     }
 
-    const vertexApiUrl = `https://${location}-aiplatform.googleapis.com/v1/projects/${project_id}/locations/${location}/publishers/google/models/${model}:generateContent`;
-    console.log(`Calling Vertex AI with processed prompt.`);
+    // Cấu hình gọi TrollLLM API
+    const trollBaseUrl = 'https://chat.trollllm.xyz/v1';
+    const trollModel = 'gemini-3-pro-preview';
+    
+    console.log(`Calling TrollLLM API: ${trollBaseUrl}/chat/completions`);
 
-    const vertexResponse = await fetch(vertexApiUrl, {
+    const aiResponse = await fetch(`${trollBaseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        'Authorization': `Bearer ${troll_api_key}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: processedPrompt }] }]
+        model: trollModel,
+        messages: [
+          { role: "user", content: processedPrompt }
+        ],
+        temperature: 0.7
       }),
     });
     
-    responseStatus = vertexResponse.status;
+    responseStatus = aiResponse.status;
 
-    if (!vertexResponse.ok) {
-      const errorBody = await vertexResponse.text();
-      console.error("Vertex AI API error:", errorBody);
-      throw new Error(`Vertex AI API error: ${vertexResponse.status} ${errorBody}`);
+    if (!aiResponse.ok) {
+      const errorText = await aiResponse.text();
+      console.error("TrollLLM API error:", errorText);
+      throw new Error(`TrollLLM API error: ${aiResponse.status} ${errorText}`);
     }
 
-    const vertexData = await vertexResponse.json();
-    const generatedSummary = vertexData.candidates[0].content.parts[0].text;
-    responseBody = { summary: generatedSummary };
-    console.log("Summary generated successfully.");
+    const aiData = await aiResponse.json();
+    const summary = aiData.choices?.[0]?.message?.content || "";
+    
+    if (!summary) {
+        throw new Error("No content received from AI.");
+    }
+
+    responseBody = { summary };
+    console.log("Summary generated successfully via TrollLLM.");
 
     return new Response(JSON.stringify(responseBody), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
+
   } catch (error) {
     errorMsg = error.message;
     responseStatus = responseStatus || 500;
     responseBody = { error: error.message };
-    console.error("An error occurred in `generate-offer-summary`:", error);
+    console.error("An error occurred:", error);
     return new Response(JSON.stringify(responseBody), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: responseStatus,
@@ -210,7 +142,7 @@ serve(async (req) => {
       await serviceClient.from('api_logs').insert({
         user_id: userId,
         method: 'POST',
-        endpoint: 'supabase/functions/generate-offer-summary',
+        endpoint: 'supabase/functions/generate-offer-summary (TrollLLM)',
         request_payload: requestBody,
         response_status: responseStatus,
         response_body: responseBody,
