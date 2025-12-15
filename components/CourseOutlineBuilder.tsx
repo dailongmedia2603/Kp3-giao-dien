@@ -157,7 +157,7 @@ export const CourseOutlineBuilder: React.FC<CourseOutlineBuilderProps> = ({ cour
 
         const { data: savedChapters, error: chapterError } = await supabase
             .from('course_chapters')
-            .upsert(chapterUpserts)
+            .upsert(chapterUpserts, { defaultToNull: false })
             .select();
 
         if (chapterError) throw chapterError;
@@ -165,7 +165,7 @@ export const CourseOutlineBuilder: React.FC<CourseOutlineBuilderProps> = ({ cour
         // Step 2: Prepare lessons with correct chapter IDs
         const allLessonsToUpsert: any[] = [];
         for (const [index, originalChapter] of chapters.entries()) {
-            const savedChapter = savedChapters[index]; 
+            const savedChapter = savedChapters.find(sc => sc.chapter_order === index);
 
             if (savedChapter && originalChapter.lessons.length > 0) {
                 for (const [lessonIndex, lesson] of originalChapter.lessons.entries()) {
@@ -188,7 +188,7 @@ export const CourseOutlineBuilder: React.FC<CourseOutlineBuilderProps> = ({ cour
         if (allLessonsToUpsert.length > 0) {
             const { error: lessonError } = await supabase
                 .from('course_lessons')
-                .upsert(allLessonsToUpsert);
+                .upsert(allLessonsToUpsert, { defaultToNull: false });
 
             if (lessonError) throw lessonError;
         }
