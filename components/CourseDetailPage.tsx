@@ -131,35 +131,35 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
   };
 
   const handleSaveChapter = async (chapterId: string, newTitle: string) => {
-    setChapters(prev => prev.map(ch => ch.id === chapterId ? { ...ch, title: newTitle } : ch));
     const { error } = await supabase.from('course_chapters').update({ title: newTitle }).eq('id', chapterId);
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
+    setChapters(prev => prev.map(ch => ch.id === chapterId ? { ...ch, title: newTitle } : ch));
   };
 
   const handleSaveLesson = async (lessonId: string, field: keyof Lesson, value: any) => {
+    const { error } = await supabase.from('course_lessons').update({ [field]: value }).eq('id', lessonId);
+    if (error) {
+      throw error;
+    }
     setChapters(prev => prev.map(ch => ({
       ...ch,
       lessons: ch.lessons.map(l => l.id === lessonId ? { ...l, [field]: value } : l)
     })));
-    const { error } = await supabase.from('course_lessons').update({ [field]: value }).eq('id', lessonId);
-    if (error) throw error;
   };
 
   const handleTogglePro = async (lessonId: string, currentIsPro: boolean) => {
     const newValue = !currentIsPro;
-    setChapters(prev => prev.map(ch => ({
-      ...ch,
-      lessons: ch.lessons.map(l => l.id === lessonId ? { ...l, is_pro: newValue } : l)
-    })));
     const { error } = await supabase.from('course_lessons').update({ is_pro: newValue }).eq('id', lessonId);
     if (error) {
       toast.error('Cập nhật trạng thái thất bại.');
-      setChapters(prev => prev.map(ch => ({
-        ...ch,
-        lessons: ch.lessons.map(l => l.id === lessonId ? { ...l, is_pro: currentIsPro } : l)
-      })));
     } else {
       toast.success('Đã cập nhật trạng thái!');
+      setChapters(prev => prev.map(ch => ({
+        ...ch,
+        lessons: ch.lessons.map(l => l.id === lessonId ? { ...l, is_pro: newValue } : l)
+      })));
     }
   };
 
@@ -197,7 +197,7 @@ export const CourseDetailPage: React.FC<CourseDetailPageProps> = ({ course, onBa
         ) : (
           chapters.map((chapter, chapterIndex) => (
             <div key={chapter.id} className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-              <div className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50/50 bg-slate-50" onClick={() => toggleChapter(chapter.id)}>
+              <div className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-100/50 bg-slate-100" onClick={() => toggleChapter(chapter.id)}>
                 <div className="flex items-center gap-4 flex-1">
                   <div className="flex flex-col items-center">
                     <span className="text-xs text-slate-400 font-bold">Chương</span>
