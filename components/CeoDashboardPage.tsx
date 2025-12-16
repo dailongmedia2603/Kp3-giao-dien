@@ -194,7 +194,7 @@ const LiveTrafficCard = () => (
 
 export const CeoDashboardPage: React.FC = () => {
   return (
-    <div className="p-8 max-w-[1400px] mx-auto font-sans h-full flex flex-col">
+    <div className="p-8 max-w-[1400px] mx-auto font-sans flex flex-col">
       
       {/* 1. Header Standardized */}
       <div className="flex flex-col items-center mb-10 text-center shrink-0">

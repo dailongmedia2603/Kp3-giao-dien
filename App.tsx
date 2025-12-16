@@ -338,7 +338,7 @@ const AppContent: React.FC = () => {
             </button>
         </div>
 
-        {currentView === 'funnel-builder' || currentView === 'unlimited-content' || currentView === 'ceo-dashboard' || currentView === 'agency-portal' || currentView === 'chat-panel' ? (
+        {currentView === 'funnel-builder' || currentView === 'unlimited-content' || currentView === 'agency-portal' || currentView === 'chat-panel' ? (
            <div className="flex-1 h-full overflow-hidden p-8">
               {renderContent()}
            </div>
